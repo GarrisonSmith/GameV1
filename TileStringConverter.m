@@ -22,7 +22,7 @@ for tileSetFile = tile_sets'
 end
 for tileMapFile = area_maps'
     textFileName = char(tileMapFile.name); 
-    textFileName = "E:\Matlab Work Spaces\Tile Creation\area_maps\"+textFileName(1:end-4)+".txt";
+    textFileName = "E:\Matlab Work Spaces\Tile Creation\area_maps\"+textFileName(1:end-4)+"1.txt";
     fileID = fopen(textFileName,'w');
     mapString = "";
     tileMap = imread(string(tileMapFile.folder)+"\"+string(tileMapFile.name));
