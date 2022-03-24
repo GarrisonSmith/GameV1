@@ -27,7 +27,7 @@ for tileMapFile = area_maps'
     mapString = "";
     tileMap = imread(string(tileMapFile.folder)+"\"+string(tileMapFile.name));
     mapString = mapString+construct_map_string(tileMap);
-    mapString = strrep(mapString, ",;", ";");
+    %mapString = strrep(mapString, ",;", ";");
     fprintf(fileID, mapString);
 end
 
