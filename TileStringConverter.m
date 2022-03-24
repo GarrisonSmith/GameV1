@@ -18,7 +18,7 @@ for tileSetFile = tile_sets'
         disp("columns wasnt a factor of 64.")
         break;
     end
-    get_tiles_from_set(tileSet,string(tileSetFile.name));
+    get_tiles_from_set(tileSet,char(tileSetFile.name));
 end
 for tileMapFile = area_maps'
     textFileName = char(tileMapFile.name); 
@@ -27,6 +27,7 @@ for tileMapFile = area_maps'
     mapString = "";
     tileMap = imread(string(tileMapFile.folder)+"\"+string(tileMapFile.name));
     mapString = mapString+construct_map_string(tileMap);
+    %mapString = strrep(mapString, ":;", ";");
     fprintf(fileID, mapString);
 end
 
@@ -34,7 +35,7 @@ function get_tiles_from_set(tileSet, name)
     [rows, columns, ~] = size(tileSet);
     for i=1:64:rows
         for j=1:64:columns
-            add_unique_tile(tileSet(i:i+63,j:j+63,1:3), name, "("+string(i)+","+string(j)+")");
+            add_unique_tile(tileSet(i:i+63,j:j+63,1:3), name(1:end-4), "("+string(i-1)+","+string(j-1)+")");
         end
     end
 end
@@ -66,9 +67,9 @@ function foo = construct_map_string(tileMap)
     [rows, columns, ~] = size(tileMap);
     for i=1:64:rows
         for j=1:64:columns
-            foo = foo+get_tile_string(tileMap(i:i+63,j:j+63,1:3))+",";
+            foo = foo+get_tile_string(tileMap(i:i+63,j:j+63,1:3))+":";
         end
-        foo = foo+";";
+        foo = foo + ";";
     end
             
 end
@@ -76,7 +77,7 @@ end
 function foo = get_tile_string(tile)
     global uniqueTiles    
     global tileIdentities
-    [rows, columns, ~] = size(uniqueTiles);
+    [rows, ~, ~] = size(uniqueTiles);
     index = 1;
     for i=1:64:rows
         if tile == uniqueTiles(i:i+63,1:64,1:3)
