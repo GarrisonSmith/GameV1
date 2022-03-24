@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -62,7 +59,7 @@ namespace Fantasy.Content.Logic.Drawing
                     Color[] newColor = new Color[64 * 64];
                     System.Diagnostics.Debug.WriteLine(x);
                     System.Diagnostics.Debug.WriteLine(y);
-                    Rectangle selectionArea = new Rectangle(y, x, 64, 64);
+                    Rectangle selectionArea = new Rectangle(x, y, 64, 64);
 
                     System.Diagnostics.Debug.WriteLine(selectionArea.Width);
                     System.Diagnostics.Debug.WriteLine(selectionArea.Height);
