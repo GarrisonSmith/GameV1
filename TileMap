@@ -1,0 +1,121 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
+namespace Fantasy
+{
+    class Tilemap
+    {
+        private List<Tile> map = new List<Tile>(); //contains the list of tile for the given tile map
+        private string initialize; //area definition string
+        private int mapWidth; //number of tiles long the map is
+        private int mapHeight; //number of tiles tall the map is
+
+        public Tilemap(String initialize)
+        {
+            char[] charTemp;
+            string[] stringTemp;
+            this.initialize = initialize.Replace(" ","");
+
+            //gets width
+            stringTemp = initialize.Split(';');
+            charTemp = stringTemp[0].ToCharArray();
+            mapWidth = 1;
+            foreach (char i in charTemp)
+            {
+                if (i == ',')
+                    mapWidth++;
+            }
+            //gets height
+            if (!initialize.Contains(";"))
+                mapHeight = 1;
+            else
+            {
+                mapHeight = 1;
+                charTemp = initialize.ToCharArray();
+                foreach (char i in charTemp)
+                {
+                    if (i == ';')
+                        mapHeight++;
+                }
+            }
+
+            /*
+            System.Diagnostics.Debug.WriteLine(mapWidth);
+            System.Diagnostics.Debug.WriteLine(mapHeight);
+            foreach (string i in initialize.Split(new char[] { ';', ',' }))
+            {
+                System.Diagnostics.Debug.WriteLine(i);
+            }
+            */
+            createTiles();
+        }
+
+        private void createTiles()
+        {
+            string[] parts = initialize.Split(new char[] {';',','});
+            int index = 0;
+            for (int i = 0; i < mapHeight*16; i+=16) {
+                for (int j = 0; j < mapWidth*16; j+=16) {
+                    if(parts[index]!="x")
+                        map.Add(new Tile(parts[index], new Vector2(j, i)));
+                    index++;
+                }
+            }
+            foreach (Tile i in map) 
+            {
+                System.Diagnostics.Debug.WriteLine(i.toString());
+            }
+            System.Diagnostics.Debug.WriteLine("_________________");
+        }
+
+        public int getMapSize() 
+        {
+            return map.Count;
+        }
+
+        public Tile getTile(int index)
+        {
+            return map[index];
+        }
+    }
+
+    class Tile
+    {
+        //tile is 16x16 pixels large
+        string tileId; //Id for which tile this represents
+        Vector2 coordinate;
+        Texture2D tile;
+        Color color;
+
+        public Tile(string tileId, Vector2 coordinate)
+        {
+            this.tileId = tileId;
+            this.coordinate = coordinate;
+            color = Color.White;
+        }
+        public string getTileId() {
+            return tileId;
+        }
+        public Vector2 getCoordinate()
+        {
+            return coordinate;
+        }
+        public string toString() {
+            return "Title ID: " + tileId + ";Vector: " + coordinate.X + ',' + coordinate.Y;
+        }
+
+        public void setContent(Texture2D tile) {
+            this.tile = tile;
+        }
+        public Texture2D getContent() {
+            return tile;
+        }
+        public Color getColor() 
+        {
+            return color;
+        }
+    }
+}
