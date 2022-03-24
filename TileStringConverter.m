@@ -35,7 +35,7 @@ function get_tiles_from_set(tileSet, name)
     [rows, columns, ~] = size(tileSet);
     for i=1:64:rows
         for j=1:64:columns
-            add_unique_tile(tileSet(i:i+63,j:j+63,1:3), name(1:end-4), "("+string(i-1)+","+string(j-1)+")");
+            add_unique_tile(tileSet(i:i+63,j:j+63,1:3), name(1:end-4), "("+string(j-1)+","+string(i-1)+")");
         end
     end
 end
