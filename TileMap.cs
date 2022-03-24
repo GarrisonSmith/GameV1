@@ -6,12 +6,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Fantasy.Content.Logic.Drawing
 {
-    class Tilemap
+    class TileMap
     {
         private List<Tile> map = new List<Tile>(); //contains the list of tile for the given tile map
         private string initialize; //area definition string
 
-        public Tilemap(String initialize)
+        public TileMap(String initialize)
         {
             this.initialize = initialize.Replace(" ", "");
             this.initialize = this.initialize.Replace(":;", ";");
@@ -30,17 +30,34 @@ namespace Fantasy.Content.Logic.Drawing
                 }
             }
         }
-
         private void createTile(String tileID)
         {
+            System.Diagnostics.Debug.WriteLine(map.Count);
             map.Add(new Tile(tileID));
+            System.Diagnostics.Debug.WriteLine(tileID);
         }
-
+        public void loadTiles(Texture2D[] tileSets, GraphicsDevice device)
+        {
+            foreach (Tile i in map)
+            {
+                i.loadTile(tileSets, device);
+            }
+        }
+        public void drawTile(int index, SpriteBatch spriteBatch)
+        {
+            map[index].drawTile(spriteBatch);
+        }
+        public void drawTiles(SpriteBatch _spriteBatch) 
+        { 
+            foreach (Tile i in map)
+            {
+                i.drawTile(_spriteBatch);
+            }
+        }
         public int getMapSize()
         {
             return map.Count;
         }
-
         public Tile getTile(int index)
         {
             return map[index];
