@@ -1,7 +1,7 @@
 clear global;
 clear;
 
-cur = "Tile Creation\area_maps\";
+cur = "Tile String Creation\area_maps\";
 foo = dir(cur);
 for bar = foo'
     if bar.isdir && bar.name ~= "." && bar.name ~= ".."
@@ -20,7 +20,7 @@ end
 function foo = get_maps_string(mapFolder)
     global uniqueTiles
     global tileIdentities
-    tile_sets = dir("Tile Creation\tile_sets\*.png");
+    tile_sets = dir("Tile String Creation\tile_sets\*.png");
     area_maps = mapFolder;
     uniqueTiles(1:128,1:64,1:3) = imread("squares.png");
     tileIdentities = ["BLA","NK";"BLA","CK"];
