@@ -6,10 +6,10 @@ namespace Fantasy.Content.Logic.Drawing
 {
     class TileMap
     {
-        private List<Tile> map = new List<Tile>(); //contains the list of tile for the given tile map
-        private string initialize; //area definition string
-        int topLayer=1;
-        int bottomLayer=1;
+        public List<Tile> map = new List<Tile>(); //contains the list of tile for the given tile map
+        public string initialize; //area definition string
+        public int topLayer=1;
+        public int bottomLayer=1;
 
         public TileMap( String initialize)
         {
@@ -95,14 +95,6 @@ namespace Fantasy.Content.Logic.Drawing
                     j.drawTile(_spriteBatch);
                 }
             }
-        }
-        public string getInitialize() 
-        {
-            return initialize;
-        }
-        public int getMapSize()
-        {
-            return map.Count;
         }
         public Tile getTile(int index)
         {
