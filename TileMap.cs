@@ -8,6 +8,8 @@ namespace Fantasy.Content.Logic.Drawing
     {
         private List<Tile> map = new List<Tile>(); //contains the list of tile for the given tile map
         private string initialize; //area definition string
+        int topLayer=1;
+        int bottomLayer=1;
 
         public TileMap( String initialize)
         {
@@ -16,12 +18,29 @@ namespace Fantasy.Content.Logic.Drawing
             string[] rowTemp;
             int row = 0;
             int column = 0;
-            rowTemp = initialize.Split(";");
-            foreach (string i in rowTemp)
+            int layer = 0;
+
+            columnTemp = initialize.Split(";");
+            for (int i = 0; i < columnTemp.Length; i++)
             {
-                row = 0;
-                columnTemp = i.Split(":");
-                foreach (string j in columnTemp)
+                if (columnTemp[i] != "" && columnTemp[i].Substring(0,1) == "<")
+                {
+                    column = 0;
+                    row = 0;
+                    layer = int.Parse(columnTemp[i].Substring(columnTemp[i].IndexOf('<')+1, columnTemp[i].IndexOf('>')-1));
+                    if (layer > topLayer)
+                    {
+                        topLayer = layer;
+                    }
+                    else if (layer < bottomLayer)
+                    {
+                        bottomLayer = layer;
+                    }
+                    columnTemp[i] = columnTemp[i].Substring(columnTemp[i].IndexOf('>')+1);
+                }
+                column = 0;
+                rowTemp = columnTemp[i].Split(":");
+                foreach (string j in rowTemp)
                 {
                     if (j == "BLANK") 
                     {
@@ -29,18 +48,16 @@ namespace Fantasy.Content.Logic.Drawing
                     }
                     else if (j != "")
                     {
-                        createTile(j, row,column);
+                        createTile(j, column, row, layer);
                     }
-                    row++;
+                    column++;
                 }
-                column++;
+                row++;
             }
         }
-        private void createTile(String tileID, int row, int column)
+        private void createTile(String tileID, int row, int column, int layer)
         {
-            //System.Diagnostics.Debug.WriteLine(map.Count);
-            map.Add(new Tile(tileID, row, column));
-            //System.Diagnostics.Debug.WriteLine(tileID);
+            map.Add(new Tile(tileID, row, column, layer));
         }
         public void loadTiles(Texture2D[] tileSets, GraphicsDevice device)
         {
@@ -49,15 +66,34 @@ namespace Fantasy.Content.Logic.Drawing
                 i.loadTile(tileSets, device);
             }
         }
-        public void drawTile(int index, SpriteBatch spriteBatch)
+        public void drawTile(int index, SpriteBatch _spriteBatch)
         {
-            map[index].drawTile(spriteBatch);
+            map[index].drawTile(_spriteBatch);
         }
         public void drawTiles(SpriteBatch _spriteBatch) 
-        { 
-            foreach (Tile i in map)
+        {
+            for (int i = bottomLayer; i <= topLayer; i++)
             {
-                i.drawTile(_spriteBatch);
+                foreach (Tile j in map)
+                {
+                    if (j.layer == i)
+                    {
+                        j.drawTile(_spriteBatch);
+                    }
+                }
+            }
+        }
+        public void drawLayer(int layer, SpriteBatch _spriteBatch)
+        {
+            foreach (Tile j in map)
+            {
+                if (j.layer == layer)
+                {
+                    System.Diagnostics.Debug.WriteLine(j.tileSetName);
+                    System.Diagnostics.Debug.WriteLine(j.row);
+                    System.Diagnostics.Debug.WriteLine(j.column);
+                    j.drawTile(_spriteBatch);
+                }
             }
         }
         public string getInitialize() 
