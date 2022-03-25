@@ -5,36 +5,49 @@ namespace Fantasy.Content.Logic.Drawing
 {
     class Tile
     {
-        //tile is 16x16 pixels large
+        //tile is 64x64 pixels large
         string tileID; //Id for which tile this represents
-        string tileSetName;
-        int x;
-        int y;
+        string tileSetName; //name of the tile set this tile belongs to
+        int x; //top left x coordinate for reference tiles set
+        int y; //top left y coordinate for reference tiles set
+        int row; //row this tile occupies on its map
+        int column; //column this tile occupies on its map
         Texture2D tile;
         Color color;
 
-        public Tile(string tileID)
+        public Tile(string tileID, int row, int column)
         {
-            //System.Diagnostics.Debug.WriteLine(tileID);
             this.tileID = tileID;
-            char[] tempChar = tileID.ToCharArray();
-            int index = 0;
-            string tileSetName = "";
-            string[] coordinates = { "0","0" };
-            foreach (char i in tempChar)
+            this.row = row;
+            this.column = column;
+            if (tileID == "BLACK")
             {
-                if (i == '(')
-                {
-                    tileSetName = tileID.Substring(0, index);
-                    coordinates = tileID.Substring(index).Replace("(","").Replace(")","").Split(",");
-                    break;
-                }
-                index++;
+                this.tileSetName = tileID;
+                x = 0;
+                y = 0;
+                color = Color.Black;
             }
-            this.tileSetName = tileSetName;
-            x = int.Parse(coordinates[0]);
-            y = int.Parse(coordinates[1]);
-            color = Color.White;
+            else
+            {
+                char[] tempChar = tileID.ToCharArray();
+                int index = 0;
+                string tileSetName = "";
+                string[] coordinates = { "0", "0" };
+                foreach (char i in tempChar)
+                {
+                    if (i == '(')
+                    {
+                        tileSetName = tileID.Substring(0, index);
+                        coordinates = tileID.Substring(index).Replace("(", "").Replace(")", "").Split(",");
+                        break;
+                    }
+                    index++;
+                }
+                this.tileSetName = tileSetName;
+                x = int.Parse(coordinates[0]);
+                y = int.Parse(coordinates[1]);
+                color = Color.White;
+            }
         }
         public string getTileId()
         {
@@ -54,17 +67,11 @@ namespace Fantasy.Content.Logic.Drawing
             {
                 if (tileSetName == i.Name)
                 {
-                    System.Diagnostics.Debug.WriteLine(tileID);
                     tile = new Texture2D(device, 64, 64);
                     Color[] newColor = new Color[64 * 64];
-                    System.Diagnostics.Debug.WriteLine(x);
-                    System.Diagnostics.Debug.WriteLine(y);
                     Rectangle selectionArea = new Rectangle(x, y, 64, 64);
 
-                    System.Diagnostics.Debug.WriteLine(selectionArea.Width);
-                    System.Diagnostics.Debug.WriteLine(selectionArea.Height);
                     i.GetData(0, selectionArea, newColor, 0, newColor.Length);
-
 
                     tile.SetData(newColor);
                 }
@@ -76,7 +83,7 @@ namespace Fantasy.Content.Logic.Drawing
         }
         public void drawTile(SpriteBatch spriteBatch) 
         {
-            spriteBatch.Draw(tile, new Vector2(x, y), Color.White);
+            spriteBatch.Draw(tile, new Vector2(row*64, column*64), Color.White);
         }
         public Texture2D getContent()
         {
