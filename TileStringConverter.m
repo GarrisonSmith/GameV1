@@ -6,7 +6,7 @@ folder = "E:\Matlab Work Spaces\Tile Creation\area_maps";
 tile_sets = dir("E:\Matlab Work Spaces\Tile Creation\tile_sets\*.png");
 area_maps = dir("E:\Matlab Work Spaces\Tile Creation\area_maps\*.png");
 uniqueTiles(1:128,1:64,1:3) = imread("squares.png");
-tileIdentities = ["BLA","CK";"BLA","NK"];
+tileIdentities = ["BLA","NK";"BLA","CK"];
 for tileSetFile = tile_sets'
     tileSet = imread(string(tileSetFile.folder)+"\"+string(tileSetFile.name));
     [rows, columns, ~] = size(tileSet);
@@ -62,7 +62,7 @@ function add_tile_identity(name, coordinates)
 end
 
 function foo = construct_map_string(tileMap)
-    foo = "foo";
+    foo = "";
     [rows, columns, ~] = size(tileMap);
     for i=1:64:rows
         for j=1:64:columns
