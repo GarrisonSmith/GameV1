@@ -89,9 +89,6 @@ namespace Fantasy.Content.Logic.Drawing
             {
                 if (j.layer == layer)
                 {
-                    System.Diagnostics.Debug.WriteLine(j.tileSetName);
-                    System.Diagnostics.Debug.WriteLine(j.row);
-                    System.Diagnostics.Debug.WriteLine(j.column);
                     j.drawTile(_spriteBatch);
                 }
             }
