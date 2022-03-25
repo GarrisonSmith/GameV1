@@ -51,18 +51,6 @@ namespace Fantasy.Content.Logic.Drawing
                 color = Color.White;
             }
         }
-        public string getTileId()
-        {
-            return tileID;
-        }
-        public string getTileSetName()
-        {
-            return tileSetName;
-        }
-        public Vector2 getCoordinate()
-        {
-            return new Vector2(x, y);
-        }
         public void loadTile(Texture2D[] tileSets, GraphicsDevice device) 
         {
             foreach (Texture2D i in tileSets)
@@ -86,14 +74,6 @@ namespace Fantasy.Content.Logic.Drawing
         public void drawTile(SpriteBatch spriteBatch) 
         {
             spriteBatch.Draw(tile, new Vector2(row*64, column*64), Color.White);
-        }
-        public Texture2D getContent()
-        {
-            return tile;
-        }
-        public Color getColor()
-        {
-            return color;
         }
     }
 }
