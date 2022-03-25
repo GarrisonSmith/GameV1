@@ -3,22 +3,58 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Fantasy.Content.Logic.Drawing
 {
+    /// <summary>
+    /// Describes A tile in a given <c>TileMap</c>.
+    /// </summary>
     class Tile
     {
-        //tile is 64x64 pixels large
-        public string tileID; //Id for which tile this represents
-        public string tileSetName; //name of the tile set this tile belongs to
-        public int x; //top left x coordinate for reference tiles set
-        public int y; //top left y coordinate for reference tiles set
-        public int row; //row this tile occupies on its map
-        public int column; //column this tile occupies on its map
-        public int layer; //layer for the tile to be drawn on.
+        /// <summary>
+        /// Name of the tile set this tile describes.
+        /// </summary>
+        public string tileSetName;
+        /// <summary>
+        /// Top left x coordinate of the tile area this tile describes inside of the given tile set.
+        /// </summary>
+        public int x;
+        /// <summary>
+        /// Top left y coordinate of the tile area this tile describes inside of the given tile set.
+        /// </summary>
+        public int y;
+        /// <summary>
+        /// Width of the tile area this tile describes inside of the given tile set. Default is 64.
+        /// </summary>
+        public int tileWidth = 64;
+        /// <summary>
+        /// Height of the tile area this tile describes inside of the given tile set. Default is 64.
+        /// </summary>
+        public int tileHeight = 64;
+        /// <summary>
+        /// Row this tile occupies in its <c>TileMap<c>.
+        /// </summary>
+        public int row;
+        /// <summary>
+        /// Column this tile occupies in its <c>TileMap<c>.
+        /// </summary>
+        public int column;
+        /// <summary>
+        /// Layer this tile occupies in its <c>TileMap<c>.
+        /// </summary>
+        public int layer;
+        /// <summary>
+        /// Texture this tile loads to be drawn.
+        /// </summary>
         public Texture2D tile;
+        /// <summary>
+        /// Color this tile loads when drawn.
+        /// </summary>
         public Color color;
 
+        /// <summary>
+        /// Constructs a tile with the following properties.
+        /// <param name="tileID"> is parsed to get the tiles <c>tileSetName</c> and tiles <c>x</c> and <c>y</c> values. </param>
+        /// </summary>
         public Tile(string tileID, int row, int column, int layer)
         {
-            this.tileID = tileID;
             this.row = row;
             this.column = column;
             this.layer = layer;
@@ -31,35 +67,34 @@ namespace Fantasy.Content.Logic.Drawing
             }
             else
             {
-                char[] tempChar = tileID.ToCharArray();
-                int index = 0;
-                string tileSetName = "";
-                string[] coordinates = { "0", "0" };
-                foreach (char i in tempChar)
-                {
-                    if (i == '(')
-                    {
-                        tileSetName = tileID.Substring(0, index);
-                        coordinates = tileID.Substring(index).Replace("(", "").Replace(")", "").Split(",");
-                        break;
-                    }
-                    index++;
-                }
-                this.tileSetName = tileSetName;
-                x = int.Parse(coordinates[0]);
-                y = int.Parse(coordinates[1]);
+                this.tileSetName = tileID.Substring(0, tileID.IndexOf('('));
+                System.Diagnostics.Debug.WriteLine(tileID.IndexOf('(') + ":" + tileID.IndexOf(',') + ":" + tileID.Length);
+                x = int.Parse(tileID.Substring(tileID.IndexOf('(') + 1, tileID.IndexOf(',') - (tileID.IndexOf('(') + 1)));
+                y = int.Parse(tileID.Substring(tileID.IndexOf(',') + 1, tileID.IndexOf(')') - (tileID.IndexOf(',') + 1)));
                 color = Color.White;
             }
         }
-        public void loadTile(Texture2D[] tileSets, GraphicsDevice device) 
+        /// <summary>
+        /// Constructs a tile with the following properties.
+        /// <param name="tileID"> is parsed to get the tiles <c>tileSetName</c> and tiles <c>x</c> and <c>y</c> values. </param>
+        /// </summary>
+        public Tile(string tileID, int row, int column, int layer, int tileWidth, int tileHeight) : this(tileID, row, column, layer)
+        {
+            this.tileWidth = tileWidth;
+            this.tileHeight = tileHeight;
+        }
+        /// <summary>
+        /// If this tiles <c>tileSetName</c> matches a tile set inside of the provided <c>tileSets</c> then it will load the corresponding tile graphics from the matching tile set.
+        /// </summary>
+        public void loadTile(Texture2D[] tileSets, GraphicsDevice device)
         {
             foreach (Texture2D i in tileSets)
             {
                 if (tileSetName == i.Name)
                 {
-                    tile = new Texture2D(device, 64, 64);
-                    Color[] newColor = new Color[64 * 64];
-                    Rectangle selectionArea = new Rectangle(x, y, 64, 64);
+                    tile = new Texture2D(device, tileWidth, tileHeight);
+                    Color[] newColor = new Color[tileWidth * tileHeight];
+                    Rectangle selectionArea = new Rectangle(x, y, tileWidth, tileHeight);
 
                     i.GetData(0, selectionArea, newColor, 0, newColor.Length);
 
@@ -67,13 +102,19 @@ namespace Fantasy.Content.Logic.Drawing
                 }
             }
         }
+        /// <summary>
+        /// Loads the graphics from <c>tile</c> into this tiles graphics. <c>tile</c>> must already be loaded.
+        /// </summary>
         public void loadTile(Texture2D tile)
         {
             this.tile = tile;
         }
-        public void drawTile(SpriteBatch spriteBatch) 
+        /// <summary>
+        /// Draws the tiles texture.
+        /// </summary>
+        public void drawTile(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(tile, new Vector2(row*64, column*64), Color.White);
+            spriteBatch.Draw(tile, new Vector2(row * tileWidth, column * tileHeight), color);
         }
     }
 }
