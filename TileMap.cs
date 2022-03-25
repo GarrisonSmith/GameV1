@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Fantasy.Content.Logic.Drawing
@@ -11,30 +9,38 @@ namespace Fantasy.Content.Logic.Drawing
         private List<Tile> map = new List<Tile>(); //contains the list of tile for the given tile map
         private string initialize; //area definition string
 
-        public TileMap(String initialize)
+        public TileMap( String initialize)
         {
             this.initialize = initialize.Replace(" ", "");
-            this.initialize = this.initialize.Replace(":;", ";");
             string[] columnTemp;
             string[] rowTemp;
+            int row = 0;
+            int column = 0;
             rowTemp = initialize.Split(";");
             foreach (string i in rowTemp)
             {
+                row = 0;
                 columnTemp = i.Split(":");
                 foreach (string j in columnTemp)
                 {
-                    if (j != "BLACK" && j != "")
+                    if (j == "BLANK") 
                     {
-                        createTile(j);
+                        //does nothing
                     }
+                    else if (j != "")
+                    {
+                        createTile(j, row,column);
+                    }
+                    row++;
                 }
+                column++;
             }
         }
-        private void createTile(String tileID)
+        private void createTile(String tileID, int row, int column)
         {
-            System.Diagnostics.Debug.WriteLine(map.Count);
-            map.Add(new Tile(tileID));
-            System.Diagnostics.Debug.WriteLine(tileID);
+            //System.Diagnostics.Debug.WriteLine(map.Count);
+            map.Add(new Tile(tileID, row, column));
+            //System.Diagnostics.Debug.WriteLine(tileID);
         }
         public void loadTiles(Texture2D[] tileSets, GraphicsDevice device)
         {
@@ -53,6 +59,10 @@ namespace Fantasy.Content.Logic.Drawing
             {
                 i.drawTile(_spriteBatch);
             }
+        }
+        public string getInitialize() 
+        {
+            return initialize;
         }
         public int getMapSize()
         {
