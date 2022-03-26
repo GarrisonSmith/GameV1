@@ -195,7 +195,7 @@ namespace Fantasy.Content.Logic.Graphics
 
         /// <summary>
         /// Constructs a tile with the given properties.
-        /// <param name="tileID"> is parsed to get the tiles <c>tileSetName</c> and tiles <c>x</c> and <c>y</c> values. </param>
+        /// <param name="tileID"> is parsed to get the tiles <c>tileSetName</c> and tiles <c>tileSetCoordinate</c> values. </param>
         /// </summary>
         public Tile(string tileID, int row, int column)
         {
@@ -218,7 +218,7 @@ namespace Fantasy.Content.Logic.Graphics
             }
         }
         /// <summary>
-        /// Draws the tiles texture from the corrasponding graphic.
+        /// Draws the tiles texture from the corrasponding graphic in <c>tileSets</c>> if it exists.
         /// </summary>
         public void drawTile(Texture2D[] tileSets,SpriteBatch spriteBatch)
         {
