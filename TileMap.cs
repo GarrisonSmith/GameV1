@@ -47,38 +47,25 @@ namespace Fantasy.Content.Logic.Graphics
             map.Add(mapLayer);
         }
         /// <summary>
-        /// Loads all tiles with the correct graphics in <c>tileSets</c> if the correct graphic is present. 
-        /// </summary>
-        public void loadLayers(Texture2D[] tileSets, GraphicsDevice device)
-        {
-            foreach (TileMapLayer i in map)
-            {
-                if (i != null)
-                { 
-                    i.loadTiles(tileSets, device); 
-                }
-            }
-        }
-        /// <summary>
         /// Describes layers of tile maps from a given string description.
         /// </summary>
-        public void drawLayers(SpriteBatch _spriteBatch)
+        public void drawLayers(Texture2D[] tileSets, SpriteBatch _spriteBatch)
         {
             foreach (TileMapLayer i in map)
             {
-                i.drawTiles(_spriteBatch);
+                i.drawTiles(tileSets, _spriteBatch);
             }
         }
         /// <summary>
         /// Draws all tiles in the TileMap.
         /// </summary>
-        public void drawLayer(int layer, SpriteBatch _spriteBatch)
+        public void drawLayer(int layer, Texture2D[] tileSets, SpriteBatch _spriteBatch)
         {
             foreach (TileMapLayer j in map)
             {
                 if (j.layer == layer)
                 {
-                    j.drawTiles(_spriteBatch);
+                    j.drawTiles(tileSets, _spriteBatch);
                 }
             }
         }
@@ -159,31 +146,21 @@ namespace Fantasy.Content.Logic.Graphics
             map.Add(tile);
         }
         /// <summary>
-        /// Loads all tiles with the correct graphics in <c>tileSets</c> if the correct graphic is present. 
-        /// </summary>
-        public void loadTiles(Texture2D[] tileSets, GraphicsDevice device)
-        {
-            foreach (Tile i in map)
-            {
-                i.loadTile(tileSets, device);
-            }
-        }
-        /// <summary>
         /// Draws all tiles in the TileMapLayer.
         /// </summary>
-        public void drawTiles(SpriteBatch _spriteBatch)
+        public void drawTiles(Texture2D[] tileSets, SpriteBatch _spriteBatch)
         {
             foreach (Tile j in map)
             {
-                j.drawTile(_spriteBatch);
+                j.drawTile(tileSets, _spriteBatch);
             }
         }
         /// <summary>
         /// Draws the tile with the corrasponding index in the TileMapLayer.
         /// </summary>
-        public void drawTile(int index, SpriteBatch _spriteBatch)
+        public void drawTile(int index, Texture2D[] tileSets, SpriteBatch _spriteBatch)
         {
-            map[index].drawTile(_spriteBatch);
+            map[index].drawTile(tileSets, _spriteBatch);
         }
         /// <summary>
         /// Returns the tile with the given index form the TileMaplayer.
@@ -212,10 +189,6 @@ namespace Fantasy.Content.Logic.Graphics
         /// </summary>
         public Point tileMapCoordinate;
         /// <summary>
-        /// Texture this tile loads to be drawn.
-        /// </summary>
-        public Texture2D tile;
-        /// <summary>
         /// Color this tile loads when drawn.
         /// </summary>
         public Color color;
@@ -226,7 +199,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// </summary>
         public Tile(string tileID, int row, int column)
         {
-            tileMapCoordinate = new Point(row, column);
+            tileMapCoordinate = new Point(row*64, column*64);
             if (tileID == "BLACK")
             {
                 this.tileSetName = tileID;
@@ -245,37 +218,17 @@ namespace Fantasy.Content.Logic.Graphics
             }
         }
         /// <summary>
-        /// If this tiles <c>tileSetName</c> matches a tile set inside of the provided <c>tileSets</c> then it will load the corresponding tile graphics from the matching tile set.
+        /// Draws the tiles texture from the corrasponding graphic.
         /// </summary>
-        public void loadTile(Texture2D[] tileSets, GraphicsDevice device)
+        public void drawTile(Texture2D[] tileSets,SpriteBatch spriteBatch)
         {
             foreach (Texture2D i in tileSets)
             {
                 if (tileSetName == i.Name)
                 {
-                    tile = new Texture2D(device, 64, 64);
-                    Color[] newColor = new Color[64 * 64];
-                    Rectangle selectionArea = new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64);
-
-                    i.GetData(0, selectionArea, newColor, 0, newColor.Length);
-
-                    tile.SetData(newColor);
+                    spriteBatch.Draw(i, new Rectangle(tileMapCoordinate.X, tileMapCoordinate.Y, 64, 64), new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64), color);
                 }
             }
-        }
-        /// <summary>
-        /// Loads the provided graphic into this tile.
-        /// </summary>
-        public void loadTile(Texture2D tile)
-        {
-            this.tile = tile;
-        }
-        /// <summary>
-        /// Draws the tiles texture.
-        /// </summary>
-        public void drawTile(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(tile, new Vector2(tileMapCoordinate.X * 64, tileMapCoordinate.Y * 64), color);
         }
     }
 }
