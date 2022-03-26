@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Fantasy.Content.Logic.Drawing
+namespace Fantasy.Content.Logic.Graphics
 {
     /// <summary>
     /// Describes layers of tile maps from a given string description. Tiles are 64 by 64 pixels large.
@@ -204,21 +204,13 @@ namespace Fantasy.Content.Logic.Drawing
         /// </summary>
         public string tileSetName;
         /// <summary>
-        /// Top left x coordinate of the tile area this tile describes inside of the given tile set.
+        /// Top left coordinate of the tile area this tile describes inside of the given tile set.
         /// </summary>
-        public int x;
+        public Point tileSetCoordinate;
         /// <summary>
-        /// Top left y coordinate of the tile area this tile describes inside of the given tile set.
+        /// Point this tile occupies in its <c>TileMapLayer<c>.
         /// </summary>
-        public int y;
-        /// <summary>
-        /// Row this tile occupies in its <c>TileMap<c>.
-        /// </summary>
-        public int row;
-        /// <summary>
-        /// Column this tile occupies in its <c>TileMap<c>.
-        /// </summary>
-        public int column;
+        public Point tileMapCoordinate;
         /// <summary>
         /// Texture this tile loads to be drawn.
         /// </summary>
@@ -234,20 +226,21 @@ namespace Fantasy.Content.Logic.Drawing
         /// </summary>
         public Tile(string tileID, int row, int column)
         {
-            this.row = row;
-            this.column = column;
+            tileMapCoordinate = new Point(row, column);
             if (tileID == "BLACK")
             {
                 this.tileSetName = tileID;
-                x = 0;
-                y = 0;
+                tileSetCoordinate = new Point(0, 0);
                 color = Color.Black;
             }
             else
             {
                 this.tileSetName = tileID.Substring(0, tileID.IndexOf('('));
-                x = int.Parse(tileID.Substring(tileID.IndexOf('(') + 1, tileID.IndexOf(',') - (tileID.IndexOf('(') + 1)));
-                y = int.Parse(tileID.Substring(tileID.IndexOf(',') + 1, tileID.IndexOf(')') - (tileID.IndexOf(',') + 1)));
+                tileSetCoordinate = new Point
+                    (
+                    int.Parse(tileID.Substring(tileID.IndexOf('(') + 1, tileID.IndexOf(',') - (tileID.IndexOf('(') + 1))),
+                    int.Parse(tileID.Substring(tileID.IndexOf(',') + 1, tileID.IndexOf(')') - (tileID.IndexOf(',') + 1)))
+                    );
                 color = Color.White;
             }
         }
@@ -262,7 +255,7 @@ namespace Fantasy.Content.Logic.Drawing
                 {
                     tile = new Texture2D(device, 64, 64);
                     Color[] newColor = new Color[64 * 64];
-                    Rectangle selectionArea = new Rectangle(x, y, 64, 64);
+                    Rectangle selectionArea = new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64);
 
                     i.GetData(0, selectionArea, newColor, 0, newColor.Length);
 
@@ -282,7 +275,7 @@ namespace Fantasy.Content.Logic.Drawing
         /// </summary>
         public void drawTile(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(tile, new Vector2(row * 64, column * 64), color);
+            spriteBatch.Draw(tile, new Vector2(tileMapCoordinate.X * 64, tileMapCoordinate.Y * 64), color);
         }
     }
 }
