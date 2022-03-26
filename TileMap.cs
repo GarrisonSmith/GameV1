@@ -271,7 +271,7 @@ namespace Fantasy.Content.Logic.Drawing
             }
         }
         /// <summary>
-        /// C
+        /// Loads the provided graphic into this tile.
         /// </summary>
         public void loadTile(Texture2D tile)
         {
