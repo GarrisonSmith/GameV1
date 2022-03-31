@@ -15,13 +15,9 @@ namespace Fantasy.Content.Logic.Graphics
         /// </summary>
         public List<TileMapLayer> map = new List<TileMapLayer>();
         /// <summary>
-        /// List containing the layer index of all loaded tiles in this TileMap.
+        /// List containing the textures of the tiles in this TileMap.
         /// </summary>
-        public List<int> loadedLayers = new List<int>();
-        /// <summary>
-        /// Describes the bounding box of this TileMap.
-        /// </summary>
-        public Rectangle tileMapBounding;
+        public List<Texture2D> tileTextures = new List<Texture2D>();
 
         /// <summary>
         /// Constructs a TileMapLayer with the given properties.
@@ -55,87 +51,119 @@ namespace Fantasy.Content.Logic.Graphics
             map.Add(mapLayer);
         }
         /// <summary>
-        /// Loads all tiles with the correct graphics in <c>tileSets</c> if the correct graphic is present. 
+        /// Returns the TileMapLayer with the corrasponding layer values in the TileMap. Returns null if the layers is not present.
         /// </summary>
-        public void loadLayers(Texture2D[] tileSets, GraphicsDevice device)
+        public List<TileMapLayer> getLayers(int[] layers)
         {
+            List<TileMapLayer> tempList = new List<TileMapLayer>();
             foreach (TileMapLayer i in map)
             {
-                if (i != null)
+                foreach (int l in layers)
                 {
-                    i.loadTiles(tileSets, device);
-                    if (!loadedLayers.Contains(i.layer))
+                    if (i.layer == l)
                     {
-                        loadedLayers.Add(i.layer);
+                        tempList.Add(i);
                     }
                 }
             }
+            return tempList;
         }
         /// <summary>
-        /// Loads all tiles in the given layers with the correct graphics in <c>tileSets</c> if the correct graphic is present. 
+        /// Returns the TileMapLayer with the corrasponding layer value in the TileMap. Returns null if the layer is not present.
         /// </summary>
-        public void loadLayers(int[] layers, Texture2D[] tileSets, GraphicsDevice device)
+        public TileMapLayer getLayer(int layer)
         {
             foreach (TileMapLayer i in map)
             {
-                foreach (int j in layers)
+                if (i.layer == layer)
                 {
-                    if (i != null && j == i.layer)
+                    return i;
+                }
+            }
+            return null;
+        }
+        /// <summary>
+        /// Loads all textures being being used by this TileMap from all layers.
+        /// </summary>
+        public void loadTileTextures(Texture2D[] tileSets, GraphicsDevice _device)
+        {
+            foreach (TileMapLayer i in map)
+            {
+                foreach (Tile j in i.map)
+                {
+                    foreach (Texture2D k in tileSets)
                     {
-                        i.loadTiles(tileSets, device);
-                        if (!loadedLayers.Contains(i.layer))
+                        if (j.tileSetName == k.Name)
                         {
-                            loadedLayers.Add(i.layer);
+                            Texture2D tile = new Texture2D(_device, 64, 64);
+                            Color[] newColor = new Color[64 * 64];
+                            Rectangle selectionArea = new Rectangle(j.tileSetCoordinate.X, j.tileSetCoordinate.Y, 64, 64);
+
+                            k.GetData(0, selectionArea, newColor, 0, newColor.Length);
+                            tile.SetData(newColor);
+                            if (!tileTextures.Contains(tile))
+                            {
+                                tileTextures.Add(tile);
+                            }
+                            j.graphicsIndex = tileTextures.IndexOf(tile);
                         }
                     }
                 }
             }
         }
         /// <summary>
-        /// Loads all tiles in the given layer with the correct graphics in <c>tileSets</c> if the correct graphic is present. 
+        /// Unloads all textures being being used by this TileMap from all layers.
         /// </summary>
-        public void loadLayer(int layer, Texture2D[] tileSets, GraphicsDevice device)
+        public void unloadTileTextures()
         {
-            foreach (TileMapLayer i in map)
-            {
-                if (i != null && i.layer == layer)
-                {
-                    i.loadTiles(tileSets, device);
-                    if (!loadedLayers.Contains(i.layer))
-                    {
-                        loadedLayers.Add(i.layer);
-                    }
-                }
-            }
+            tileTextures = null;
         }
         /// <summary>
-        /// Draws all tiles in the TileMap.
+        /// Draws all tiles inside of the TileMap.
         /// </summary>
         public void drawLayers(Vector2 stretch, SpriteBatch _spriteBatch)
         {
             foreach (TileMapLayer i in map)
             {
-                i.drawTiles(stretch, _spriteBatch);
-            }
-        }
-        /// <summary>
-        /// Draws the given layers in the TileMap.
-        /// </summary>
-        public void drawLayers(int[] layers, Vector2 stretch, SpriteBatch _spriteBatch)
-        {
-            foreach (TileMapLayer i in map)
-            {
-                foreach (int j in layers)
+                foreach (Tile j in i.map)
                 {
-                    if (j == i.layer)
+                    foreach (Texture2D k in tileTextures)
                     {
-                        i.drawTiles(stretch, _spriteBatch);
+                        _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                            new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                            new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                            stretch, new SpriteEffects(), 0);
                     }
                 }
             }
         }
         /// <summary>
-        /// Draws the given layer in the TileMap.
+        /// Draws all tiles inside of the TileMap which occupy the provided layers.
+        /// </summary>
+        public void drawLayers(int[] layers, Vector2 stretch, SpriteBatch _spriteBatch)
+        {
+            foreach (int l in layers)
+            {
+                foreach (TileMapLayer i in map)
+                {
+                    if (i.layer == l)
+                    {
+                        foreach (Tile j in i.map)
+                        {
+                            foreach (Texture2D k in tileTextures)
+                            {
+                                _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                    new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                    new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                    stretch, new SpriteEffects(), 0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy the provided layer.
         /// </summary>
         public void drawLayer(int layer, Vector2 stretch, SpriteBatch _spriteBatch)
         {
@@ -143,16 +171,414 @@ namespace Fantasy.Content.Logic.Graphics
             {
                 if (i.layer == layer)
                 {
-                    i.drawTiles(stretch, _spriteBatch);
+                    foreach (Tile j in i.map)
+                    {
+                        foreach (Texture2D k in tileTextures)
+                        {
+                            _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                stretch, new SpriteEffects(), 0);
+                        }
+                    }
                 }
             }
         }
         /// <summary>
-        /// Draws the TileMapLayer with the corrasponding layer value in the TileMap.
+        /// Draws all tiles inside of the TileMap which occupy the provided rows.
         /// </summary>
-        public TileMapLayer getLayer(int index)
+        public void drawRows(int[] rows, Vector2 stretch, SpriteBatch _spriteBatch)
         {
-            return map[index];
+            foreach (int r in rows)
+            {
+                foreach (TileMapLayer i in map)
+                {
+                    foreach (Tile j in i.map)
+                    {
+                        if (j.tileMapCoordinate.X == r)
+                        {
+                            foreach (Texture2D k in tileTextures)
+                            {
+                                _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                    new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                    new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                    stretch, new SpriteEffects(), 0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy the provided rows and layers.
+        /// </summary>
+        public void drawRows(int[] rows, int[] layers, Vector2 stretch, SpriteBatch _spriteBatch)
+        {
+            foreach (int r in rows)
+            {
+                foreach (int l in layers)
+                {
+                    foreach (TileMapLayer i in map)
+                    {
+                        if (i.layer == l)
+                        {
+                            foreach (Tile j in i.map)
+                            {
+                                if (j.tileMapCoordinate.X == r)
+                                {
+                                    foreach (Texture2D k in tileTextures)
+                                    {
+                                        _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                            new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                            new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                            stretch, new SpriteEffects(), 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy the provided rows and layer.
+        /// </summary>
+        public void drawRows(int[] rows, int layer, Vector2 stretch, SpriteBatch _spriteBatch)
+        {
+            foreach (int r in rows)
+            {
+                foreach (TileMapLayer i in map)
+                {
+                    if (i.layer == layer)
+                    {
+                        foreach (Tile j in i.map)
+                        {
+                            if (j.tileMapCoordinate.X == r)
+                            {
+                                foreach (Texture2D k in tileTextures)
+                                {
+                                    _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                        new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                        new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                        stretch, new SpriteEffects(), 0);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy the provided row.
+        /// </summary>
+        public void drawRow(int row, Vector2 stretch, SpriteBatch _spriteBatch)
+        {
+            foreach (TileMapLayer i in map)
+            {
+                foreach (Tile j in i.map)
+                {
+                    if (j.tileMapCoordinate.X == row)
+                    {
+                        foreach (Texture2D k in tileTextures)
+                        {
+                            _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                stretch, new SpriteEffects(), 0);
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy the provided row and layers.
+        /// </summary>
+        public void drawRow(int row, int[] layers, Vector2 stretch, SpriteBatch _spriteBatch)
+        {
+            foreach (int l in layers)
+            {
+                foreach (TileMapLayer i in map)
+                {
+                    if (i.layer == l)
+                    {
+                        foreach (Tile j in i.map)
+                        {
+                            if (j.tileMapCoordinate.X == row)
+                            {
+                                foreach (Texture2D k in tileTextures)
+                                {
+                                    _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                        new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                        new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                        stretch, new SpriteEffects(), 0);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy the provided row and layer.
+        /// </summary>
+        public void drawRows(int row, int layer, Vector2 stretch, SpriteBatch _spriteBatch)
+        {
+            foreach (TileMapLayer i in map)
+            {
+                if (i.layer == layer)
+                {
+                    foreach (Tile j in i.map)
+                    {
+                        if (j.tileMapCoordinate.X == row)
+                        {
+                            foreach (Texture2D k in tileTextures)
+                            {
+                                _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                    new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                    new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                    stretch, new SpriteEffects(), 0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy the provided columns.
+        /// </summary>
+        public void drawColumns(int[] columns, Vector2 stretch, SpriteBatch _spriteBatch)
+        {
+            foreach (int c in columns)
+            {
+                foreach (TileMapLayer i in map)
+                {
+                    foreach (Tile j in i.map)
+                    {
+                        if (j.tileMapCoordinate.X == c)
+                        {
+                            foreach (Texture2D k in tileTextures)
+                            {
+                                _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                    new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                    new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                    stretch, new SpriteEffects(), 0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy the provided columns and layers.
+        /// </summary>
+        public void drawColumns(int[] columns, int[] layers, Vector2 stretch, SpriteBatch _spriteBatch)
+        {
+            foreach (int c in columns)
+            {
+                foreach (int l in layers)
+                {
+                    foreach (TileMapLayer i in map)
+                    {
+                        if (i.layer == l)
+                        {
+                            foreach (Tile j in i.map)
+                            {
+                                if (j.tileMapCoordinate.X == c)
+                                {
+                                    foreach (Texture2D k in tileTextures)
+                                    {
+                                        _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                            new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                            new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                            stretch, new SpriteEffects(), 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy the provided columns and layer.
+        /// </summary>
+        public void draweColumns(int[] columns, int layer, Vector2 stretch, SpriteBatch _spriteBatch)
+        {
+            foreach (int c in columns)
+            {
+                foreach (TileMapLayer i in map)
+                {
+                    if (i.layer == layer)
+                    {
+                        foreach (Tile j in i.map)
+                        {
+                            if (j.tileMapCoordinate.X == c)
+                            {
+                                foreach (Texture2D k in tileTextures)
+                                {
+                                    _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                        new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                        new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                        stretch, new SpriteEffects(), 0);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy the provided column.
+        /// </summary>
+        public void drawColumn(int column, Vector2 stretch, SpriteBatch _spriteBatch)
+        {
+            foreach (TileMapLayer i in map)
+            {
+                foreach (Tile j in i.map)
+                {
+                    if (j.tileMapCoordinate.X == column)
+                    {
+                        foreach (Texture2D k in tileTextures)
+                        {
+                            _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                stretch, new SpriteEffects(), 0);
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy the provided column and layers.
+        /// </summary>
+        public void drawColumn(int column, int[] layers, Vector2 stretch, SpriteBatch _spriteBatch)
+        {
+            foreach (int l in layers)
+            {
+                foreach (TileMapLayer i in map)
+                {
+                    if (i.layer == l)
+                    {
+                        foreach (Tile j in i.map)
+                        {
+                            if (j.tileMapCoordinate.X == column)
+                            {
+                                foreach (Texture2D k in tileTextures)
+                                {
+                                    _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                        new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                        new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                        stretch, new SpriteEffects(), 0);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy the provided column and layer.
+        /// </summary>
+        public void drawColumns(int column, int layer, Vector2 stretch, SpriteBatch _spriteBatch)
+        {
+            foreach (TileMapLayer i in map)
+            {
+                if (i.layer == layer)
+                {
+                    foreach (Tile j in i.map)
+                    {
+                        if (j.tileMapCoordinate.X == column)
+                        {
+                            foreach (Texture2D k in tileTextures)
+                            {
+                                _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                    new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                    new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                    stretch, new SpriteEffects(), 0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy with in the provided rectangle <c>drawArea</c>.
+        /// </summary>
+        public void drawArea(Rectangle drawArea, Vector2 stretch, SpriteBatch _spriteBatch)
+        {
+            drawArea = new Rectangle((int)(drawArea.X * stretch.X), (int)(drawArea.Y * stretch.Y),
+                (int)(drawArea.Width * stretch.X), (int)(drawArea.Height * stretch.Y));
+            foreach (TileMapLayer i in map)
+            {
+                foreach (Tile j in i.map)
+                {
+                    Rectangle tileArea = new Rectangle((int)(j.tileMapCoordinate.X * 64 * stretch.X), (int)(j.tileMapCoordinate.Y * 64 * stretch.Y),
+                        (int)(64 * stretch.X), (int)(64 * stretch.Y));
+                    if (tileArea.Intersects(drawArea))
+                    {
+                        _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                    new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                    new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                    stretch, new SpriteEffects(), 0);
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy with in the provided layers and rectangle <c>drawArea</c>.
+        /// </summary>
+        public void drawArea(Rectangle drawArea, Vector2 stretch, SpriteBatch _spriteBatch, int[] layers)
+        {
+            drawArea = new Rectangle((int)(drawArea.X * stretch.X), (int)(drawArea.Y * stretch.Y),
+                (int)(drawArea.Width * stretch.X), (int)(drawArea.Height * stretch.Y));
+            foreach (int l in layers)
+            {
+                foreach (TileMapLayer i in map)
+                {
+                    if (i.layer == l)
+                    {
+                        foreach (Tile j in i.map)
+                        {
+                            Rectangle tileArea = new Rectangle((int)(j.tileMapCoordinate.X * 64 * stretch.X), (int)(j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                (int)(64 * stretch.X), (int)(64 * stretch.Y));
+                            if (tileArea.Intersects(drawArea))
+                            {
+                                _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                            new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                            new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                            stretch, new SpriteEffects(), 0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all tiles inside of the TileMap which occupy with in the provided layer and rectangle <c>drawArea</c>.
+        /// </summary>
+        public void drawArea(Rectangle drawArea, Vector2 stretch, SpriteBatch _spriteBatch, int layer)
+        {
+            drawArea = new Rectangle((int)(drawArea.X * stretch.X), (int)(drawArea.Y * stretch.Y),
+                (int)(drawArea.Width * stretch.X), (int)(drawArea.Height * stretch.Y));
+            foreach (TileMapLayer i in map)
+            {
+                if (i.layer == layer)
+                {
+                    foreach (Tile j in i.map)
+                    {
+                        Rectangle tileArea = new Rectangle((int)(j.tileMapCoordinate.X * 64 * stretch.X), (int)(j.tileMapCoordinate.Y * 64 * stretch.Y),
+                            (int)(64 * stretch.X), (int)(64 * stretch.Y));
+                        if (tileArea.Intersects(drawArea))
+                        {
+                            _spriteBatch.Draw(tileTextures[j.graphicsIndex],
+                                        new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, j.tileMapCoordinate.Y * 64 * stretch.Y),
+                                        new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
+                                        stretch, new SpriteEffects(), 0);
+                        }
+                    }
+                }
+            }
         }
         /// <summary>
         /// Returns the number of TileMapLayers present in the TileMap.
@@ -172,9 +598,9 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Returns the bounding box of the TileMap.
         /// </summary>
-        public Rectangle getTileMapBounding(int[] layers, float stretch)
+        public Rectangle getTileMapBounding(Vector2 stretch)
         {
-            return tileMapBounding;
+            return new Rectangle(0, 0, 1, 1);
         }
     }
 
@@ -186,7 +612,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// List containing this layers tiles.
         /// </summary>
-        List<Tile> map = new List<Tile>();
+        public List<Tile> map = new List<Tile>();
         /// <summary>
         /// The layer this TileMapLayer will be drawn on.
         /// </summary>
@@ -231,181 +657,36 @@ namespace Fantasy.Content.Logic.Graphics
                 }
                 column++;
             }
-            this.width = row+1;
-            this.height = column+1;
+            this.width = row + 1;
+            this.height = column + 1;
         }
         /// <summary>
-        /// Add the given tile to the TileMapLayer.
-        /// </summary>
-        public void addTile(Tile tile)
-        {
-            map.Add(tile);
-        }
-        /// <summary>
-        /// Loads all tiles with the correct graphics in <c>tileSets</c> if the correct graphic is present. 
-        /// </summary>
-        public void loadTiles(Texture2D[] tileSets, GraphicsDevice device)
-        {
-            foreach (Tile i in map)
-            {
-                i.loadTile(tileSets, device);
-            }
-        }
-        /// <summary>
-        /// Loads all tiles inside <c>indexes</c> with the correct graphics in <c>tileSets</c> if the correct graphic is present. 
-        /// </summary>
-        public void loadTiles(int[] indexes, Texture2D[] tileSets, GraphicsDevice device)
-        {
-            foreach (int i in indexes)
-            {
-                map[i].loadTile(tileSets, device);
-            }
-        }
-        /// <summary>
-        /// Loads all tiles within the <c>row</c> with the correct graphics in <c>tileSets</c> if the correct graphic is present. 
-        /// </summary>
-        public void loadRow(int row, Texture2D[] tileSets, GraphicsDevice device)
-        {
-            foreach (Tile i in map)
-            {
-                if (i.tileMapCoordinate.X == row)
-                {
-                    i.loadTile(tileSets, device);
-                }
-            }
-        }
-        /// <summary>
-        /// Loads all tiles within the <c>column</c> with the correct graphics in <c>tileSets</c> if the correct graphic is present. 
-        /// </summary>
-        public void loadColumn(int column, Texture2D[] tileSets, GraphicsDevice device)
-        {
-            foreach (Tile i in map)
-            {
-                if (i.tileMapCoordinate.Y== column)
-                {
-                    i.loadTile(tileSets, device);
-                }
-            }
-        }
-        /// <summary>
-        /// Loads the tile at <c>index</c> with the correct graphics in <c>tileSets</c> if the correct graphic is present. 
-        /// </summary>
-        public void loadTile(int index, Texture2D[] tileSets, GraphicsDevice device)
-        {
-            map[index].loadTile(tileSets, device);
-        }
-        /// <summary>
-        /// Unloads all tiles in <c>tileSets</c>. 
-        /// </summary>
-        public void unloadTiles()
-        {
-            foreach (Tile i in map)
-            {
-                i.unloadTile();
-            }
-        }
-        /// <summary>
-        /// Unloads all tiles inside <c>indexes</c>. 
-        /// </summary>
-        public void unloadTiles(int[] indexes)
-        {
-            foreach (int i in indexes)
-            {
-                map[i].unloadTile();
-            }
-        }
-        /// <summary>
-        /// Unloads all tiles within the <c>row</c>. 
-        /// </summary>
-        public void unloadRow(int row)
-        {
-            foreach (Tile i in map)
-            {
-                if (i.tileMapCoordinate.X == row)
-                {
-                    i.unloadTile();
-                }
-            }
-        }
-        /// <summary>
-        /// Unloads all tiles within the <c>column</c>. 
-        /// </summary>
-        public void unloadColumn(int column)
-        {
-            foreach (Tile i in map)
-            {
-                if (i.tileMapCoordinate.Y == column)
-                {
-                    i.unloadTile();
-                }
-            }
-        }
-        /// <summary>
-        /// Unloads the tile at <c>index</c>. 
-        /// </summary>
-        public void unloadTile(int index)
-        {
-            map[index].unloadTile();
-        }
-        /// <summary>
-        /// Draws all tiles in the TileMapLayer.
-        /// </summary>
-        public void drawTiles(Vector2 stretch, SpriteBatch _spriteBatch)
-        {
-            foreach (Tile i in map)
-            {
-                i.drawTile(stretch, _spriteBatch);
-            }
-        }
-        /// <summary>
-        /// Draws all tiles inside <c>indexes</c>> in the TileMapLayer.
-        /// </summary>
-        public void drawTiles(int[] indexes, Vector2 stretch, SpriteBatch _spriteBatch)
-        {
-            foreach (int i in indexes)
-            {
-                map[i].drawTile(stretch, _spriteBatch);
-            }
-        }
-        /// <summary>
-        /// Draws the tile with the corrasponding index in the TileMapLayer.
-        /// </summary>
-        public void drawTile(int index, Vector2 stretch, SpriteBatch _spriteBatch)
-        {
-            map[index].drawTile(stretch, _spriteBatch);
-        }
-        /// <summary>
-        /// Draws all tiles within <c>row</c>> in the TileMapLayer.
-        /// </summary>
-        public void drawRow(int row, Vector2 stretch, SpriteBatch _spriteBatch)
-        {
-            foreach (Tile i in map)
-            {
-                if (i.tileMapCoordinate.X == row)
-                {
-                    i.drawTile(stretch, _spriteBatch);
-                }
-            }
-        }
-        /// <summary>
-        /// Draws all tiles within <c>column</c>> in the TileMapLayer.
-        /// </summary>
-        public void drawColumn(int column, Vector2 stretch, SpriteBatch _spriteBatch)
-        {
-            foreach (Tile i in map)
-            {
-                if (i.tileMapCoordinate.Y == column)
-                {
-                    i.drawTile(stretch, _spriteBatch);
-                }
-            }
-        }
-        /// <summary>
-        /// Returns the tile with the given index form the TileMaplayer.
+        /// Returns the tile with the given index from the TileMaplayer. If the index is invalid returns null.
         /// </summary>
         public Tile getTile(int index)
         {
-            return map[index];
+            if (map.Count - 1 >= index)
+            {
+                return map[index];
+            }
+            else
+            {
+                return null;
+            }
+        }
+        /// <summary>
+        /// Returns the tile with the given coordinate from the TileMaplayer. If the coordiante is invalid returns null.
+        /// </summary>
+        public Tile getTile(Point coordinate)
+        {
+            foreach (Tile i in map)
+            {
+                if (i.tileMapCoordinate == coordinate)
+                {
+                    return i;
+                }
+            }
+            return null;
         }
         /// <summary>
         /// Returns the layer dimensions in as a point containing width and height.
@@ -434,13 +715,13 @@ namespace Fantasy.Content.Logic.Graphics
         /// </summary>
         public Point tileMapCoordinate;
         /// <summary>
-        /// Texture this tile loads to be drawn.
-        /// </summary>
-        public Texture2D tile;
-        /// <summary>
         /// Color this tile loads when drawn.
         /// </summary>
         public Color color;
+        /// <summary>
+        /// The index of the graphic in the TileMap for this tile.
+        /// </summary>
+        public int graphicsIndex;
 
         /// <summary>
         /// Constructs a tile with the given properties.
@@ -466,49 +747,5 @@ namespace Fantasy.Content.Logic.Graphics
                 color = Color.White;
             }
         }
-        /// <summary>
-        /// If this tiles <c>tileSetName</c> matches a tile set inside of the provided <c>tileSets</c> then it will load the corresponding tile graphics from the matching tile set.
-        /// </summary>
-        public void loadTile(Texture2D[] tileSets, GraphicsDevice device)
-        {
-            foreach (Texture2D i in tileSets)
-            {
-                if (tileSetName == i.Name)
-                {
-                    tile = new Texture2D(device, 64, 64);
-                    Color[] newColor = new Color[64 * 64];
-                    Rectangle selectionArea = new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64);
-
-                    i.GetData(0, selectionArea, newColor, 0, newColor.Length);
-
-                    tile.SetData(newColor);
-                }
-            }
-        }
-        /// <summary>
-        /// Loads the provided graphic into this tile.
-        /// </summary>
-        public void loadTile(Texture2D tile)
-        {
-            this.tile = tile;
-        }
-        /// <summary>
-        /// Unloads the graphic from this tile.
-        /// </summary>
-        public void unloadTile()
-        {
-            tile = null;
-        }
-        /// <summary>
-        /// Draws the tiles texture with the provided stretch.
-        /// </summary>
-        public void drawTile(Vector2 stretch, SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(tile,
-                new Vector2(tileMapCoordinate.X * 64 * stretch.X, tileMapCoordinate.Y * 64 * stretch.Y),
-                new Rectangle(0, 0, 64, 64), color, 0, new Vector2(0, 0),
-                stretch, new SpriteEffects(), 0);
-        }
-
     }
 }
