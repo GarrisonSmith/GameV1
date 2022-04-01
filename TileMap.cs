@@ -596,11 +596,130 @@ namespace Fantasy.Content.Logic.Graphics
             return count;
         }
         /// <summary>
-        /// Returns the bounding box of the TileMap.
+        /// Returns a rectangle that is the size and location of the TileMap with the provided <c>stretch</c>.
         /// </summary>
         public Rectangle getTileMapBounding(Vector2 stretch)
         {
-            return new Rectangle(0, 0, 1, 1);
+            int width = 0;
+            int height =0;
+            foreach (TileMapLayer i in map)
+            {
+                if (i.width > width)
+                {
+                    width = (int)(i.width * 64 * stretch.X);
+                }
+                if (i.height > height)
+                {
+                    height = (int)(i.height * 64 * stretch.Y);
+                }
+            }
+            return new Rectangle(0, 0, width, height);
+        }
+        /// <summary>
+        /// Returns a rectangle that is the size and location of the provided <c>layers</c> in the TileMap with the provided <c>stretch</c>.
+        /// </summary>
+        public Rectangle getTileMapBounding(Vector2 stretch, int[] layers)
+        {
+            int width = 0;
+            int height = 0;
+            foreach (int l in layers)
+            {
+                foreach (TileMapLayer i in map)
+                {
+                    if (i.width > width)
+                    {
+                        width = (int)(i.width * 64 * stretch.X);
+                    }
+                    if (i.height > height)
+                    {
+                        height = (int)(i.height * 64 * stretch.Y);
+                    }
+                }
+            }
+            return new Rectangle(0, 0, width, height);
+        }
+        /// <summary>
+        /// Returns a rectangle that is the size and location of the provided <c>layer</c> in the TileMap with the provided <c>stretch</c>.
+        /// </summary>
+        public Rectangle getTileMapBounding(Vector2 stretch, int layer)
+        {
+            int width = 0;
+            int height = 0;
+            foreach (TileMapLayer i in map)
+            {
+                if (i.width > width)
+                {
+                    width = (int)(i.width * 64 * stretch.X);
+                }
+                if (i.height > height)
+                {
+                    height = (int)(i.height * 64 * stretch.Y);
+                }
+            }
+            return new Rectangle(0, 0, width, height);
+        }
+        /// <summary>
+        /// Returns a point that is the center of the TileMap with the provided <c>stretch</c>.
+        /// </summary>
+        public Point getTileMapCenter(Vector2 stretch)
+        {
+            int width = 0;
+            int height = 0;
+            foreach (TileMapLayer i in map)
+            {
+                if (i.width > width)
+                {
+                    width = (int)(i.width * 64 * stretch.X * .5);
+                }
+                if (i.height > height)
+                {
+                    height = (int)(i.height * 64 * stretch.Y * .5);
+                }
+            }
+            return new Point(width, height);
+        }
+        /// <summary>
+        /// Returns a point that is the center of the TileMap of the provided <c>layers</c> in the TileMap with the provided <c>stretch</c>.
+        /// </summary>
+        public Point getTileMapCenter(Vector2 stretch, int[] layers)
+        {
+            int width = 0;
+            int height = 0;
+            foreach (int l in layers)
+            {
+                foreach (TileMapLayer i in map)
+                {
+                    if (i.width > width)
+                    {
+                        width = (int)(i.width * 64 * stretch.X);
+                    }
+                    if (i.height > height)
+                    {
+                        height = (int)(i.height * 64 * stretch.Y);
+                    }
+                }
+            }
+            return new Point(width, height);
+        }
+        /// <summary>
+        /// Returns a point that is the center of the TileMap of the provided <c>layer</c> in the TileMap with the provided <c>stretch</c>.
+        /// </summary>
+        public Point getTileMapCenter(Vector2 stretch, int layer)
+        {
+            int width = 0;
+            int height = 0;
+            foreach (TileMapLayer i in map)
+            {
+                if (i.width > width)
+                {
+                    width = (int)(i.width * 64 * stretch.X);
+                }
+                if (i.height > height)
+                {
+                    height = (int)(i.height * 64 * stretch.Y);
+                }
+            }
+            return new Point(width, height);
         }
     }
 
