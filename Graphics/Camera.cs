@@ -27,7 +27,7 @@ namespace Fantasy.Content.Logic.Graphics
         {
             this.zoom = zoom;
         }
-        public void panCamera(Point destination, int speed)
+        public void Pan(Point destination, int speed)
         {
             destination.X = (int)(destination.X * zoom.X);
             destination.Y = (int)(destination.Y * zoom.Y);
@@ -66,26 +66,26 @@ namespace Fantasy.Content.Logic.Graphics
                 }
             }
         }
-        public void zoomCamera(Vector2 amount)
+        public void Zoom(Vector2 amount)
         {
             if (amount.X >= minZoom.X && amount.X <= maxZoom.X)
             {
-                cameraCenter.X = (int)((cameraCenter.X * amount.X) / zoom.X);
-                cameraPosition.X = cameraCenter.X + (int)(cameraPosition.Width / (2 * zoom.X));
-                cameraPosition.Width = (int)((cameraPosition.Width * amount.X) / zoom.X);
-                boundingBox.Width = (int)((boundingBox.Width * amount.X) / zoom.X);
+                cameraCenter.X = (int)Math.Round(((cameraCenter.X * amount.X) / zoom.X),0);
+                cameraPosition.X = cameraCenter.X + (int)Math.Round((cameraPosition.Width / (2 * zoom.X)),0);
+                cameraPosition.Width = (int)Math.Round(((cameraPosition.Width * amount.X) / zoom.X),0);
+                boundingBox.Width = (int)Math.Round(((boundingBox.Width * amount.X) / zoom.X),0);
                 zoom.X = amount.X;
             }
             if (amount.Y >= minZoom.Y && amount.Y <= maxZoom.Y)
             {
-                cameraCenter.Y = (int)((cameraCenter.Y * amount.Y) / zoom.Y);
-                cameraPosition.Y = cameraCenter.Y + (int)(cameraPosition.Height / (2 * zoom.Y));
-                cameraPosition.Height = (int)((cameraPosition.Height * amount.Y) / zoom.Y);
-                boundingBox.Height = (int)((boundingBox.Height * amount.Y) / zoom.Y);
+                cameraCenter.Y = (int)Math.Round(((cameraCenter.Y * amount.Y) / zoom.Y),0);
+                cameraPosition.Y = cameraCenter.Y + (int)Math.Round((cameraPosition.Height / (2 * zoom.Y)),0);
+                cameraPosition.Height = (int)Math.Round(((cameraPosition.Height * amount.Y) / zoom.Y),0);
+                boundingBox.Height = (int)Math.Round(((boundingBox.Height * amount.Y) / zoom.Y),0);
                 zoom.Y = amount.Y;
             }
         }
-        public void panWithZoom(Point destination, int speed)
+        public void PanWithZoom(Point destination, int speed)
         {
             destination.X = (int)(destination.X * zoom.X);
             destination.Y = (int)(destination.Y * zoom.Y);
@@ -95,22 +95,23 @@ namespace Fantasy.Content.Logic.Graphics
                 while (!(destination.X <= cameraPosition.X && destination.X >= cameraPosition.X - cameraPosition.Width) ||
                     !(destination.Y <= cameraPosition.Y && destination.Y >= cameraPosition.Y - cameraPosition.Height))
                 {
-                    if (zoom.X - .01f <= minZoom.X + .01f || zoom.Y - .01f <= minZoom.Y + .01f)
+                    if ((zoom.X - .01f <= minZoom.X + .01f || zoom.X <= original.X - 1f) || (zoom.Y - .01f <= minZoom.Y + .01f || zoom.Y <= original.Y - 1f))
                     {
                         break;
                     }
-                    zoomCamera(new Vector2(zoom.X - .01f, zoom.Y - .01f));
+                    Zoom(new Vector2(zoom.X - .01f, zoom.Y - .01f));
                     reposition();
                     _scene.clearAndRedraw();
                 }
-                panCamera(destination, speed);
+                Pan(destination, speed);
                 while (original != zoom)
                 {
-                    zoomCamera(new Vector2(zoom.X + .01f, zoom.Y + .01f));
-                    panCamera(destination, speed);
+                    Zoom(new Vector2(zoom.X + .01f, zoom.Y + .01f));
+                    Pan(destination, speed);
                 }
-                zoomCamera(original);
-                panCamera(destination, speed);
+                Zoom(original);
+                Pan(destination, speed);
+                reposition();
             }
 
         }

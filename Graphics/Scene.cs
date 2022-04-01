@@ -26,7 +26,7 @@ namespace Fantasy.Content.Logic.Graphics
             _spriteBatch.Begin();
             _spriteBatch.GraphicsDevice.Viewport = new Viewport(new Rectangle(0,0, 1000, 1000));
             _graphics.GraphicsDevice.Viewport = new Viewport(_camera.cameraPosition);
-            _tileMap.DrawArea(_camera.zoom, _spriteBatch,1 ,_camera.cameraPosition);
+            _tileMap.DrawArea(_camera.zoom, _spriteBatch,_camera.cameraPosition);
             _spriteBatch.End();
         }
         public void clearAndRedraw() 
@@ -37,7 +37,7 @@ namespace Fantasy.Content.Logic.Graphics
             _graphics.GraphicsDevice.Viewport = new Viewport(_camera.cameraPosition);
             SpriteBatch _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             _spriteBatch.Begin();
-            _tileMap.DrawArea(_camera.zoom, _spriteBatch, 1, _camera.cameraPosition);
+            _tileMap.DrawArea(_camera.zoom, _spriteBatch, _camera.cameraPosition);
             _spriteBatch.End();
             _graphics.EndDraw();
             this._spriteBatch = _spriteBatch;
