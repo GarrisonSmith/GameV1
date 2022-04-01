@@ -140,7 +140,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided layers.
         /// </summary>
-        public void drawLayers(int[] layers, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawLayers(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers)
         {
             foreach (int l in layers)
             {
@@ -165,7 +165,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided layer.
         /// </summary>
-        public void drawLayer(int layer, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawLayer(Vector2 stretch, SpriteBatch _spriteBatch, int layer)
         {
             foreach (TileMapLayer i in map)
             {
@@ -187,7 +187,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided rows.
         /// </summary>
-        public void drawRows(int[] rows, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawRows(Vector2 stretch, SpriteBatch _spriteBatch, int[] rows)
         {
             foreach (int r in rows)
             {
@@ -212,7 +212,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided rows and layers.
         /// </summary>
-        public void drawRows(int[] rows, int[] layers, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawRows(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers, int[] rows)
         {
             foreach (int r in rows)
             {
@@ -243,7 +243,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided rows and layer.
         /// </summary>
-        public void drawRows(int[] rows, int layer, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawRows(Vector2 stretch, SpriteBatch _spriteBatch, int layer, int[] rows)
         {
             foreach (int r in rows)
             {
@@ -271,7 +271,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided row.
         /// </summary>
-        public void drawRow(int row, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawRow(Vector2 stretch, SpriteBatch _spriteBatch, int row)
         {
             foreach (TileMapLayer i in map)
             {
@@ -293,7 +293,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided row and layers.
         /// </summary>
-        public void drawRow(int row, int[] layers, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawRow(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers, int row)
         {
             foreach (int l in layers)
             {
@@ -321,7 +321,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided row and layer.
         /// </summary>
-        public void drawRows(int row, int layer, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawRows(Vector2 stretch, SpriteBatch _spriteBatch, int layer, int row)
         {
             foreach (TileMapLayer i in map)
             {
@@ -346,7 +346,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided columns.
         /// </summary>
-        public void drawColumns(int[] columns, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawColumns(Vector2 stretch, SpriteBatch _spriteBatch, int[] columns)
         {
             foreach (int c in columns)
             {
@@ -371,7 +371,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided columns and layers.
         /// </summary>
-        public void drawColumns(int[] columns, int[] layers, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawColumns(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers, int[] columns)
         {
             foreach (int c in columns)
             {
@@ -402,7 +402,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided columns and layer.
         /// </summary>
-        public void draweColumns(int[] columns, int layer, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void draweColumns(Vector2 stretch, SpriteBatch _spriteBatch, int layer, int[] columns)
         {
             foreach (int c in columns)
             {
@@ -430,7 +430,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided column.
         /// </summary>
-        public void drawColumn(int column, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawColumn(Vector2 stretch, SpriteBatch _spriteBatch, int column)
         {
             foreach (TileMapLayer i in map)
             {
@@ -452,7 +452,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided column and layers.
         /// </summary>
-        public void drawColumn(int column, int[] layers, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawColumn(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers, int column)
         {
             foreach (int l in layers)
             {
@@ -480,7 +480,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided column and layer.
         /// </summary>
-        public void drawColumns(int column, int layer, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawColumns(Vector2 stretch, SpriteBatch _spriteBatch, int layer, int column)
         {
             foreach (TileMapLayer i in map)
             {
@@ -505,10 +505,10 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy with in the provided rectangle <c>drawArea</c>.
         /// </summary>
-        public void drawArea(Rectangle drawArea, Vector2 stretch, SpriteBatch _spriteBatch)
+        public void drawArea(Vector2 stretch, SpriteBatch _spriteBatch, Rectangle drawArea)
         {
-            drawArea = new Rectangle((int)(drawArea.X * stretch.X), (int)(drawArea.Y * stretch.Y),
-                (int)(drawArea.Width * stretch.X), (int)(drawArea.Height * stretch.Y));
+            drawArea = new Rectangle((int)(-1 * drawArea.X), (int)(-1 * drawArea.Y),
+                (int)(drawArea.Width * (1 / stretch.X)), (int)(drawArea.Height * (1 / stretch.Y)));
             foreach (TileMapLayer i in map)
             {
                 foreach (Tile j in i.map)
@@ -528,10 +528,10 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy with in the provided layers and rectangle <c>drawArea</c>.
         /// </summary>
-        public void drawArea(Rectangle drawArea, Vector2 stretch, SpriteBatch _spriteBatch, int[] layers)
+        public void drawArea(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers, Rectangle drawArea)
         {
-            drawArea = new Rectangle((int)(drawArea.X * stretch.X), (int)(drawArea.Y * stretch.Y),
-                (int)(drawArea.Width * stretch.X), (int)(drawArea.Height * stretch.Y));
+            drawArea = new Rectangle((int)(-1 * drawArea.X), (int)(-1 * drawArea.Y),
+                (int)(drawArea.Width * (1 / stretch.X)), (int)(drawArea.Height * (1 / stretch.Y)));
             foreach (int l in layers)
             {
                 foreach (TileMapLayer i in map)
@@ -557,10 +557,10 @@ namespace Fantasy.Content.Logic.Graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy with in the provided layer and rectangle <c>drawArea</c>.
         /// </summary>
-        public void drawArea(Rectangle drawArea, Vector2 stretch, SpriteBatch _spriteBatch, int layer)
+        public void drawArea(Vector2 stretch, SpriteBatch _spriteBatch, int layer, Rectangle drawArea)
         {
-            drawArea = new Rectangle((int)(drawArea.X * stretch.X), (int)(drawArea.Y * stretch.Y),
-                (int)(drawArea.Width * stretch.X), (int)(drawArea.Height * stretch.Y));
+            drawArea = new Rectangle((int)(-1 * drawArea.X), (int)(-1 * drawArea.Y),
+                (int)(drawArea.Width * (1 / stretch.X)), (int)(drawArea.Height * (1 / stretch.Y)));
             foreach (TileMapLayer i in map)
             {
                 if (i.layer == layer)
