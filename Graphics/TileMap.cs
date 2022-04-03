@@ -606,14 +606,14 @@ namespace Fantasy.Content.Logic.Graphics
             {
                 if (i.width > width)
                 {
-                    width = (int)(i.width * 64 * stretch.X);
+                    width = i.width;
                 }
                 if (i.height > height)
                 {
-                    height = (int)(i.height * 64 * stretch.Y);
+                    height = i.height;
                 }
             }
-            return new Rectangle(0, 0, width, height);
+            return new Rectangle(0, 0, (int)(width * 64 * stretch.X), (int)(height * 64 * stretch.Y));
         }
         /// <summary>
         /// Returns a rectangle that is the size and location of the provided <c>layers</c> in the TileMap with the provided <c>stretch</c>.
@@ -628,15 +628,15 @@ namespace Fantasy.Content.Logic.Graphics
                 {
                     if (i.width > width)
                     {
-                        width = (int)(i.width * 64 * stretch.X);
+                        width = i.width;
                     }
                     if (i.height > height)
                     {
-                        height = (int)(i.height * 64 * stretch.Y);
+                        height = i.height;
                     }
                 }
             }
-            return new Rectangle(0, 0, width, height);
+            return new Rectangle(0, 0, (int)(width * 64 * stretch.X), (int)(height * 64 * stretch.Y));
         }
         /// <summary>
         /// Returns a rectangle that is the size and location of the provided <c>layer</c> in the TileMap with the provided <c>stretch</c>.
@@ -649,77 +649,77 @@ namespace Fantasy.Content.Logic.Graphics
             {
                 if (i.width > width)
                 {
-                    width = (int)(i.width * 64 * stretch.X);
+                    width = i.width;
                 }
                 if (i.height > height)
                 {
-                    height = (int)(i.height * 64 * stretch.Y);
+                    height = i.height;
                 }
             }
-            return new Rectangle(0, 0, width, height);
+            return new Rectangle(0, 0, (int)(width * 64 * stretch.X), (int)(height * 64 * stretch.Y));
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap with the provided <c>stretch</c>.
         /// </summary>
         public Point GetTileMapCenter(Vector2 stretch)
         {
-            int width = 0;
-            int height = 0;
+            int X = 0;
+            int Y = 0;
             foreach (TileMapLayer i in map)
             {
-                if (i.width > width)
+                if (i.width > X)
                 {
-                    width = (int)(i.width * 64 * stretch.X * .5);
+                    X = i.width;
                 }
-                if (i.height > height)
+                if (i.height > Y)
                 {
-                    height = (int)(i.height * 64 * stretch.Y * .5);
+                    Y = i.height;
                 }
             }
-            return new Point(width, height);
+            return new Point((int)(-1 * ((X * 64) / 2) * stretch.X), (int)(-1 * ((Y * 64) / 2) * stretch.Y));
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap of the provided <c>layers</c> in the TileMap with the provided <c>stretch</c>.
         /// </summary>
         public Point GetTileMapCenter(Vector2 stretch, int[] layers)
         {
-            int width = 0;
-            int height = 0;
+            int X = 0;
+            int Y = 0;
             foreach (int l in layers)
             {
                 foreach (TileMapLayer i in map)
                 {
-                    if (i.width > width)
+                    if (i.width > X)
                     {
-                        width = (int)(i.width * 64 * stretch.X);
+                        X = i.width;
                     }
-                    if (i.height > height)
+                    if (i.height > Y)
                     {
-                        height = (int)(i.height * 64 * stretch.Y);
+                        Y = i.height;
                     }
                 }
             }
-            return new Point(width, height);
+            return new Point((int)(-1 * ((X * 64) / 2) * stretch.X), (int)(-1 * ((Y * 64) / 2) * stretch.Y))
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap of the provided <c>layer</c> in the TileMap with the provided <c>stretch</c>.
         /// </summary>
         public Point GetTileMapCenter(Vector2 stretch, int layer)
         {
-            int width = 0;
-            int height = 0;
+            int X = 0;
+            int Y = 0;
             foreach (TileMapLayer i in map)
             {
-                if (i.width > width)
+                if (i.width > X)
                 {
-                    width = (int)(i.width * 64 * stretch.X);
+                    X = i.width;
                 }
-                if (i.height > height)
+                if (i.height > Y)
                 {
-                    height = (int)(i.height * 64 * stretch.Y);
+                    Y = i.height;
                 }
             }
-            return new Point(width, height);
+            return new Point((int)(-1 * ((X * 64) / 2) * stretch.X), (int)(-1 * ((Y * 64) / 2) * stretch.Y))
         }
     }
 
@@ -754,13 +754,12 @@ namespace Fantasy.Content.Logic.Graphics
             this.layer = layer;
             string[] columnTemp;
             string[] rowTemp;
-            int row = 0;
             int column = 0;
 
             columnTemp = initialize.Split(";");
             for (int i = 0; i < columnTemp.Length; i++)
             {
-                row = 0;
+                int row = 0;
                 rowTemp = columnTemp[i].Split(":");
                 foreach (string j in rowTemp)
                 {
@@ -771,13 +770,19 @@ namespace Fantasy.Content.Logic.Graphics
                     else if (j != "")
                     {
                         map.Add(new Tile(j, row, column));
+                        if (row + 1 > this.width)
+                        {
+                            this.width = row + 1;
+                        }
+                        if (column + 1 > this.height)
+                        {
+                            this.height = column + 1;
+                        }
                     }
                     row++;
                 }
                 column++;
             }
-            this.width = row + 1;
-            this.height = column + 1;
         }
         /// <summary>
         /// Returns the tile with the given index from the TileMaplayer. If the index is invalid returns null.
