@@ -6,11 +6,13 @@ namespace Fantasy.Content.Logic.Graphics
     class Camera
     {
         public Rectangle cameraPosition;
-        public Rectangle boundingBox = new Rectangle(-69, -69, 69, 69);
+        public Rectangle boundingBox;
         public Point cameraCenter;
         public Vector2 zoom = new Vector2(1f, 1f);
         public Vector2 maxZoom = new Vector2(3f, 3f);
         public Vector2 minZoom = new Vector2(.5f, .5f);
+        public bool movementAllowedVertical = true;
+        public bool movementAllowedHorizontal = true;
         public Scene _scene;
 
         public Camera(Scene _scene, Rectangle cameraPosition)
@@ -26,40 +28,43 @@ namespace Fantasy.Content.Logic.Graphics
         }
         public void Pan(Point destination, int speed)
         {
-            destination.X = (int)(destination.X * zoom.X);
-            destination.Y = (int)(destination.Y * zoom.Y);
-
-            if (PointInBoundingBox(destination))
+            if (movementAllowedVertical && movementAllowedHorizontal)
             {
-                while (cameraCenter.X != destination.X || cameraCenter.Y != destination.Y)
+                destination.X = (int)(destination.X * zoom.X);
+                destination.Y = (int)(destination.Y * zoom.Y);
+
+                if (PointInBoundingBox(destination))
                 {
-                    if (Math.Abs(destination.X - cameraCenter.X) <= speed)
+                    while (cameraCenter.X != destination.X || cameraCenter.Y != destination.Y)
                     {
-                        SetHorizontal(destination.X);
+                        if (Math.Abs(destination.X - cameraCenter.X) <= speed)
+                        {
+                            SetHorizontal(destination.X);
 
-                    }
-                    else if (cameraCenter.X < destination.X)
-                    {
-                        MoveHorizontal(false, speed);
-                    }
-                    else if (cameraCenter.X > destination.X)
-                    {
-                        MoveHorizontal(true, speed);
-                    }
+                        }
+                        else if (cameraCenter.X < destination.X)
+                        {
+                            MoveHorizontal(false, speed);
+                        }
+                        else if (cameraCenter.X > destination.X)
+                        {
+                            MoveHorizontal(true, speed);
+                        }
 
-                    if (Math.Abs(destination.Y - cameraCenter.Y) <= speed)
-                    {
-                        SetVertical(destination.Y);
+                        if (Math.Abs(destination.Y - cameraCenter.Y) <= speed)
+                        {
+                            SetVertical(destination.Y);
+                        }
+                        else if (cameraCenter.Y < destination.Y)
+                        {
+                            MoveVertical(true, speed);
+                        }
+                        else if (cameraCenter.Y > destination.Y)
+                        {
+                            MoveVertical(false, speed);
+                        }
+                        _scene.clearAndRedraw();
                     }
-                    else if (cameraCenter.Y < destination.Y)
-                    {
-                        MoveVertical(true, speed);
-                    }
-                    else if (cameraCenter.Y > destination.Y)
-                    {
-                        MoveVertical(false, speed);
-                    }
-                    _scene.clearAndRedraw();
                 }
             }
         }
@@ -83,31 +88,34 @@ namespace Fantasy.Content.Logic.Graphics
         }
         public void PanWithZoom(Point destination, int speed)
         {
-            destination.X = (int)(destination.X * zoom.X);
-            destination.Y = (int)(destination.Y * zoom.Y);
-            if (PointInBoundingBox(destination))
+            if (movementAllowedVertical && movementAllowedHorizontal)
             {
-                Vector2 original = zoom;
-                while (!(destination.X <= cameraPosition.X && destination.X >= cameraPosition.X - cameraPosition.Width) ||
-                    !(destination.Y <= cameraPosition.Y && destination.Y >= cameraPosition.Y - cameraPosition.Height))
+                destination.X = (int)(destination.X * zoom.X);
+                destination.Y = (int)(destination.Y * zoom.Y);
+                if (PointInBoundingBox(destination))
                 {
-                    if ((zoom.X - .01f <= minZoom.X + .01f || zoom.X <= original.X - 1f) || (zoom.Y - .01f <= minZoom.Y + .01f || zoom.Y <= original.Y - 1f))
+                    Vector2 original = zoom;
+                    while (!(destination.X <= cameraPosition.X && destination.X >= cameraPosition.X - cameraPosition.Width) ||
+                        !(destination.Y <= cameraPosition.Y && destination.Y >= cameraPosition.Y - cameraPosition.Height))
                     {
-                        break;
+                        if ((zoom.X - .01f <= minZoom.X + .01f || zoom.X <= original.X - 1f) || (zoom.Y - .01f <= minZoom.Y + .01f || zoom.Y <= original.Y - 1f))
+                        {
+                            break;
+                        }
+                        Zoom(new Vector2(zoom.X - .01f, zoom.Y - .01f));
+                        Reposition();
+                        _scene.clearAndRedraw();
                     }
-                    Zoom(new Vector2(zoom.X - .01f, zoom.Y - .01f));
-                    Reposition();
-                    _scene.clearAndRedraw();
-                }
-                Pan(destination, speed);
-                while (original != zoom)
-                {
-                    Zoom(new Vector2(zoom.X + .01f, zoom.Y + .01f));
                     Pan(destination, speed);
+                    while (original != zoom)
+                    {
+                        Zoom(new Vector2(zoom.X + .01f, zoom.Y + .01f));
+                        Pan(destination, speed);
+                    }
+                    Zoom(original);
+                    Pan(destination, speed);
+                    Reposition();
                 }
-                Zoom(original);
-                Pan(destination, speed);
-                Reposition();
             }
 
         }
@@ -119,91 +127,103 @@ namespace Fantasy.Content.Logic.Graphics
         }
         public void MoveVertical(bool direction, int amount)
         {
-            if (direction)
+            if (movementAllowedVertical)
             {
-                //moves up
-                if (PointInBoundingBox(new Point(cameraCenter.X, cameraCenter.Y + amount)))
+                if (direction)
                 {
-                    cameraCenter.Y += amount;
+                    //moves up
+                    if (PointInBoundingBox(new Point(cameraCenter.X, cameraCenter.Y + amount)))
+                    {
+                        cameraCenter.Y += amount;
+                    }
+                    else
+                    {
+                        cameraCenter.Y = boundingBox.Y;
+                    }
+                }
+                else
+                {
+                    //moves down
+                    if (PointInBoundingBox(new Point(cameraCenter.X, cameraCenter.Y - amount)))
+                    {
+                        cameraCenter.Y -= amount;
+                    }
+                    else
+                    {
+                        cameraCenter.Y = boundingBox.Y - boundingBox.Height;
+                    }
+                }
+                Reposition();
+            }
+        }
+        public void SetVertical(int Y)
+        {
+            if (movementAllowedVertical)
+            {
+                if (PointInBoundingBox(new Point(cameraCenter.X, Y)))
+                {
+                    cameraCenter.Y = Y;
+                }
+                else if (Y <= boundingBox.Y - boundingBox.Height)
+                {
+                    cameraCenter.Y = boundingBox.Y - boundingBox.Height;
                 }
                 else
                 {
                     cameraCenter.Y = boundingBox.Y;
                 }
+                Reposition();
             }
-            else
-            {
-                //moves down
-                if (PointInBoundingBox(new Point(cameraCenter.X, cameraCenter.Y - amount)))
-                {
-                    cameraCenter.Y -= amount;
-                }
-                else
-                {
-                    cameraCenter.Y = boundingBox.Y - boundingBox.Height;
-                }
-            }
-            Reposition();
-        }
-        public void SetVertical(int Y)
-        {
-            if (PointInBoundingBox(new Point(cameraCenter.X, Y)))
-            {
-                cameraCenter.Y = Y;
-            }
-            else if (Y <= boundingBox.Y - boundingBox.Height)
-            {
-                cameraCenter.Y = boundingBox.Y - boundingBox.Height;
-            }
-            else
-            {
-                cameraCenter.Y = boundingBox.Y;
-            }
-            Reposition();
         }
         public void MoveHorizontal(bool direction, int amount)
         {
-            if (direction)
+            if (movementAllowedHorizontal)
             {
-                //moves right
-                if (PointInBoundingBox(new Point(cameraCenter.X - amount, cameraCenter.Y)))
+                if (direction)
                 {
-                    cameraCenter.X -= amount;
+                    //moves right
+                    if (PointInBoundingBox(new Point(cameraCenter.X - amount, cameraCenter.Y)))
+                    {
+                        cameraCenter.X -= amount;
+                    }
+                    else
+                    {
+                        cameraCenter.X = boundingBox.X - boundingBox.Width;
+                    }
                 }
                 else
                 {
-                    cameraCenter.X = boundingBox.X - boundingBox.Width;
+                    //moves left
+                    if (PointInBoundingBox(new Point(cameraCenter.X + amount, cameraCenter.Y)))
+                    {
+                        cameraCenter.X += amount;
+                    }
+                    else
+                    {
+                        cameraCenter.X = boundingBox.X;
+                    }
                 }
+                Reposition();
             }
-            else
+        }
+        public void SetHorizontal(int X)
+        {
+            if (movementAllowedHorizontal)
             {
-                //moves left
-                if (PointInBoundingBox(new Point(cameraCenter.X + amount, cameraCenter.Y)))
+                if (PointInBoundingBox(new Point(X, cameraCenter.Y)))
                 {
-                    cameraCenter.X += amount;
+                    cameraCenter.X = X;
+                }
+                else if (X <= boundingBox.X - boundingBox.Width)
+                {
+                    cameraCenter.X = boundingBox.X - boundingBox.Width;
                 }
                 else
                 {
                     cameraCenter.X = boundingBox.X;
                 }
+                Reposition();
             }
-            Reposition();
-        }
-        public void SetHorizontal(int X)
-        {
-            if (PointInBoundingBox(new Point(X, cameraCenter.Y)))
-            {
-                cameraCenter.X = X;
-            }
-            else if (X <= boundingBox.X - boundingBox.Width)
-            {
-                cameraCenter.X = boundingBox.X - boundingBox.Width;
-            }
-            else
-            {
-                cameraCenter.X = boundingBox.X;
-            }
-            Reposition();
         }
         public void SetBoundingBox(TileMap map)
         {
@@ -211,27 +231,28 @@ namespace Fantasy.Content.Logic.Graphics
             Rectangle _rectangle = map.GetTileMapBounding(zoom);
             if (_rectangle.Width <= cameraPosition.Width)
             {
+                movementAllowedHorizontal = false;
                 cameraCenter.X = _point.X;
-                boundingBox.X = _point.X;
-                boundingBox.Width = 0;
             }
-            else
+            else 
             {
-                boundingBox.X = _rectangle.X;
-                boundingBox.Width = _rectangle.Width;
+                movementAllowedHorizontal = true;
             }
+            boundingBox.X = _rectangle.X;
+            boundingBox.Width = _rectangle.Width;
 
             if (_rectangle.Height <= cameraPosition.Height)
             {
+                movementAllowedVertical = false;
                 cameraCenter.Y = _point.Y;
-                boundingBox.Y = _point.Y;
-                boundingBox.Height = 0;
             }
-            else
+            else 
             {
-                boundingBox.Y = _rectangle.Y;
-                boundingBox.Height = _rectangle.Height;
+                movementAllowedVertical = true;
             }
+            boundingBox.Y = _rectangle.Y;
+            boundingBox.Height = _rectangle.Height;
+
             Reposition();
         }
         public bool PointInBoundingBox(Point point)

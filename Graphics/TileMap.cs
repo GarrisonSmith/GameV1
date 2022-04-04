@@ -699,7 +699,7 @@ namespace Fantasy.Content.Logic.Graphics
                     }
                 }
             }
-            return new Point((int)(-1 * ((X * 64) / 2) * stretch.X), (int)(-1 * ((Y * 64) / 2) * stretch.Y))
+            return new Point((int)(-1 * ((X * 64) / 2) * stretch.X), (int)(-1 * ((Y * 64) / 2) * stretch.Y));
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap of the provided <c>layer</c> in the TileMap with the provided <c>stretch</c>.
@@ -719,7 +719,7 @@ namespace Fantasy.Content.Logic.Graphics
                     Y = i.height;
                 }
             }
-            return new Point((int)(-1 * ((X * 64) / 2) * stretch.X), (int)(-1 * ((Y * 64) / 2) * stretch.Y))
+            return new Point((int)(-1 * ((X * 64) / 2) * stretch.X), (int)(-1 * ((Y * 64) / 2) * stretch.Y));
         }
     }
 
