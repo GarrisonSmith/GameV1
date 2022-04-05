@@ -19,10 +19,17 @@ namespace Fantasy.Content.Logic.Graphics
             this._spriteBatch = _spriteBatch;
             this._tileMap = _tileMap;
             this._camera = _camera;
-            this._camera.SetBoundingBox(this._tileMap);
             this._camera._scene = this;
         }
-        public void drawScene(Texture2D debug)
+        public void InitializeScene()
+        { 
+            
+        }
+        public void LoadScene()
+        { 
+            
+        }
+        public void DrawScene()
         {
             _spriteBatch.GraphicsDevice.Viewport = new Viewport(_camera.cameraPosition);
             _graphics.GraphicsDevice.Viewport = new Viewport(new Rectangle(_camera.cameraPosition.X, _camera.cameraPosition.Y, _camera.boundingBox.Width, _camera.boundingBox.Height));
@@ -30,7 +37,7 @@ namespace Fantasy.Content.Logic.Graphics
             _tileMap.DrawArea(_camera.zoom, _spriteBatch, _camera.cameraPosition);
             _spriteBatch.End();
         }
-        public void clearAndRedraw()
+        public void ClearAndRedraw()
         {
             _graphics.BeginDraw();
             _graphics.GraphicsDevice.Reset();
@@ -44,14 +51,13 @@ namespace Fantasy.Content.Logic.Graphics
             _graphics.EndDraw();
             this._spriteBatch = _spriteBatch;
         }
-        public void drawMapBorder(Texture2D debug)
+        public void TransitionScene(String tileMapString, Texture2D[] tileSets, GraphicsDevice _graphicsdevice) 
         {
-            _spriteBatch.Begin();
-            for (int i = _camera.boundingBox.X; i <= _camera.boundingBox.X + _camera.boundingBox.Width; i++)
-            {
-                _spriteBatch.Draw(debug, new Vector2(i, 0), Color.White);
-            }
-            _spriteBatch.End();
+            _tileMap.UnloadTileTextures();
+            _tileMap = new TileMap(tileMapString);
+            _tileMap.LoadTileTextures(tileSets, _graphicsdevice);
+            _camera.SetBoundingBox();
+            ClearAndRedraw();
         }
     }
 }

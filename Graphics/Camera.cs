@@ -63,7 +63,7 @@ namespace Fantasy.Content.Logic.Graphics
                         {
                             MoveVertical(false, speed);
                         }
-                        _scene.clearAndRedraw();
+                        _scene.ClearAndRedraw();
                     }
                 }
             }
@@ -84,7 +84,7 @@ namespace Fantasy.Content.Logic.Graphics
                 boundingBox.Height = (int)Math.Round(((boundingBox.Height * amount.Y) / zoom.Y), 0);
                 zoom.Y = amount.Y;
             }
-            Reposition();
+            SetBoundingBox();
         }
         public void PanWithZoom(Point destination, int speed)
         {
@@ -104,7 +104,7 @@ namespace Fantasy.Content.Logic.Graphics
                         }
                         Zoom(new Vector2(zoom.X - .01f, zoom.Y - .01f));
                         Reposition();
-                        _scene.clearAndRedraw();
+                        _scene.ClearAndRedraw();
                     }
                     Pan(destination, speed);
                     while (original != zoom)
@@ -225,30 +225,62 @@ namespace Fantasy.Content.Logic.Graphics
                 Reposition();
             }
         }
-        public void SetBoundingBox(TileMap map)
+        public void SetBoundingBox()
         {
-            Point _point = map.GetTileMapCenter(zoom);
-            Rectangle _rectangle = map.GetTileMapBounding(zoom);
-            if (_rectangle.Width <= cameraPosition.Width)
+            Point _point = _scene._tileMap.GetTileMapCenter(zoom);
+            Rectangle _rectangle = _scene._tileMap.GetTileMapBounding(zoom);
+            if (_rectangle.Width <= (cameraPosition.Width / zoom.X))
             {
                 movementAllowedHorizontal = false;
                 cameraCenter.X = _point.X;
             }
-            else 
+            else
             {
                 movementAllowedHorizontal = true;
             }
             boundingBox.X = _rectangle.X;
             boundingBox.Width = _rectangle.Width;
 
-            if (_rectangle.Height <= cameraPosition.Height)
+            if (_rectangle.Height <= (cameraPosition.Height / zoom.Y))
             {
                 movementAllowedVertical = false;
                 cameraCenter.Y = _point.Y;
             }
-            else 
+            else
             {
                 movementAllowedVertical = true;
+            }
+            boundingBox.Y = _rectangle.Y;
+            boundingBox.Height = _rectangle.Height;
+
+            Reposition();
+        }
+        public void SetBoundingBox(Point startingCoordinate)
+        {
+            Point _point = _scene._tileMap.GetTileMapCenter(zoom);
+            Rectangle _rectangle = _scene._tileMap.GetTileMapBounding(zoom);
+            if (_rectangle.Width <= (cameraPosition.Width / zoom.X))
+            {
+                movementAllowedHorizontal = false;
+                cameraCenter.X = _point.X;
+            }
+            else
+            {
+                movementAllowedHorizontal = true;
+                cameraCenter.X = startingCoordinate.X;
+            }
+            boundingBox.X = _rectangle.X;
+            boundingBox.Width = _rectangle.Width;
+
+            if (_rectangle.Height <= (cameraPosition.Height / zoom.Y))
+            {
+                movementAllowedVertical = false;
+                cameraCenter.Y = _point.Y;
+            }
+            else
+            {
+                movementAllowedVertical = true;
+                cameraCenter.Y = startingCoordinate.Y;
             }
             boundingBox.Y = _rectangle.Y;
             boundingBox.Height = _rectangle.Height;
