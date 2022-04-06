@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Fantasy.Content.Logic.Graphics
 {
@@ -140,7 +141,6 @@ namespace Fantasy.Content.Logic.Graphics
                             break;
                         }
                         Zoom(new Vector2(zoom.X - .01f, zoom.Y - .01f), false);
-                        Reposition();
                         _scene.ClearAndRedraw();
                     }
                     ForcePan(destination, speed);
@@ -151,7 +151,6 @@ namespace Fantasy.Content.Logic.Graphics
                     }
                     Zoom(original, true);
                     ForcePan(destination, speed);
-                    Reposition();
                 }
             }
 
@@ -171,7 +170,6 @@ namespace Fantasy.Content.Logic.Graphics
                         break;
                     }
                     Zoom(new Vector2(zoom.X - .01f, zoom.Y - .01f), false);
-                    Reposition();
                     _scene.ClearAndRedraw();
                 }
                 ForcePan(destination, speed);
@@ -182,7 +180,6 @@ namespace Fantasy.Content.Logic.Graphics
                 }
                 Zoom(original, false);
                 ForcePan(destination, speed);
-                Reposition();
             }
 
         }
@@ -452,6 +449,10 @@ namespace Fantasy.Content.Logic.Graphics
             {
                 return false;
             }
+        }
+        public Viewport GetViewport()
+        {
+            return new Viewport(new Rectangle(cameraPosition.X, cameraPosition.Y, boundingBox.Width, boundingBox.Height));
         }
     }
 }
