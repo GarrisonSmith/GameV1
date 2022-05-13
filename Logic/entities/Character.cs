@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Fantasy.Content.Logic.Graphics;
+using Fantasy.Content.Logic.graphics;
 
-namespace Fantasy.Content.Logic.Entities
+namespace Fantasy.Content.Logic.entities
 {
     class Character
     {
@@ -24,7 +24,7 @@ namespace Fantasy.Content.Logic.Entities
             this.orientation = orientation;
         }
 
-        public void DrawCharacter(Vector2 stretch, SpriteBatch _spriteBatch, int layer)
+        public void DrawCharacter( SpriteBatch _spriteBatch, int layer)
         {
             if (frames == null)
             {
@@ -47,11 +47,11 @@ namespace Fantasy.Content.Logic.Entities
 
             if (characterIsMoving)
             {
-                frames.DrawNextFrame(spritesheet, stretch, _spriteBatch, layer, new Vector2((position.X - 30), position.Y));
+                frames.DrawNextFrame(spritesheet, _spriteBatch, layer, new Vector2((position.X - 30), position.Y));
             }
             else
             {
-                frames.FinishAnimation(spritesheet, stretch, _spriteBatch, layer, new Vector2((position.X - 30), position.Y));
+                frames.FinishAnimation(spritesheet, _spriteBatch, layer, new Vector2((position.X - 30), position.Y));
             }
         }
 

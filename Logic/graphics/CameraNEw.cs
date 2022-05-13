@@ -3,12 +3,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Content.Logic.screen;
 
-namespace Fantasy.Content.Logic.Graphics
+namespace Fantasy.Content.Logic.graphics
 {
-    /// <summary>
-    /// Controls camera movement and positioning for given scene.
-    /// </summary>
-    class Camera
+    class CameraNEw
     {
         /// <summary>
         /// The scene for this camera.
@@ -34,6 +31,8 @@ namespace Fantasy.Content.Logic.Graphics
         /// The max zoom for this camera.
         /// </summary>
         public Vector2 maxZoom = new Vector2(3f, 3f);
+
+        public float rotation;
         /// <summary>
         /// The minimum zoom for this camera.
         /// </summary>
@@ -51,12 +50,12 @@ namespace Fantasy.Content.Logic.Graphics
         /// Creates a Camera with the given properties. <c>startingCoordinate</c> becomes the cameraCenter.
         /// <c>forceCentering</c> determines that if the boundingBox is smaller than camera view, then the camera is centered on the tileMap and movement is disable without override.
         /// </summary>
-        public Camera(Scene _scene, Point startingCoordinate, bool forceCentering)
+        public CameraNEw(Scene _scene, Point startingCoordinate, bool forceCentering)
         {
             this._scene = _scene;
             this.cameraCenter = startingCoordinate;
-            cameraPosition.Width = boundingBox.Width =_scene._graphics.PreferredBackBufferWidth;
-            cameraPosition.Height = boundingBox.Height = _scene._graphics.PreferredBackBufferHeight;
+            cameraPosition.Width = _scene._graphics.PreferredBackBufferWidth;
+            cameraPosition.Height = _scene._graphics.PreferredBackBufferHeight;
             Reposition();
             SetBoundingBox(forceCentering);
         }
@@ -64,7 +63,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// Creates a Camera with the given properties. <c>startingCoordinate</c> becomes the cameraCenter.
         /// <c>forceCentering</c> determines that if the boundingBox is smaller than camera view, then the camera is centered on the tileMap and movement is disable without override.
         /// </summary>
-        public Camera(Scene _scene, Point startingCoordinate, Vector2 zoom, bool forceCentering) : this(_scene, startingCoordinate, forceCentering)
+        public CameraNEw(Scene _scene, Point startingCoordinate, Vector2 zoom, bool forceCentering) : this(_scene, startingCoordinate, forceCentering)
         {
             Zoom(zoom, true);
         }
@@ -75,18 +74,19 @@ namespace Fantasy.Content.Logic.Graphics
         {
             if (amount.X >= minZoom.X && amount.X <= maxZoom.X)
             {
-                cameraCenter.X = (int)Math.Round(((cameraCenter.X * amount.X) / zoom.X), 0);
-                cameraPosition.Width = (int)Math.Round(((cameraPosition.Width * amount.X) / zoom.X), 0);
+                cameraPosition.X = (int)Math.Round(((cameraCenter.X * amount.X) / zoom.X), 0);
+                cameraPosition.Width = (int)Math.Round(((cameraPosition.Width * (amount.X * amount.Y)) / (amount.X * amount.Y)), 0);
                 zoom.X = amount.X;
             }
             if (amount.Y >= minZoom.Y && amount.Y <= maxZoom.Y)
             {
-                cameraCenter.Y = (int)Math.Round(((cameraCenter.Y * amount.Y) / zoom.Y), 0);
+                cameraPosition.Y = (int)Math.Round(((cameraCenter.Y * amount.Y) / zoom.Y), 0);
                 cameraPosition.Height = (int)Math.Round(((cameraPosition.Height * amount.Y) / zoom.Y), 0);
                 zoom.Y = amount.Y;
             }
 
-            SetBoundingBox(allowCentering);
+
+            SetBoundingBox(false);
         }
         /// <summary>
         /// Repositions <c>cameraPosition</c> to be consistant with <c>cameraCenter</c>.
@@ -145,11 +145,16 @@ namespace Fantasy.Content.Logic.Graphics
             }
         }
         /// <summary>
-        /// Creates and returns the camera viewport used for diplaying and drawing. 
+        /// Creates the transfromation matrix used to apply camera effects when drawing.
         /// </summary>
-        public Viewport GetViewport()
+        public Matrix GetTransformation(GraphicsDevice graphicsDevice)
         {
-            return new Viewport(new Rectangle(cameraPosition.X, cameraPosition.Y, boundingBox.Width, boundingBox.Height));
+            Matrix _transform =
+                Matrix.CreateTranslation(new Vector3(cameraPosition.X, cameraPosition.Y, 0)) *
+                Matrix.CreateRotationZ(rotation) *
+                Matrix.CreateScale(new Vector3(zoom.X, zoom.Y, 1));
+            System.Diagnostics.Debug.WriteLine(_transform.ToString());
+            return _transform;
         }
         /// <summary>
         /// Pans the camera to <c>destination</c> with the provided <c>speed</c>. Follows camera movement constrictions.
@@ -189,7 +194,7 @@ namespace Fantasy.Content.Logic.Graphics
                     {
                         MoveVertical(false, speed);
                     }
-                    _scene.ClearAndRedraw();
+                    _scene.DrawScene();
                 }
             }
         }
@@ -201,38 +206,36 @@ namespace Fantasy.Content.Logic.Graphics
             destination.X = (int)(destination.X * zoom.X);
             destination.Y = (int)(destination.Y * zoom.Y);
 
-            if (PointInBoundingBox(destination))
+            while (cameraCenter.X != destination.X || cameraCenter.Y != destination.Y)
             {
-                while (cameraCenter.X != destination.X || cameraCenter.Y != destination.Y)
+                if (Math.Abs(destination.X - cameraCenter.X) <= speed)
                 {
-                    if (Math.Abs(destination.X - cameraCenter.X) <= speed)
-                    {
-                        ForceSetHorizontal(destination.X);
+                    ForceSetHorizontal(destination.X);
 
-                    }
-                    else if (cameraCenter.X < destination.X)
-                    {
-                        ForceMoveHorizontal(false, speed);
-                    }
-                    else if (cameraCenter.X > destination.X)
-                    {
-                        ForceMoveHorizontal(true, speed);
-                    }
-
-                    if (Math.Abs(destination.Y - cameraCenter.Y) <= speed)
-                    {
-                        ForceSetVertical(destination.Y);
-                    }
-                    else if (cameraCenter.Y < destination.Y)
-                    {
-                        ForceMoveVertical(true, speed);
-                    }
-                    else if (cameraCenter.Y > destination.Y)
-                    {
-                        ForceMoveVertical(false, speed);
-                    }
-                    _scene.ClearAndRedraw();
                 }
+                else if (cameraCenter.X < destination.X)
+                {
+                    ForceMoveHorizontal(false, speed);
+                }
+                else if (cameraCenter.X > destination.X)
+                {
+                    ForceMoveHorizontal(true, speed);
+                }
+
+                if (Math.Abs(destination.Y - cameraCenter.Y) <= speed)
+                {
+                    ForceSetVertical(destination.Y);
+                }
+                else if (cameraCenter.Y < destination.Y)
+                {
+                    ForceMoveVertical(true, speed);
+                }
+                else if (cameraCenter.Y > destination.Y)
+                {
+                    ForceMoveVertical(false, speed);
+                }
+                _scene.ClearAndRedraw();
+                //_scene.DrawScene();
             }
         }
         /// <summary>
@@ -276,28 +279,25 @@ namespace Fantasy.Content.Logic.Graphics
         {
             destination.X = (int)(destination.X * zoom.X);
             destination.Y = (int)(destination.Y * zoom.Y);
-            if (PointInBoundingBox(destination))
+            Vector2 original = zoom;
+            while (!(destination.X <= cameraPosition.X && destination.X >= cameraPosition.X - cameraPosition.Width) ||
+                !(destination.Y <= cameraPosition.Y && destination.Y >= cameraPosition.Y - cameraPosition.Height))
             {
-                Vector2 original = zoom;
-                while (!(destination.X <= cameraPosition.X && destination.X >= cameraPosition.X - cameraPosition.Width) ||
-                    !(destination.Y <= cameraPosition.Y && destination.Y >= cameraPosition.Y - cameraPosition.Height))
+                if ((zoom.X - .01f <= minZoom.X + .0f || zoom.X <= original.X - 1f) || (zoom.Y - .01f <= minZoom.Y + .0f || zoom.Y <= original.Y - 1f))
                 {
-                    if ((zoom.X - .01f <= minZoom.X + .0f || zoom.X <= original.X - 1f) || (zoom.Y - .01f <= minZoom.Y + .0f || zoom.Y <= original.Y - 1f))
-                    {
-                        break;
-                    }
-                    Zoom(new Vector2(zoom.X - .01f, zoom.Y - .01f), false);
-                    _scene.ClearAndRedraw();
+                    break;
                 }
-                ForcePan(destination, speed);
-                while (original != zoom)
-                {
-                    Zoom(new Vector2(zoom.X + .01f, zoom.Y + .01f), false);
-                    ForcePan(destination, speed);
-                }
-                Zoom(original, false);
+                Zoom(new Vector2(zoom.X - .01f, zoom.Y - .01f), false);
+                _scene.ClearAndRedraw();
+            }
+            ForcePan(destination, speed);
+            while (original != zoom)
+            {
+                Zoom(new Vector2(zoom.X + .01f, zoom.Y + .01f), false);
                 ForcePan(destination, speed);
             }
+            Zoom(original, false);
+            ForcePan(destination, speed);
 
         }
         /// <summary>
@@ -431,26 +431,12 @@ namespace Fantasy.Content.Logic.Graphics
             if (direction)
             {
                 //moves up
-                if (PointInBoundingBox(new Point(cameraCenter.X, cameraCenter.Y + amount)))
-                {
-                    cameraCenter.Y += amount;
-                }
-                else
-                {
-                    cameraCenter.Y = boundingBox.Y;
-                }
+                cameraCenter.Y += amount;
             }
             else
             {
                 //moves down
-                if (PointInBoundingBox(new Point(cameraCenter.X, cameraCenter.Y - amount)))
-                {
-                    cameraCenter.Y -= amount;
-                }
-                else
-                {
-                    cameraCenter.Y = boundingBox.Y - boundingBox.Height;
-                }
+                cameraCenter.Y -= amount;
             }
             Reposition();
         }
@@ -459,18 +445,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// </summary>
         public void ForceSetVertical(int Y)
         {
-            if (PointInBoundingBox(new Point(cameraCenter.X, -Y)))
-            {
-                cameraCenter.Y = -Y;
-            }
-            else if (-Y <= boundingBox.Y - boundingBox.Height)
-            {
-                cameraCenter.Y = boundingBox.Y - boundingBox.Height;
-            }
-            else
-            {
-                cameraCenter.Y = boundingBox.Y;
-            }
+            cameraCenter.Y = -Y;
             Reposition();
         }
         /// <summary>
@@ -482,26 +457,12 @@ namespace Fantasy.Content.Logic.Graphics
             if (direction)
             {
                 //moves right
-                if (PointInBoundingBox(new Point(cameraCenter.X - amount, cameraCenter.Y)))
-                {
-                    cameraCenter.X -= amount;
-                }
-                else
-                {
-                    cameraCenter.X = boundingBox.X - boundingBox.Width;
-                }
+                cameraCenter.X -= amount;
             }
             else
             {
                 //moves left
-                if (PointInBoundingBox(new Point(cameraCenter.X + amount, cameraCenter.Y)))
-                {
-                    cameraCenter.X += amount;
-                }
-                else
-                {
-                    cameraCenter.X = boundingBox.X;
-                }
+                cameraCenter.X += amount;
             }
             Reposition();
         }
@@ -510,19 +471,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// </summary>
         public void ForceSetHorizontal(int X)
         {
-            if (PointInBoundingBox(new Point(-X, cameraCenter.Y)))
-            {
-                cameraCenter.X = -X;
-            }
-            else if (-X <= boundingBox.X - boundingBox.Width)
-            {
-                cameraCenter.X = boundingBox.X - boundingBox.Width;
-            }
-            else
-            {
-                cameraCenter.X = boundingBox.X;
-            }
-            Reposition();
+            cameraCenter.X = -X;
         }
         /// <summary>
         /// Sets the camera center to the <c>cameraCenter</c>. Overrides camerea movement constrictions.

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Fantasy.Content.Logic.Graphics
+namespace Fantasy.Content.Logic.graphics
 {
     /// <summary>
     /// Desribes a layer of tiles in a given <c>TileMap</c>.
@@ -39,6 +39,7 @@ namespace Fantasy.Content.Logic.Graphics
             int column = 0;
 
             columnTemp = initialize.Split(";");
+            Array.Reverse(columnTemp);
             for (int i = 0; i < columnTemp.Length; i++)
             {
                 int row = 0;

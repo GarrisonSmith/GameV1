@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Fantasy.Content.Logic.Graphics
+namespace Fantasy.Content.Logic.graphics
 {
     class Animation
     {
@@ -24,11 +24,11 @@ namespace Fantasy.Content.Logic.Graphics
             this.currentFrame = currentFrame;
         }
 
-        public void DrawNextFrame(Texture2D spritesheet, Vector2 stretch, SpriteBatch _spriteBatch, int layer, Vector2 position)
+        public void DrawNextFrame(Texture2D spritesheet,  SpriteBatch _spriteBatch, int layer, Vector2 position)
         {
             if (frameIncrement < frameMinDrawAmount)
             {
-                _spriteBatch.Draw(spritesheet, position, drawArea, Color.White, 0, new Vector2(0, 0), stretch, new SpriteEffects(), layer);
+                _spriteBatch.Draw(spritesheet, position, drawArea, Color.White, 0, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), layer);
                 frameIncrement++;
             }
             else
@@ -43,21 +43,21 @@ namespace Fantasy.Content.Logic.Graphics
                     currentFrame = 0;
                 }
                 drawArea = new Rectangle(currentFrame * 64, rowReference * 128, 64, 128);
-                _spriteBatch.Draw(spritesheet, position, drawArea, Color.White, 0, new Vector2(0, 0), stretch, new SpriteEffects(), layer);
+                _spriteBatch.Draw(spritesheet, position, drawArea, Color.White, 0, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), layer);
             }
         }
-        public void FinishAnimation(Texture2D spritesheet, Vector2 stretch, SpriteBatch _spriteBatch, int layer, Vector2 position)
+        public void FinishAnimation(Texture2D spritesheet,  SpriteBatch _spriteBatch, int layer, Vector2 position)
         {
             if (frameIncrement < frameMinDrawAmount)
             {
-                _spriteBatch.Draw(spritesheet, position, drawArea, Color.White, 0, new Vector2(0, 0), stretch, new SpriteEffects(), layer);
+                _spriteBatch.Draw(spritesheet, position, drawArea, Color.White, 0, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), layer);
                 frameIncrement++;
             }
             else
             {
                 frameIncrement = 10;
                 drawArea = new Rectangle(0, rowReference * 128, 64, 128);
-                _spriteBatch.Draw(spritesheet, position, drawArea, Color.White, 0, new Vector2(0, 0), stretch, new SpriteEffects(), layer);
+                _spriteBatch.Draw(spritesheet, position, drawArea, Color.White, 0, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), layer);
             }
         }
     }

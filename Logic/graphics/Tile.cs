@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Fantasy.Content.Logic.Graphics
+namespace Fantasy.Content.Logic.graphics
 {
     /// <summary>
     /// Describes A tile in a given <c>TileMapLayer</c>.
