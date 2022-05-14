@@ -479,8 +479,12 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public void DrawArea(Vector2 stretch, SpriteBatch _spriteBatch, Rectangle drawArea)
         {
-            drawArea = new Rectangle((int)(-drawArea.X), (int)(-drawArea.Y),
-                (int)(drawArea.Width * (1 / new Vector2(1, 1).X)), (int)(drawArea.Height * (1 / new Vector2(1, 1).Y)));
+            drawArea = new Rectangle(
+                (int)(-drawArea.X),
+                (int)(-drawArea.Y),
+                (int)(drawArea.Width * (1 / new Vector2(1, 1).X)), 
+                (int)(drawArea.Height * (1 / new Vector2(1, 1).Y)));
+
             foreach (TileMapLayer i in map)
             {
                 foreach (Tile j in i.map)
@@ -502,18 +506,26 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public void DrawArea(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers, Rectangle drawArea)
         {
-            drawArea = new Rectangle((int)(-drawArea.X), (int)(-drawArea.Y),
-                (int)(drawArea.Width * (1 / new Vector2(1, 1).X)), (int)(drawArea.Height * (1 / new Vector2(1, 1).Y)));
+            drawArea = new Rectangle(
+                (int)(-drawArea.X),
+                (int)(-drawArea.Y),
+                (int)(drawArea.Width * (1 / new Vector2(1, 1).X)),
+                (int)(drawArea.Height * (1 / new Vector2(1, 1).Y)));
+
             foreach (int l in layers)
             {
                 foreach (TileMapLayer i in map)
                 {
-                    if (0 == l)
+                    if (i.layer == l)
                     {
                         foreach (Tile j in i.map)
                         {
-                            Rectangle tileArea = new Rectangle((int)(j.tileMapCoordinate.X * 64), (int)(-j.tileMapCoordinate.Y * 64),
-                                (int)(64), (int)(64));
+                            Rectangle tileArea = new Rectangle(
+                                (int)(j.tileMapCoordinate.X * 64),
+                                (int)(-j.tileMapCoordinate.Y * 64),
+                                (int)(64),
+                                (int)(64));
+
                             if (tileArea.Intersects(drawArea))
                             {
                                 _spriteBatch.Draw(tileTextures[j.graphicsIndex],
@@ -531,16 +543,24 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public void DrawArea(Vector2 stretch, SpriteBatch _spriteBatch, int layer, Rectangle drawArea)
         {
-            drawArea = new Rectangle((int)(-drawArea.X), (int)(-drawArea.Y),
-                (int)(drawArea.Width * (1 / new Vector2(1, 1).X)), (int)(drawArea.Height * (1 / new Vector2(1, 1).Y)));
+            drawArea = new Rectangle(
+                (int)(-drawArea.X),
+                (int)(-drawArea.Y),
+                (int)(drawArea.Width * (1 / new Vector2(1, 1).X)),
+                (int)(drawArea.Height * (1 / new Vector2(1, 1).Y)));
+
             foreach (TileMapLayer i in map)
             {
                 if (0 == layer)
                 {
                     foreach (Tile j in i.map)
                     {
-                        Rectangle tileArea = new Rectangle((int)(j.tileMapCoordinate.X * 64), (int)(-j.tileMapCoordinate.Y * 64),
-                            (int)(64), (int)(64));
+                        Rectangle tileArea = new Rectangle(
+                                (int)(j.tileMapCoordinate.X * 64),
+                                (int)(-j.tileMapCoordinate.Y * 64),
+                                (int)(64),
+                                (int)(64));
+
                         if (tileArea.Intersects(drawArea))
                         {
                             _spriteBatch.Draw(tileTextures[j.graphicsIndex],
@@ -574,6 +594,7 @@ namespace Fantasy.Content.Logic.graphics
         {
             int widthLargest = 2, widthSmallest = 2;
             int heightLargest = 2, heightSmallest = 2;
+
             foreach (TileMapLayer i in map)
             {
                 if (i.width > widthLargest)
@@ -583,8 +604,8 @@ namespace Fantasy.Content.Logic.graphics
                 else if (i.width < widthSmallest)
                 {
                     widthSmallest = i.width;
-                }   
-                
+                }
+
                 if (i.height > heightLargest)
                 {
                     heightLargest = i.height;
@@ -594,124 +615,199 @@ namespace Fantasy.Content.Logic.graphics
                     heightSmallest = i.height;
                 }
             }
+
             return new Rectangle(
-                (int)Math.Round(((widthSmallest-1) * 64 * stretch.X), 0),
-                (int)Math.Round(((heightSmallest-1) * 64 * stretch.X), 0),
-                (int)Math.Round(((widthLargest-(widthSmallest-1)) * 64 * stretch.X), 0),
-                (int)Math.Round(((heightLargest-(heightSmallest-1)) * 64 * stretch.Y), 0)
-                );
+                (int)Math.Round(((widthSmallest - 1) * 64 * stretch.X)),
+                (int)Math.Round(((heightSmallest - 1) * 64 * stretch.X)),
+                (int)Math.Round(((widthLargest - (widthSmallest - 1)) * 64 * stretch.X)),
+                (int)Math.Round(((heightLargest - (heightSmallest - 1)) * 64 * stretch.Y)));
         }
         /// <summary>
         /// Returns a rectangle that is the size and location of the provided <c>layers</c> in the TileMap with the provided <c>stretch</c>.
         /// </summary>
         public Rectangle GetTileMapBounding(Vector2 stretch, int[] layers)
         {
-            int width = 0;
-            int height = 0;
+            int widthLargest = 2, widthSmallest = 2;
+            int heightLargest = 2, heightSmallest = 2;
+
             foreach (int l in layers)
             {
                 foreach (TileMapLayer i in map)
+                {
                     if (i.layer == l)
                     {
+                        if (i.width > widthLargest)
                         {
-                            if (i.width > width)
-                            {
-                                width = i.width;
-                            }
-                            if (i.height > height)
-                            {
-                                height = i.height;
-                            }
+                            widthLargest = i.width;
+                        }
+                        else if (i.width < widthSmallest)
+                        {
+                            widthSmallest = i.width;
+                        }
+
+                        if (i.height > heightLargest)
+                        {
+                            heightLargest = i.height;
+                        }
+                        else if (i.height < heightSmallest)
+                        {
+                            heightSmallest = i.height;
                         }
                     }
+                }
             }
-            return new Rectangle(0, (int)Math.Round((height * 64 * stretch.Y), 0), (int)Math.Round((width * 64 * stretch.X), 0), (int)Math.Round((height * 64 * stretch.Y), 0));
+
+            return new Rectangle(
+                (int)Math.Round(((widthSmallest - 1) * 64 * stretch.X)),
+                (int)Math.Round(((heightSmallest - 1) * 64 * stretch.X)),
+                (int)Math.Round(((widthLargest - (widthSmallest - 1)) * 64 * stretch.X)),
+                (int)Math.Round(((heightLargest - (heightSmallest - 1)) * 64 * stretch.Y)));
         }
         /// <summary>
         /// Returns a rectangle that is the size and location of the provided <c>layer</c> in the TileMap with the provided <c>stretch</c>.
         /// </summary>
         public Rectangle GetTileMapBounding(Vector2 stretch, int layer)
         {
-            int width = 0;
-            int height = 0;
+            int widthLargest = 2, widthSmallest = 2;
+            int heightLargest = 2, heightSmallest = 2;
+
             foreach (TileMapLayer i in map)
             {
                 if (i.layer == layer)
                 {
-                    if (i.width > width)
+                    if (i.width > widthLargest)
                     {
-                        width = i.width;
+                        widthLargest = i.width;
                     }
-                    if (i.height > height)
+                    else if (i.width < widthSmallest)
                     {
-                        height = i.height;
+                        widthSmallest = i.width;
+                    }
+
+                    if (i.height > heightLargest)
+                    {
+                        heightLargest = i.height;
+                    }
+                    else if (i.height < heightSmallest)
+                    {
+                        heightSmallest = i.height;
                     }
                 }
             }
-            return new Rectangle(0, (int)Math.Round((height * 64 * stretch.Y), 0), (int)Math.Round((width * 64 * stretch.X), 0), (int)Math.Round((height * 64 * stretch.Y), 0));
+
+            return new Rectangle(
+                (int)Math.Round(((widthSmallest - 1) * 64 * stretch.X)),
+                (int)Math.Round(((heightSmallest - 1) * 64 * stretch.X)),
+                (int)Math.Round(((widthLargest - (widthSmallest - 1)) * 64 * stretch.X)),
+                (int)Math.Round(((heightLargest - (heightSmallest - 1)) * 64 * stretch.Y)));
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap with the provided <c>stretch</c>.
         /// </summary>
         public Point GetTileMapCenter(Vector2 stretch)
         {
-            int X = 0;
-            int Y = 0;
+            int widthLargest = 2, widthSmallest = 2;
+            int heightLargest = 2, heightSmallest = 2;
+
             foreach (TileMapLayer i in map)
             {
-                if (i.width > X)
+                if (i.width > widthLargest)
                 {
-                    X = i.width;
+                    widthLargest = i.width;
                 }
-                if (i.height > Y)
+                else if (i.width < widthSmallest)
                 {
-                    Y = i.height;
+                    widthSmallest = i.width;
+                }
+
+                if (i.height > heightLargest)
+                {
+                    heightLargest = i.height;
+                }
+                else if (i.height < heightSmallest)
+                {
+                    heightSmallest = i.height;
                 }
             }
-            return new Point((int)(-((X * 64) / 2) * stretch.X), (int)(-((Y * 64) / 2) * stretch.Y));
+
+            return new Point(
+                (int)Math.Round((((widthSmallest - 1) * 64) + ((widthLargest - (widthSmallest - 1)) * 32)) * stretch.X),
+                (int)Math.Round((((heightSmallest - 1) * 64) + ((heightLargest - (heightSmallest - 1)) * 32)) * stretch.Y));
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap of the provided <c>layers</c> in the TileMap with the provided <c>stretch</c>.
         /// </summary>
         public Point GetTileMapCenter(Vector2 stretch, int[] layers)
         {
-            int X = 0;
-            int Y = 0;
+            int widthLargest = 2, widthSmallest = 2;
+            int heightLargest = 2, heightSmallest = 2;
+
             foreach (int l in layers)
             {
                 foreach (TileMapLayer i in map)
                 {
-                    if (i.width > X)
+                    if (i.layer == l)
                     {
-                        X = i.width;
-                    }
-                    if (i.height > Y)
-                    {
-                        Y = i.height;
+                        if (i.width > widthLargest)
+                        {
+                            widthLargest = i.width;
+                        }
+                        else if (i.width < widthSmallest)
+                        {
+                            widthSmallest = i.width;
+                        }
+
+                        if (i.height > heightLargest)
+                        {
+                            heightLargest = i.height;
+                        }
+                        else if (i.height < heightSmallest)
+                        {
+                            heightSmallest = i.height;
+                        }
                     }
                 }
             }
-            return new Point((int)(-((X * 64) / 2) * stretch.X), (int)(-((Y * 64) / 2) * stretch.Y));
+
+            return new Point(
+                (int)Math.Round((((widthSmallest - 1) * 64) + ((widthLargest - (widthSmallest - 1)) * 32)) * stretch.X),
+                (int)Math.Round((((heightSmallest - 1) * 64) + ((heightLargest - (heightSmallest - 1)) * 32)) * stretch.Y));
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap of the provided <c>layer</c> in the TileMap with the provided <c>stretch</c>.
         /// </summary>
         public Point GetTileMapCenter(Vector2 stretch, int layer)
         {
-            int X = 0;
-            int Y = 0;
+            int widthLargest = 2, widthSmallest = 2;
+            int heightLargest = 2, heightSmallest = 2;
+
             foreach (TileMapLayer i in map)
             {
-                if (i.width > X)
+                if (i.layer == layer)
                 {
-                    X = i.width;
-                }
-                if (i.height > Y)
-                {
-                    Y = i.height;
+                    if (i.width > widthLargest)
+                    {
+                        widthLargest = i.width;
+                    }
+                    else if (i.width < widthSmallest)
+                    {
+                        widthSmallest = i.width;
+                    }
+
+                    if (i.height > heightLargest)
+                    {
+                        heightLargest = i.height;
+                    }
+                    else if (i.height < heightSmallest)
+                    {
+                        heightSmallest = i.height;
+                    }
                 }
             }
-            return new Point((int)(-((X * 64) / 2) * stretch.X), (int)(-((Y * 64) / 2) * stretch.Y));
+
+            return new Point(
+                (int)Math.Round((((widthSmallest - 1) * 64) + ((widthLargest - (widthSmallest - 1)) * 32)) * stretch.X),
+                (int)Math.Round((((heightSmallest - 1) * 64) + ((heightLargest - (heightSmallest - 1)) * 32)) * stretch.Y));
         }
     }
 }

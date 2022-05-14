@@ -48,11 +48,7 @@ namespace Fantasy.Content.Logic.graphics
                 {
                     foreach (string j in columnTemp)
                     {
-                        if (j == "BLANK")
-                        {
-                            //does nothing. Blank tiles are not added to the layer.
-                        }
-                        else if (j != "")
+                        if (j != "")
                         {
                             map.Add(new Tile(j, column, row));
                             if (column+1 > this.width)
@@ -66,6 +62,7 @@ namespace Fantasy.Content.Logic.graphics
                         }
                         column++;
                     }
+                    
                     row++;
                 }
             }
