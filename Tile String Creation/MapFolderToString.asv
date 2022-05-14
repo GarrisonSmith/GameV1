@@ -105,20 +105,20 @@ function foo = get_tile_string(tile) %gets the provided tile's string from tileI
     end
 end
 
-function foo = remove_empty_rows(mapString) %removes any empty rows from the bottom of the string.
+function foo = remove_empty_rows(mapString)
+    disp(mapString);
+    index = 0; %index of the first ; that is followed only by empty rows.
+    empty = true;
     for i=1:1:strlength(mapString)
-        empty = true;
-        if(mapString{1}(i) == ';')
+        if(mapString{1}(i) == ";")
             for j = i:1:strlength(mapString)
-               if(mapString{1}(j) ~= ':' && mapString{1}(j) ~= ';')
-                   empty = false;
-                   break;
+               if(mapString{1}(i) ~= ":")
+                    empty = false;
                end
-            end
-            
-            if (empty)
-                mapString = mapString{1}(1:i);
-                break;
+                
+               if(mapString{1}(i) == ";" && empty)
+                   
+               end
             end
         end
     end
