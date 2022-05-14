@@ -27,7 +27,7 @@ namespace Fantasy.Content.Logic.Graphics
         /// </summary>
         public Rectangle boundingBox;
         /// <summary>
-        /// The zoom level of the camera. Higher values result in a closer zoom. Is used as a new Vector2(1, 1) on tiles when drawing.
+        /// The zoom level of the camera. Higher values result in a closer zoom. Is used as a stretch on tiles when drawing.
         /// </summary>
         public Vector2 zoom = new Vector2(1f, 1f);
         /// <summary>

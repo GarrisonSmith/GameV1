@@ -32,9 +32,9 @@ namespace Fantasy.Content.Logic.graphics
         /// Constructs a tile with the given properties.
         /// <param name="tileID"> is parsed to get the tiles <c>tileSetName</c> and tiles <c>x</c> and <c>y</c> values. </param>
         /// </summary>
-        public Tile(string tileID, int row, int column)
+        public Tile(string tileID, int column, int row)
         {
-            tileMapCoordinate = new Point(row, column);
+            tileMapCoordinate = new Point(column, row);
             if (tileID == "BLACK")
             {
                 this.tileSetName = tileID;

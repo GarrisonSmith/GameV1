@@ -22,9 +22,9 @@ namespace Fantasy.Content.Logic.screen
             this._tileMap = _tileMap;
             this._tileTextures = _tileTextures;
             this._characters = new List<Character>();
-            _characters.Add(new Character(_tileTextures[5], new Point(30, 0), "character one", 3, Orientation.forward));
+            _characters.Add(new Character(_tileTextures[5], new Point(200, -700), "character one", 3, Orientation.forward));
 
-            this._camera = new CameraNEw(this, new Point(0, 0), true);
+            this._camera = new CameraNEw(this, new Point(0, 1500), true);
         }
         public void LoadScene()
         {
@@ -32,22 +32,22 @@ namespace Fantasy.Content.Logic.screen
         }
         public void DrawScene()
         {
-            //SpriteBatch _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
-            _spriteBatch.Begin(SpriteSortMode.FrontToBack,
-                        BlendState.AlphaBlend,
-                        null,
-                        null,
-                        null,
-                        null,
-                        _camera.GetTransformation(_graphics.GraphicsDevice));
-            _tileMap.DrawLayers(_spriteBatch);
-            _characters[0].DrawCharacter(_spriteBatch, 0);
+            _spriteBatch.Begin(SpriteSortMode.FrontToBack, //1.0 on top, 0.0 on bottom 
+                null,
+                null,
+                null, 
+                null, 
+                null,
+                _camera.GetTransformation(_graphics.GraphicsDevice));
+            _characters[0].DrawCharacter(_spriteBatch, 1);
+            _tileMap.DrawLayers(_camera.zoom, _spriteBatch);
             _spriteBatch.End();
-            DrawDebug();
+
+            Debug.DebugAll(this);
         }
         public void ClearAndRedraw()
         {
-            _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
+            _graphics.GraphicsDevice.Clear(Color.Gray);
             _graphics.BeginDraw();
             DrawScene();
             _graphics.EndDraw();
@@ -66,30 +66,6 @@ namespace Fantasy.Content.Logic.screen
             _graphics.PreferredBackBufferHeight = 500;
             _graphics.ApplyChanges();
             this._camera = new CameraNEw(this, this._camera.cameraCenter, true);
-        }
-        public void DrawDebug() {
-            _spriteBatch.Begin(SpriteSortMode.BackToFront,
-                        BlendState.AlphaBlend,
-                        null,
-                        null,
-                        null,
-                        null,
-                        _camera.GetTransformation(_graphics.GraphicsDevice));
-            for (int i = 0; i <= _graphics.PreferredBackBufferWidth / 2; i++)
-            {
-                _spriteBatch.Draw(_tileTextures[0],
-                        new Vector2(i, 0),
-                        new Rectangle(0, 0, 2, 1), Color.White, 0, new Vector2(0,0),
-                        new Vector2(1, 1), new SpriteEffects(), 0);
-            }
-            for (int i = 0; i <= _graphics.PreferredBackBufferHeight / 2; i++)
-            {
-                _spriteBatch.Draw(_tileTextures[0],
-                        new Vector2(0, -i-_camera.zoom.Y),
-                        new Rectangle(0, 0, 1, 2), Color.White, 0, new Vector2(0,0),
-                        new Vector2(1, 1), new SpriteEffects(), 1);
-            }
-            _spriteBatch.End();
         }
     }
 }

@@ -36,35 +36,38 @@ namespace Fantasy.Content.Logic.graphics
             this.layer = layer;
             string[] columnTemp;
             string[] rowTemp;
-            int column = 0;
+            int row = 2;
 
-            columnTemp = initialize.Split(";");
-            Array.Reverse(columnTemp);
-            for (int i = 0; i < columnTemp.Length; i++)
+            rowTemp = initialize.Split(";");
+            Array.Reverse(rowTemp);
+            for (int i = 0; i < rowTemp.Length; i++)
             {
-                int row = 0;
-                rowTemp = columnTemp[i].Split(":");
-                foreach (string j in rowTemp)
+                int column = 1;
+                columnTemp = rowTemp[i].Split(":");
+                if (rowTemp[i] != "")
                 {
-                    if (j == "BLANK")
+                    foreach (string j in columnTemp)
                     {
-                        //does nothing. Blank tiles are not added to the layer.
-                    }
-                    else if (j != "")
-                    {
-                        map.Add(new Tile(j, row, column));
-                        if (row + 1 > this.width)
+                        if (j == "BLANK")
                         {
-                            this.width = row + 1;
+                            //does nothing. Blank tiles are not added to the layer.
                         }
-                        if (column + 1 > this.height)
+                        else if (j != "")
                         {
-                            this.height = column + 1;
+                            map.Add(new Tile(j, column, row));
+                            if (column+1 > this.width)
+                            {
+                                this.width = column+1;
+                            }
+                            if (row > this.height)
+                            {
+                                this.height = row;
+                            }
                         }
+                        column++;
                     }
                     row++;
                 }
-                column++;
             }
         }
         /// <summary>
