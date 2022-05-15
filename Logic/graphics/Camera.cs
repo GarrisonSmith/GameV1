@@ -32,7 +32,9 @@ namespace Fantasy.Content.Logic.graphics
         /// The max zoom for this camera.
         /// </summary>
         public Vector2 maxZoom = new Vector2(3f, 3f);
-
+        /// <summary>
+        /// Determines how much the final drawing of the spritebatch is rotated around the origin.
+        /// </summary>
         public float rotation = 0f;
         /// <summary>
         /// The minimum zoom for this camera.
@@ -204,6 +206,7 @@ namespace Fantasy.Content.Logic.graphics
         }
         /// <summary>
         /// Pans the camera to <c>destination</c> with the provided <c>speed</c>. Overrides camera movement constrictions.
+        /// <c>centerDestination</c> determines if the destination will be in the middle of the screen if true, top left if false.
         /// </summary>
         public void ForcePan(Point destination, int speed, bool centerDestination)
         {
@@ -249,6 +252,7 @@ namespace Fantasy.Content.Logic.graphics
         }
         /// <summary>
         /// Pans the camera to <c>destination</c> with the provided <c>speed</c> by first zooming out before panning then zooming back in after panning. Follows camera movement constrictions.
+        /// <c>centerDestination</c> determines if the destination will be in the middle of the screen if true, top left if false.
         /// </summary>
         public void PanWithZoom(Point destination, int speed, bool centerDestination)
         {
@@ -347,6 +351,8 @@ namespace Fantasy.Content.Logic.graphics
         }
         /// <summary>
         /// Sets the camera vetical coordinate to the provided <c>Y</c>. Follows camera movement constrictions.
+        /// <c>centerDestination</c> determines if the destination will be in the middle of the screen if true, top left if false.
+        /// <c>stretchY</c> determines if this cameras <c>stretch</c> value is applied to the destination <c>Y</c>.
         /// </summary>
         public void SetVertical(int Y, bool centerDestination, bool stretchY)
         {
@@ -414,6 +420,8 @@ namespace Fantasy.Content.Logic.graphics
         }
         /// <summary>
         /// Sets the camera horizontal coordinate to the provided <c>X</c>. Follows camera movement constrictions.
+        /// <c>centerDestination</c> determines if the destination will be in the middle of the screen if true, top left if false.
+        /// <c>stretchX</c> determines if this cameras <c>stretch</c> value is applied to the destination <c>X</c>.
         /// </summary>
         public void SetHorizontal(int X, bool centerDestination, bool stretchX)
         {
@@ -446,6 +454,7 @@ namespace Fantasy.Content.Logic.graphics
         }
         /// <summary>
         /// Sets the camera center to the <c>cameraCenter</c>. Follows camerea movement constrictions.
+        /// <c>stretchCoordinate</c> determines if this cameras <c>stretch</c> value is applied to the destination <c>coordinate</c>.
         /// </summary>
         public void SetCenter(Point coordinate, bool stretchCoordinate)
         {
@@ -472,6 +481,8 @@ namespace Fantasy.Content.Logic.graphics
         }
         /// <summary>
         /// Sets the camera vetical coordinate to the provided <c>Y</c>. Overrides camera movement constrictions.
+        /// <c>centerDestination</c> determines if the destination will be in the middle of the screen if true, top left if false.
+        /// <c>stretchY</c> determines if this cameras <c>stretch</c> value is applied to the destination <c>Y</c>.
         /// </summary>
         public void ForceSetVertical(int Y, bool centerDestination, bool stretchY)
         {
@@ -508,6 +519,8 @@ namespace Fantasy.Content.Logic.graphics
         }
         /// <summary>
         /// Sets the camera horizontal coordinate to the provided <c>X</c>. Overrides camera movement constrictions.
+        /// <c>centerDestination</c> determines if the destination will be in the middle of the screen if true, top left if false.
+        /// <c>stretchX</c> determines if this cameras <c>stretch</c> value is applied to the destination <c>X</c>.
         /// </summary>
         public void ForceSetHorizontal(int X, bool centerDestination, bool stretchX)
         {
@@ -526,6 +539,7 @@ namespace Fantasy.Content.Logic.graphics
         }
         /// <summary>
         /// Sets the camera center to the <c>cameraCenter</c>. Overrides camerea movement constrictions.
+        /// <c>stretchCoordinate</c> determines if this cameras <c>stretch</c> value is applied to the destination <c>coordinate</c>.
         /// </summary>
         public void ForceSetCenter(Point coordinate, bool stretchCoordinate)
         {
