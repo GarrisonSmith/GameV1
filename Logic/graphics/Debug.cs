@@ -22,7 +22,7 @@ namespace Fantasy.Content.Logic.graphics
             */
             DrawAxis(_scene);
             DrawRectangle(_scene, _scene._tileMap.GetTileMapBounding(_scene._camera.zoom));
-            DrawPoint(_scene, _scene._tileMap.GetTileMapCenter(_scene._camera.zoom), false);
+            //DrawPoint(_scene, _scene._tileMap.GetTileMapCenter(_scene._camera.zoom), false);
             DrawPoint(_scene, new Point(640, 640), true);
 
             // _scene._spriteBatch.End();
@@ -52,12 +52,12 @@ namespace Fantasy.Content.Logic.graphics
             for (int i = foo.X; i < foo.X + foo.Width; i++)
             {
                 _scene._spriteBatch.Draw(_scene._tileTextures[0],
-                        new Vector2(i, -foo.Y),
+                        new Vector2(i, -(foo.Y-foo.Height)),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
                         new Vector2(1, 1), new SpriteEffects(), 1);
             }
             //draws left line
-            for (int i = foo.Y; i < foo.Y + foo.Height; i++)
+            for (int i = foo.Y-foo.Height; i < foo.Y; i++)
             {
                 _scene._spriteBatch.Draw(_scene._tileTextures[0],
                         new Vector2(foo.X, -i),
@@ -68,15 +68,15 @@ namespace Fantasy.Content.Logic.graphics
             for (int i = foo.X; i < foo.X + foo.Width; i++)
             {
                 _scene._spriteBatch.Draw(_scene._tileTextures[0],
-                        new Vector2(i, -foo.Height - (64 * _scene._camera.zoom.X)),
+                        new Vector2(i, -foo.Y),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
                         new Vector2(1, 1), new SpriteEffects(), 1);
             }
             //draws right line
-            for (int i = foo.Y; i < foo.Y + foo.Height; i++)
+            for (int i = foo.Y - foo.Height; i < foo.Y; i++)
             {
                 _scene._spriteBatch.Draw(_scene._tileTextures[0],
-                        new Vector2(foo.Width + (64 * _scene._camera.zoom.Y), -i),
+                        new Vector2((foo.X + foo.Width), -i),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
                         new Vector2(1, 1), new SpriteEffects(), 1);
             }

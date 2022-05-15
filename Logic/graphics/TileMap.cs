@@ -120,6 +120,13 @@ namespace Fantasy.Content.Logic.graphics
         {
             tileTextures = null;
         }
+        public void DrawToMap(Texture2D texture, Color color, Vector2 stretch, SpriteBatch _spriteBatch, int row, int column, int horizontalOffSet, int verticalalOffSet)
+        {
+            _spriteBatch.Draw(texture,
+                            new Vector2(((row * 64)+horizontalOffSet) * stretch.X, ((-(column + 1) * 64) - verticalalOffSet )* stretch.Y),
+                            new Rectangle(0, 0, 64, 64), color, 0, new Vector2(0, 0),
+                            stretch, new SpriteEffects(), 0);
+        }
         /// <summary>
         /// Draws all tiles inside of the TileMap.
         /// </summary>
@@ -129,10 +136,7 @@ namespace Fantasy.Content.Logic.graphics
             {
                 foreach (Tile j in i.map)
                 {
-                    _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                        new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                        new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                        stretch, new SpriteEffects(), 0);
+                    DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                 }
             }
         }
@@ -149,10 +153,7 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         foreach (Tile j in i.map)
                         {
-                            _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                                new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                                new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                                stretch, new SpriteEffects(), 0);
+                            DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                         }
                     }
                 }
@@ -169,10 +170,7 @@ namespace Fantasy.Content.Logic.graphics
                 {
                     foreach (Tile j in i.map)
                     {
-                        _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                            new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                            new Rectangle(0, 0, 64, 64), j.color, 0f, Vector2.Zero,
-                            stretch, SpriteEffects.None, 0f);
+                        DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                     }
                 }
             }
@@ -192,10 +190,7 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             foreach (Texture2D k in tileTextures)
                             {
-                                _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                                    new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                                    new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                                    stretch, new SpriteEffects(), 0);
+                                DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                             }
                         }
                     }
@@ -219,10 +214,7 @@ namespace Fantasy.Content.Logic.graphics
                             {
                                 if (j.tileMapCoordinate.X == r)
                                 {
-                                    _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                                        new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                                        new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                                        stretch, new SpriteEffects(), 0);
+                                    DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                                 }
                             }
                         }
@@ -245,10 +237,7 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             if (j.tileMapCoordinate.X == r)
                             {
-                                _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                                    new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                                    new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                                    stretch, new SpriteEffects(), 0);
+                                DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                             }
                         }
                     }
@@ -266,10 +255,7 @@ namespace Fantasy.Content.Logic.graphics
                 {
                     if (j.tileMapCoordinate.X == row)
                     {
-                        _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                            new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                            new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                            stretch, new SpriteEffects(), 0);
+                        DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                     }
                 }
             }
@@ -289,10 +275,7 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             if (j.tileMapCoordinate.X == row)
                             {
-                                _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                                    new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                                    new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                                    stretch, new SpriteEffects(), 0);
+                                DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                             }
                         }
                     }
@@ -312,10 +295,7 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         if (j.tileMapCoordinate.X == row)
                         {
-                            _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                                new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                                new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                                stretch, new SpriteEffects(), 0);
+                            DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                         }
                     }
                 }
@@ -334,10 +314,7 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         if (j.tileMapCoordinate.X == c)
                         {
-                            _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                                new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                                new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                                stretch, new SpriteEffects(), 0);
+                            DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                         }
                     }
                 }
@@ -360,10 +337,7 @@ namespace Fantasy.Content.Logic.graphics
                             {
                                 if (j.tileMapCoordinate.X == c)
                                 {
-                                    _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                                        new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                                        new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                                        stretch, new SpriteEffects(), 0);
+                                    DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                                 }
                             }
                         }
@@ -386,10 +360,7 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             if (j.tileMapCoordinate.X == c)
                             {
-                                _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                                    new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                                    new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                                    stretch, new SpriteEffects(), 0);
+                                DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                             }
                         }
                     }
@@ -407,10 +378,7 @@ namespace Fantasy.Content.Logic.graphics
                 {
                     if (j.tileMapCoordinate.X == column)
                     {
-                        _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                            new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                            new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                            stretch, new SpriteEffects(), 0);
+                        DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                     }
                 }
             }
@@ -430,10 +398,7 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             if (j.tileMapCoordinate.X == column)
                             {
-                                _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                                    new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                                    new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                                    stretch, new SpriteEffects(), 0);
+                                DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                             }
                         }
                     }
@@ -453,10 +418,7 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         if (j.tileMapCoordinate.X == column)
                         {
-                            _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                                new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                                new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                                stretch, new SpriteEffects(), 0);
+                            DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                         }
                     }
                 }
@@ -477,10 +439,7 @@ namespace Fantasy.Content.Logic.graphics
                         (int)(64 * stretch.X), (int)(64 * stretch.Y));
                     if (tileArea.Intersects(drawArea))
                     {
-                        _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                            new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                            new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                            stretch, new SpriteEffects(), 0);
+                        DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                     }
                 }
             }
@@ -508,10 +467,7 @@ namespace Fantasy.Content.Logic.graphics
 
                             if (tileArea.Intersects(drawArea))
                             {
-                                _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                                    new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                                    new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                                    stretch, new SpriteEffects(), 0);
+                                DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                             }
                         }
                     }
@@ -539,10 +495,7 @@ namespace Fantasy.Content.Logic.graphics
 
                         if (tileArea.Intersects(drawArea))
                         {
-                            _spriteBatch.Draw(tileTextures[j.graphicsIndex],
-                                new Vector2(j.tileMapCoordinate.X * 64 * stretch.X, -j.tileMapCoordinate.Y * 64 * stretch.Y),
-                                new Rectangle(0, 0, 64, 64), j.color, 0, new Vector2(0, 0),
-                                stretch, new SpriteEffects(), 0);
+                            DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                         }
                     }
                 }
@@ -568,8 +521,8 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public Rectangle GetTileMapBounding(Vector2 stretch)
         {
-            int widthLargest = 2, widthSmallest = 2;
-            int heightLargest = 2, heightSmallest = 2;
+            int widthLargest = 1, widthSmallest = 1;
+            int heightLargest = 1, heightSmallest = 1;
 
             foreach (TileMapLayer i in map)
             {
@@ -593,10 +546,10 @@ namespace Fantasy.Content.Logic.graphics
             }
 
             return new Rectangle(
-                (int)Math.Round(((widthSmallest - 1) * 64 * stretch.X)),
-                (int)Math.Round(((heightSmallest - 1) * 64 * stretch.X)),
-                (int)Math.Round(((widthLargest - (widthSmallest - 1)) * 64 * stretch.X)),
-                (int)Math.Round(((heightLargest - (heightSmallest - 1)) * 64 * stretch.Y)));
+                (int)Math.Round((widthSmallest * 64 * stretch.X)),
+                (int)Math.Round(((heightLargest+1) * 64 * stretch.X)),
+                (int)Math.Round(((widthLargest - widthSmallest + 1) * 64 * stretch.X)),
+                (int)Math.Round(((heightLargest - heightSmallest + 1) * 64 * stretch.Y)));
         }
         /// <summary>
         /// Returns a rectangle that is the size and location of the provided <c>layers</c> in the TileMap with the provided <c>stretch</c>.

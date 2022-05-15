@@ -49,11 +49,11 @@ namespace Fantasy.Content.Logic.entities
 
             if (characterIsMoving)
             {
-                frames.DrawNextFrame(spritesheet, _spriteBatch, new Vector2((position.X - 30), position.Y));
+                frames.DrawNextFrame(spritesheet, _spriteBatch, new Vector2((position.X - 0), position.Y));
             }
             else
             {
-                frames.FinishAnimation(spritesheet, _spriteBatch, new Vector2((position.X - 30), position.Y));
+                frames.FinishAnimation(spritesheet, _spriteBatch, new Vector2((position.X - 0), position.Y));
             }
         }
 

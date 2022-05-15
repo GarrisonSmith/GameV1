@@ -36,7 +36,7 @@ namespace Fantasy.Content.Logic.graphics
             this.layer = layer;
             string[] columnTemp;
             string[] rowTemp;
-            int row = 2;
+            int row = 1;
 
             rowTemp = initialize.Split(";");
             Array.Reverse(rowTemp);
@@ -51,9 +51,9 @@ namespace Fantasy.Content.Logic.graphics
                         if (j != "")
                         {
                             map.Add(new Tile(j, column, row));
-                            if (column+1 > this.width)
+                            if (column > this.width)
                             {
-                                this.width = column+1;
+                                this.width = column;
                             }
                             if (row > this.height)
                             {

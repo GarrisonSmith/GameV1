@@ -22,7 +22,7 @@ namespace Fantasy.Content.Logic.screen
             this._tileMap = _tileMap;
             this._tileTextures = _tileTextures;
             this._characters = new List<Character>();
-            _characters.Add(new Character("character one", _tileTextures[5], 3, 1, Orientation.forward, new Point(200, -700)));
+            _characters.Add(new Character("character one", _tileTextures[5], 3, 1, Orientation.forward, new Point(0, -64)));
 
             _camera = new Camera(this, new Point(0, 1500), true);
         }
@@ -40,7 +40,7 @@ namespace Fantasy.Content.Logic.screen
                 null,
                 _camera.GetTransformation(_graphics.GraphicsDevice));
 
-            _tileMap.DrawArea(_camera.zoom, _spriteBatch, _camera.cameraPosition);
+            _tileMap.DrawLayers(_camera.zoom, _spriteBatch);
             _characters[0].DrawCharacter(_spriteBatch);
             Debug.DebugAll(this);
             
