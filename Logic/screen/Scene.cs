@@ -11,7 +11,7 @@ namespace Fantasy.Content.Logic.screen
     {
         public GraphicsDeviceManager _graphics;
         public SpriteBatch _spriteBatch;
-        public CameraNEw _camera;
+        public Camera _camera;
         public TileMap _tileMap;
         public Texture2D[] _tileTextures;
         public List<Character> _characters;
@@ -22,9 +22,9 @@ namespace Fantasy.Content.Logic.screen
             this._tileMap = _tileMap;
             this._tileTextures = _tileTextures;
             this._characters = new List<Character>();
-            _characters.Add(new Character(_tileTextures[5], new Point(200, -700), "character one", 3, Orientation.forward));
+            _characters.Add(new Character("character one", _tileTextures[5], 3, 1, Orientation.forward, new Point(200, -700)));
 
-            this._camera = new CameraNEw(this, new Point(0, 1500), true);
+            _camera = new Camera(this, new Point(0, 1500), true);
         }
         public void LoadScene()
         {
@@ -32,18 +32,19 @@ namespace Fantasy.Content.Logic.screen
         }
         public void DrawScene()
         {
-            _spriteBatch.Begin(SpriteSortMode.FrontToBack, //1.0 on top, 0.0 on bottom 
-                null,
+            _spriteBatch.Begin(SpriteSortMode.Deferred, //first things drawn on bottom, last things on top
+                BlendState.AlphaBlend,
                 null,
                 null, 
                 null, 
                 null,
                 _camera.GetTransformation(_graphics.GraphicsDevice));
-            _characters[0].DrawCharacter(_spriteBatch, 1);
-            _tileMap.DrawLayers(_camera.zoom, _spriteBatch);
-            _spriteBatch.End();
 
+            _tileMap.DrawArea(_camera.zoom, _spriteBatch, _camera.cameraPosition);
+            _characters[0].DrawCharacter(_spriteBatch);
             Debug.DebugAll(this);
+            
+            _spriteBatch.End();
         }
         public void ClearAndRedraw()
         {
@@ -65,7 +66,7 @@ namespace Fantasy.Content.Logic.screen
             _graphics.PreferredBackBufferWidth = 500;
             _graphics.PreferredBackBufferHeight = 500;
             _graphics.ApplyChanges();
-            this._camera = new CameraNEw(this, this._camera.cameraCenter, true);
+            this._camera = new Camera(this, this._camera.cameraCenter, true);
         }
     }
 }

@@ -84,18 +84,6 @@ namespace Fantasy.Content.Logic.graphics
             }
             return null;
         }
-        public int GetAmountOfRows()
-        {
-            int rowAmount = 1;
-            foreach (TileMapLayer i in map)
-            {
-                if (i.width > rowAmount)
-                {
-                    rowAmount = i.width;
-                }
-            }
-            return rowAmount;
-        }
         /// <summary>
         /// Loads all textures being being used by this TileMap from all layers.
         /// </summary>
@@ -479,18 +467,14 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public void DrawArea(Vector2 stretch, SpriteBatch _spriteBatch, Rectangle drawArea)
         {
-            drawArea = new Rectangle(
-                (int)(-drawArea.X),
-                (int)(-drawArea.Y),
-                (int)(drawArea.Width * (1 / new Vector2(1, 1).X)), 
-                (int)(drawArea.Height * (1 / new Vector2(1, 1).Y)));
+            drawArea.Y = -drawArea.Y;
 
             foreach (TileMapLayer i in map)
             {
                 foreach (Tile j in i.map)
                 {
-                    Rectangle tileArea = new Rectangle((int)(j.tileMapCoordinate.X * 64), (int)(-j.tileMapCoordinate.Y * 64),
-                        (int)(64), (int)(64));
+                    Rectangle tileArea = new Rectangle((int)(j.tileMapCoordinate.X * 64 * stretch.X), (int)(-j.tileMapCoordinate.Y * 64 * stretch.Y),
+                        (int)(64 * stretch.X), (int)(64 * stretch.Y));
                     if (tileArea.Intersects(drawArea))
                     {
                         _spriteBatch.Draw(tileTextures[j.graphicsIndex],
@@ -506,11 +490,7 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public void DrawArea(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers, Rectangle drawArea)
         {
-            drawArea = new Rectangle(
-                (int)(-drawArea.X),
-                (int)(-drawArea.Y),
-                (int)(drawArea.Width * (1 / new Vector2(1, 1).X)),
-                (int)(drawArea.Height * (1 / new Vector2(1, 1).Y)));
+            drawArea.Y = -drawArea.Y;
 
             foreach (int l in layers)
             {
@@ -543,11 +523,7 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public void DrawArea(Vector2 stretch, SpriteBatch _spriteBatch, int layer, Rectangle drawArea)
         {
-            drawArea = new Rectangle(
-                (int)(-drawArea.X),
-                (int)(-drawArea.Y),
-                (int)(drawArea.Width * (1 / new Vector2(1, 1).X)),
-                (int)(drawArea.Height * (1 / new Vector2(1, 1).Y)));
+            drawArea.Y = -drawArea.Y;
 
             foreach (TileMapLayer i in map)
             {

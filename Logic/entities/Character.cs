@@ -10,21 +10,23 @@ namespace Fantasy.Content.Logic.entities
         public Texture2D spritesheet;
         public bool characterIsMoving;
         public int speed;
+        public int layer;
         public Orientation orientation;
         public Animation frames;
         public Point position;
         public Rectangle hitBox;
 
-        public Character(Texture2D spritesheet, Point position, string id, int speed, Orientation orientation)
+        public Character(string id, Texture2D spritesheet, int speed, int layer, Orientation orientation, Point position)
         {
-            this.spritesheet = spritesheet;
-            this.position = position;
             this.id = id;
+            this.spritesheet = spritesheet;
             this.speed = speed;
+            this.layer = layer;
             this.orientation = orientation;
+            this.position = position;
         }
 
-        public void DrawCharacter( SpriteBatch _spriteBatch, int layer)
+        public void DrawCharacter( SpriteBatch _spriteBatch)
         {
             if (frames == null)
             {
@@ -47,11 +49,11 @@ namespace Fantasy.Content.Logic.entities
 
             if (characterIsMoving)
             {
-                frames.DrawNextFrame(spritesheet, _spriteBatch, layer, new Vector2((position.X - 30), position.Y));
+                frames.DrawNextFrame(spritesheet, _spriteBatch, new Vector2((position.X - 30), position.Y));
             }
             else
             {
-                frames.FinishAnimation(spritesheet, _spriteBatch, layer, new Vector2((position.X - 30), position.Y));
+                frames.FinishAnimation(spritesheet, _spriteBatch, new Vector2((position.X - 30), position.Y));
             }
         }
 
@@ -84,13 +86,5 @@ namespace Fantasy.Content.Logic.entities
         {
             characterIsMoving = false;
         }
-    }
-
-    public enum Orientation
-    {
-        forward,
-        right,
-        left,
-        backward
     }
 }

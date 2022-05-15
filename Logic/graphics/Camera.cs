@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Content.Logic.screen;
+using Fantasy.Content.Logic.utility;
 
 namespace Fantasy.Content.Logic.graphics
 {
@@ -100,31 +101,31 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public void SetBoundingBox(bool forceCentering)
         {
-            Point _point = _scene._tileMap.GetTileMapCenter(zoom);
-            Rectangle _rectangle = _scene._tileMap.GetTileMapBounding(zoom);
-            if (_rectangle.Width <= (cameraPosition.Width / zoom.X) && forceCentering)
+            Point mapCenter = _scene._tileMap.GetTileMapCenter(zoom);
+            Rectangle mapBounding = _scene._tileMap.GetTileMapBounding(zoom);
+            if (mapBounding.Width <= (cameraPosition.Width / zoom.X) && forceCentering)
             {
                 movementAllowedHorizontal = false;
-                cameraCenter.X = _point.X;
+                cameraPosition.X = mapCenter.X - (int)(cameraPosition.Width / 2);
             }
             else
             {
                 movementAllowedHorizontal = true;
             }
-            boundingBox.X = _rectangle.X;
-            boundingBox.Width = _rectangle.Width;
+            boundingBox.X = mapBounding.X;
+            boundingBox.Width = mapBounding.Width;
 
-            if (_rectangle.Height <= (cameraPosition.Height / zoom.Y) && forceCentering)
+            if (mapBounding.Height <= (cameraPosition.Height / zoom.Y) && forceCentering)
             {
                 movementAllowedVertical = false;
-                cameraPosition.Y = _point.Y;
+                cameraPosition.Y = mapCenter.Y + (int)(cameraPosition.Height / 2);
             }
             else
             {
                 movementAllowedVertical = true;
             }
-            boundingBox.Y = _rectangle.Y;
-            boundingBox.Height = _rectangle.Height;
+            boundingBox.Y = mapBounding.Y;
+            boundingBox.Height = mapBounding.Height;
 
             Reposition();
         }
@@ -133,11 +134,11 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public bool PointInBoundingBox(Point point)
         {
-            if ((boundingBox.X >= point.X && boundingBox.X - boundingBox.Width <= point.X) && (boundingBox.Y >= point.Y && boundingBox.Y - boundingBox.Height <= point.Y))
+            if (util.PointInsideRectangle(point, boundingBox))
             {
                 return true;
             }
-            else
+            else 
             {
                 return false;
             }
@@ -220,7 +221,6 @@ namespace Fantasy.Content.Logic.graphics
                 if (Math.Abs(destination.X - cameraPosition.X) <= speed)
                 {
                     ForceSetHorizontal(destination.X);
-
                 }
                 else if (cameraPosition.X < destination.X)
                 {
@@ -254,13 +254,11 @@ namespace Fantasy.Content.Logic.graphics
         {
             if (movementAllowedVertical && movementAllowedHorizontal)
             {
-                destination.X = (int)(destination.X * zoom.X);
-                destination.Y = (int)(destination.Y * zoom.Y);
                 if (PointInBoundingBox(destination))
                 {
                     Vector2 original = zoom;
-                    while (!(destination.X <= cameraPosition.X && destination.X >= cameraPosition.X - cameraPosition.Width) ||
-                        !(destination.Y <= cameraPosition.Y && destination.Y >= cameraPosition.Y - cameraPosition.Height))
+
+                    while (!util.PointInsideRectangle(destination, cameraPosition))
                     {
                         if ((zoom.X - .01f <= minZoom.X + .0f || zoom.X <= original.X - 1f) || (zoom.Y - .01f <= minZoom.Y + .0f || zoom.Y <= original.Y - 1f))
                         {
@@ -269,12 +267,15 @@ namespace Fantasy.Content.Logic.graphics
                         Zoom(new Vector2(zoom.X - .01f, zoom.Y - .01f), false);
                         _scene.ClearAndRedraw();
                     }
+
                     Pan(destination, speed, centerDestination);
-                    while (original != zoom)
+
+                    while (original.X != zoom.X)
                     {
                         Zoom(new Vector2(zoom.X + .01f, zoom.Y + .01f), false);
-                        _scene.ClearAndRedraw();
+                        Pan(destination, speed, centerDestination);
                     }
+
                     Zoom(original, true);
                     Pan(destination, speed, centerDestination);
                 }
@@ -286,16 +287,9 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public void ForcePanWithZoom(Point destination, int speed, bool centerDestination)
         {
-            if (centerDestination)
-            {
-                destination.X -= (int)(cameraPosition.Width / 2);
-                destination.Y += (int)(cameraPosition.Height / 2);
-            }
-
             Vector2 original = zoom;
 
-            while (!(destination.X >= cameraPosition.X && destination.X <= cameraPosition.X + cameraPosition.Width) ||
-                !(destination.Y <= cameraPosition.Y && destination.Y >= cameraPosition.Y - cameraPosition.Height))
+            while (!util.PointInsideRectangle(destination, cameraPosition))
             {
                 if ((zoom.X - .01f <= minZoom.X + .0f || zoom.X <= original.X - 1f) || (zoom.Y - .01f <= minZoom.Y + .0f || zoom.Y <= original.Y - 1f))
                 {
@@ -304,15 +298,17 @@ namespace Fantasy.Content.Logic.graphics
                 Zoom(new Vector2(zoom.X - .01f, zoom.Y - .01f), false);
                 _scene.ClearAndRedraw();
             }
-            ForcePan(destination, speed, false);
+
+            ForcePan(destination, speed, centerDestination);
+
             while (original.X != zoom.X)
             {
                 Zoom(new Vector2(zoom.X + .01f, zoom.Y + .01f), false);
-                _scene.ClearAndRedraw();
+                ForcePan(destination, speed, centerDestination);
             }
-            Zoom(original, false);
-            ForcePan(destination, speed, false);
 
+            Zoom(original, false);
+            ForcePan(destination, speed, centerDestination);
         }
         /// <summary>
         /// Moves the camera vertically by the provided <c>amount</c>. Follows camera movement constrictions.
