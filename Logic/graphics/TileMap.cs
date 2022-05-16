@@ -23,7 +23,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Constructs a TileMapLayer from the provided string.
         /// </summary>
-        /// <param name="initialized"> string to be parsed to describe the Tiles in the TileMap. </param>
+        /// <param name="initialized">string to be parsed to describe the Tiles in the TileMap.</param>
         public TileMap(String initialize)
         {
             this.map = new List<TileMapLayer>();
@@ -142,7 +142,7 @@ namespace Fantasy.Content.Logic.graphics
         public void DrawToMap(Texture2D texture, Color color, Vector2 _stretch, SpriteBatch _spriteBatch, int column, int row, int horizontalOffSet, int verticalalOffSet)
         {
             _spriteBatch.Draw(texture,
-                            new Vector2(((column * 64)+horizontalOffSet) * _stretch.X, ((-(row + 1) * 64) - verticalalOffSet )* _stretch.Y),
+                            new Vector2(((column * 64) + horizontalOffSet) * _stretch.X, ((-(row + 1) * 64) - verticalalOffSet) * _stretch.Y),
                             new Rectangle(0, 0, 64, 64), color, 0, new Vector2(0, 0),
                             _stretch, new SpriteEffects(), 0);
         }
@@ -511,7 +511,7 @@ namespace Fantasy.Content.Logic.graphics
                 {
                     Rectangle tileArea = new Rectangle(
                         (int)(j.tileMapCoordinate.X * 64 * _stretch.X),
-                        (int)(-(j.tileMapCoordinate.Y+1) * 64 * _stretch.Y),
+                        (int)(-(j.tileMapCoordinate.Y + 1) * 64 * _stretch.Y),
                         (int)(64 * _stretch.X),
                         (int)(64 * _stretch.Y));
 
@@ -636,7 +636,7 @@ namespace Fantasy.Content.Logic.graphics
 
             return new Rectangle(
                 (int)Math.Round((widthSmallest * 64 * _stretch.X)),
-                (int)Math.Round(((heightLargest+1) * 64 * _stretch.Y)),
+                (int)Math.Round(((heightLargest + 1) * 64 * _stretch.Y)),
                 (int)Math.Round(((widthLargest - widthSmallest + 1) * 64 * _stretch.X)),
                 (int)Math.Round(((heightLargest - heightSmallest + 1) * 64 * _stretch.Y)));
         }

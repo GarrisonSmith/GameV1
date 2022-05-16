@@ -3,7 +3,7 @@
 namespace Fantasy.Content.Logic.graphics
 {
     /// <summary>
-    /// Describes A tile in a given <c>TileMapLayer</c>.
+    /// Describes A tile in a given TileMapLayer.
     /// </summary>
     class Tile
     {
@@ -16,7 +16,7 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public Point tileSetCoordinate;
         /// <summary>
-        /// Point this tile occupies in its <c>TileMapLayer<c>.
+        /// Point this tile occupies in its TileMapLayer. The X value is the column and the Y value is the row.
         /// </summary>
         public Point tileMapCoordinate;
         /// <summary>
@@ -30,7 +30,9 @@ namespace Fantasy.Content.Logic.graphics
 
         /// <summary>
         /// Constructs a tile with the given properties.
-        /// <param name="tileID"> is parsed to get the tiles <c>tileSetName</c> and tiles <c>x</c> and <c>y</c> values. </param>
+        /// <param name="tileID">is parsed to get the tiles tileSetName and tiles x and y values.</param>
+        /// <param name="column">the column this tile occupies on its TileMapLayer.</param>
+        /// <param name="row">the row this tile occupies on its TileMapLayer.</param>
         /// </summary>
         public Tile(string tileID, int column, int row)
         {

@@ -27,9 +27,10 @@ namespace Fantasy.Content.Logic.graphics
         public int height;
 
         /// <summary>
-        /// Constructs a TileMapLayer with the given properties.
-        /// <param name="initialized"> is parsed to describe the tiles in the map. </param>
-        /// </summary>>
+        /// Constructs a TileMapLayer from the provided string.
+        /// </summary>
+        /// <param name="layer">The layer this TileMapLayer occupies in its TileMap</param>
+        /// <param name="initialize">string to be parsed to describe the Tiles in the TileMapLayer.</param>
         public TileMapLayer(int layer, String initialize)
         {
             this.map = new List<Tile>();
@@ -70,6 +71,8 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Returns the tile with the given index from the TileMaplayer. If the index is invalid returns null.
         /// </summary>
+        /// <param name="index">The index of the tile to be returned.</param>
+        /// <returns>The tile with the corresponding index. If not tile with that index exists then null.</returns>
         public Tile GetTile(int index)
         {
             if (map.Count - 1 >= index)
@@ -84,6 +87,8 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Returns the tile with the given coordinate from the TileMaplayer. If the coordiante is invalid returns null.
         /// </summary>
+        /// <param name="coordinate">The coordinate of the tile to be returned. coordinate.X is the column and coordinate.Y is the row the tile occupies in the TileMapLayer.</param>
+        /// <returns></returns>
         public Tile GetTile(Point coordinate)
         {
             foreach (Tile i in map)
@@ -98,7 +103,8 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Returns the layer dimensions in as a point containing width and height.
         /// </summary>
-        public Point GetLayerDimension()
+        /// <returns>Point where the X value is the TileMapLayer width and the Y is the TileMapLayer height.</returns>
+        public Point GetLayerDimensions()
         {
             return new Point(this.width, this.height);
         }
