@@ -37,15 +37,20 @@ function foo = get_maps_string(mapFolder)
         end
         get_tiles_from_set(tileSet,char(tileSetFile.name));
     end
-    mapString = "";
+    index = 1;
     for tileMapFile = area_maps'
-        mapString = mapString + "<" +tileMapFile.name(end-4:end-4) + ">";
+        mapString(index) = "";
+        mapString(index) = mapString(index) + "<" +tileMapFile.name(end-4:end-4) + ">";
         tileMap = imread(string(tileMapFile.folder)+"\"+string(tileMapFile.name));
         mapLayer = construct_map_string(tileMap);
-        mapLayer = remove_empty_rows(mapLayer);
-        mapString = mapString+mapLayer;
+        mapString(index) = mapString(index) + mapLayer;
+        index = index + 1;
     end
-    foo = mapString;
+    mapString = remove_empty_rows(mapString);
+    foo= "";
+    for index = 1:length(mapString) 
+        foo = foo + mapString(index);
+    end
 end
 
 function get_tiles_from_set(tileSet, name) %adds all the unique tiles to uniqueTiles
@@ -106,21 +111,35 @@ function foo = get_tile_string(tile) %gets the provided tile's string from tileI
 end
 
 function foo = remove_empty_rows(mapString) %removes any empty rows from the bottom of the string.
-    for i=1:1:strlength(mapString)
-        empty = true;
-        if(mapString{1}(i) == ';')
-            for j = i:1:strlength(mapString)
-               if(mapString{1}(j) ~= ':' && mapString{1}(j) ~= ';')
-                   empty = false;
-                   break;
-               end
-            end
+    
+    lengthDif = intmax;
+    for index=1:1:length(mapString)
+        layerString = mapString(index);
+        
+        for i=1:1:strlength(layerString)
+            empty = true;
+            if(layerString{1}(i) == ';')
+                for j = i:1:strlength(layerString)
+                    if(layerString{1}(j) ~= ':' && layerString{1}(j) ~= ';')
+                        empty = false;
+                        break;
+                    end
+                end
             
-            if (empty)
-                mapString = mapString{1}(1:i);
-                break;
+                if (empty)
+                    if (lengthDif > (strlength(layerString)-i))
+                        lengthDif = (strlength(layerString)-i);
+                    end
+                    break;
+                end
             end
         end
+    end
+    
+    for index=1:1:length(mapString)
+        layerString = mapString(index);
+        layerString = layerString{1}(1:(strlength(layerString)-lengthDif));
+        mapString(index) = layerString;
     end
     foo = mapString;
 end
