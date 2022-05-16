@@ -6,6 +6,9 @@ using Fantasy.Content.Logic.utility;
 
 namespace Fantasy.Content.Logic.graphics
 {
+    /// <summary>
+    /// Describes a scenes camera. Determines the placement and stretching of graphics when drawn by the spritebatch.
+    /// </summary>
     class Camera
     {
         /// <summary>
@@ -25,21 +28,21 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public Rectangle boundingBox;
         /// <summary>
-        /// The zoom level of the camera. Higher values result in a closer zoom. Is used as a stretch on tiles when drawing.
+        /// The stretch level of the camera. Higher values result in a closer zoom. Is used as a stretch on tiles when drawing.
         /// </summary>
-        public Vector2 zoom = new Vector2(1f, 1f);
+        public Vector2 _stretch = new Vector2(1f, 1f);
         /// <summary>
-        /// The max zoom for this camera.
+        /// The max stretch for this camera.
         /// </summary>
-        public Vector2 maxZoom = new Vector2(3f, 3f);
+        public Vector2 maxStretch = new Vector2(3f, 3f);
+        /// <summary>
+        /// The minimum stretch for this camera.
+        /// </summary>
+        public Vector2 minStretch = new Vector2(.5f, .5f);
         /// <summary>
         /// Determines how much the final drawing of the spritebatch is rotated around the origin.
         /// </summary>
         public float rotation = 0f;
-        /// <summary>
-        /// The minimum zoom for this camera.
-        /// </summary>
-        public Vector2 minZoom = new Vector2(.5f, .5f);
         /// <summary>
         /// Determines if camera movement is valid about the vertical axis.
         /// </summary>
@@ -67,24 +70,24 @@ namespace Fantasy.Content.Logic.graphics
         /// Creates a Camera with the given properties. <c>startingCoordinate</c> becomes the cameraCenter.
         /// <c>forceCentering</c> determines that if the boundingBox is smaller than camera view, then the camera is centered on the tileMap and movement is disable without override.
         /// </summary>
-        public Camera(Scene _scene, Point startingCoordinate, Vector2 zoom, bool forceCentering) : this(_scene, startingCoordinate, forceCentering)
+        public Camera(Scene _scene, Point startingCoordinate, Vector2 stretch, bool forceCentering) : this(_scene, startingCoordinate, forceCentering)
         {
-            Zoom(zoom, forceCentering);
+            Stretch(stretch, forceCentering);
         }
         /// <summary>
-        /// Sets the camera zoom by the provided <c>amount</c>. If <c>allowCentering</c> is true then the camera will lock on the scene tileMap center if the whole tileMap fits into view. 
+        /// Sets the camera stretch by the provided <c>amount</c>. If <c>allowCentering</c> is true then the camera will lock on the scene tileMap center if the whole tileMap fits into view. 
         /// </summary>
-        public void Zoom(Vector2 amount, bool allowCentering)
+        public void Stretch(Vector2 amount, bool allowCentering)
         {
-            if (amount.X >= minZoom.X && amount.X <= maxZoom.X)
+            if (amount.X >= minStretch.X && amount.X <= maxStretch.X)
             {
-                cameraPosition.X += ((int)((cameraCenter.X * amount.X) / zoom.X) - cameraCenter.X);
-                zoom.X = amount.X;
+                cameraPosition.X += ((int)((cameraCenter.X * amount.X) / _stretch.X) - cameraCenter.X);
+                _stretch.X = amount.X;
             }
-            if (amount.Y >= minZoom.Y && amount.Y <= maxZoom.Y)
+            if (amount.Y >= minStretch.Y && amount.Y <= maxStretch.Y)
             {
-                cameraPosition.Y += ((int)((cameraCenter.Y * amount.Y) / zoom.Y) - cameraCenter.Y);
-                zoom.Y = amount.Y;
+                cameraPosition.Y += ((int)((cameraCenter.Y * amount.Y) / _stretch.Y) - cameraCenter.Y);
+                _stretch.Y = amount.Y;
             }
             Reposition();
             SetBoundingBox(allowCentering);
@@ -94,8 +97,7 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public void Reposition()
         {
-            cameraCenter.X = cameraPosition.X + (int)(cameraPosition.Width / 2);
-            cameraCenter.Y = cameraPosition.Y - (int)(cameraPosition.Height / 2);
+            cameraCenter = util.GetRectangleCenter(cameraPosition);
         }
         /// <summary>
         /// Sets boundingBox to conform to the scenes tileMap.
@@ -103,9 +105,9 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public void SetBoundingBox(bool forceCentering)
         {
-            Point mapCenter = _scene._tileMap.GetTileMapCenter(zoom);
-            Rectangle mapBounding = _scene._tileMap.GetTileMapBounding(zoom);
-            if (mapBounding.Width <= (cameraPosition.Width / zoom.X) && forceCentering)
+            Point mapCenter = _scene._tileMap.GetTileMapCenter(_stretch);
+            Rectangle mapBounding = _scene._tileMap.GetTileMapBounding(_stretch);
+            if (mapBounding.Width <= (cameraPosition.Width / _stretch.X) && forceCentering)
             {
                 movementAllowedHorizontal = false;
                 cameraPosition.X = mapCenter.X - (int)(cameraPosition.Width / 2);
@@ -117,7 +119,7 @@ namespace Fantasy.Content.Logic.graphics
             boundingBox.X = mapBounding.X;
             boundingBox.Width = mapBounding.Width;
 
-            if (mapBounding.Height <= (cameraPosition.Height / zoom.Y) && forceCentering)
+            if (mapBounding.Height <= (cameraPosition.Height / _stretch.Y) && forceCentering)
             {
                 movementAllowedVertical = false;
                 cameraPosition.Y = mapCenter.Y + (int)(cameraPosition.Height / 2);
@@ -160,8 +162,8 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public void Pan(Point destination, int speed, bool centerDestination)
         {
-            destination.X = (int)(destination.X * zoom.X);
-            destination.Y = (int)(destination.Y * zoom.Y);
+            destination.X = (int)(destination.X * _stretch.X);
+            destination.Y = (int)(destination.Y * _stretch.Y);
 
             if (centerDestination)
             {
@@ -180,11 +182,11 @@ namespace Fantasy.Content.Logic.graphics
                     }
                     else if (cameraCenter.X < destination.X)
                     {
-                        MoveHorizontal(true, speed);
+                        MoveHorizontal(true, speed, false);
                     }
                     else if (cameraCenter.X > destination.X)
                     {
-                        MoveHorizontal(false, speed);
+                        MoveHorizontal(false, speed, false);
                     }
 
                     if (Math.Abs(destination.Y - cameraPosition.Y) <= speed)
@@ -193,11 +195,11 @@ namespace Fantasy.Content.Logic.graphics
                     }
                     else if (cameraPosition.Y < destination.Y)
                     {
-                        MoveVertical(true, speed);
+                        MoveVertical(true, speed, false);
                     }
                     else if (cameraPosition.Y > destination.Y)
                     {
-                        MoveVertical(false, speed);
+                        MoveVertical(false, speed, false);
                     }
                     Reposition();
                     _scene.ClearAndRedraw();
@@ -210,8 +212,8 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public void ForcePan(Point destination, int speed, bool centerDestination)
         {
-            destination.X = (int)(destination.X * zoom.X);
-            destination.Y = (int)(destination.Y * zoom.Y);
+            destination.X = (int)(destination.X * _stretch.X);
+            destination.Y = (int)(destination.Y * _stretch.Y);
 
             if (centerDestination)
             {
@@ -227,11 +229,11 @@ namespace Fantasy.Content.Logic.graphics
                 }
                 else if (cameraPosition.X < destination.X)
                 {
-                    ForceMoveHorizontal(true, speed);
+                    ForceMoveHorizontal(true, speed, false);
                 }
                 else if (cameraPosition.X > destination.X)
                 {
-                    ForceMoveHorizontal(false, speed);
+                    ForceMoveHorizontal(false, speed, false);
                 }
 
                 if (Math.Abs(destination.Y - cameraPosition.Y) <= speed)
@@ -240,88 +242,94 @@ namespace Fantasy.Content.Logic.graphics
                 }
                 else if (cameraPosition.Y < destination.Y)
                 {
-                    ForceMoveVertical(true, speed);
+                    ForceMoveVertical(true, speed, false);
                 }
                 else if (cameraPosition.Y > destination.Y)
                 {
-                    ForceMoveVertical(false, speed);
+                    ForceMoveVertical(false, speed, false);
                 }
                 Reposition();
                 _scene.ClearAndRedraw();
             }
         }
         /// <summary>
-        /// Pans the camera to <c>destination</c> with the provided <c>speed</c> by first zooming out before panning then zooming back in after panning. Follows camera movement constrictions.
+        /// Pans the camera to <c>destination</c> with the provided <c>speed</c> by first stretching out before panning then stretching back in after panning. Follows camera movement constrictions.
         /// <c>centerDestination</c> determines if the destination will be in the middle of the screen if true, top left if false.
         /// </summary>
-        public void PanWithZoom(Point destination, int speed, bool centerDestination)
+        public void PanWithStretch(Point destination, int speed, bool centerDestination)
         {
             if (movementAllowedVertical && movementAllowedHorizontal)
             {
                 if (PointInBoundingBox(destination))
                 {
-                    Vector2 original = zoom;
+                    Vector2 original = _stretch;
 
                     while (!util.PointInsideRectangle(destination, cameraPosition))
                     {
-                        if ((zoom.X - .01f <= minZoom.X + .0f || zoom.X <= original.X - 1f) || (zoom.Y - .01f <= minZoom.Y + .0f || zoom.Y <= original.Y - 1f))
+                        if ((_stretch.X - .01f <= minStretch.X + .0f || _stretch.X <= original.X - 1f) || (_stretch.Y - .01f <= minStretch.Y + .0f || _stretch.Y <= original.Y - 1f))
                         {
                             break;
                         }
-                        Zoom(new Vector2(zoom.X - .01f, zoom.Y - .01f), false);
+                        Stretch(new Vector2(_stretch.X - .01f, _stretch.Y - .01f), false);
                         _scene.ClearAndRedraw();
                     }
 
                     Pan(destination, speed, centerDestination);
 
-                    while (original.X != zoom.X)
+                    while (original.X != _stretch.X)
                     {
-                        Zoom(new Vector2(zoom.X + .01f, zoom.Y + .01f), false);
+                        Stretch(new Vector2(_stretch.X + .01f, _stretch.Y + .01f), false);
                         Pan(destination, speed, centerDestination);
                     }
 
-                    Zoom(original, true);
+                    Stretch(original, true);
                     Pan(destination, speed, centerDestination);
                 }
             }
 
         }
         /// <summary>
-        /// Pans the camera to <c>destination</c> with the provided <c>speed</c> by first zooming out before panning then zooming back in after panning. Overrides camera movement constrictions.
+        /// Pans the camera to <c>destination</c> with the provided <c>speed</c> by first stretching out before panning then stretching back in after panning. Overrides camera movement constrictions.
         /// </summary>
-        public void ForcePanWithZoom(Point destination, int speed, bool centerDestination)
+        public void ForcePanWithStretch(Point destination, int speed, bool centerDestination)
         {
-            Vector2 original = zoom;
+            Vector2 original = _stretch;
 
             while (!util.PointInsideRectangle(destination, cameraPosition))
             {
-                if ((zoom.X - .01f <= minZoom.X + .0f || zoom.X <= original.X - 1f) || (zoom.Y - .01f <= minZoom.Y + .0f || zoom.Y <= original.Y - 1f))
+                if ((_stretch.X - .01f <= minStretch.X + .0f || _stretch.X <= original.X - 1f) || (_stretch.Y - .01f <= minStretch.Y + .0f || _stretch.Y <= original.Y - 1f))
                 {
                     break;
                 }
-                Zoom(new Vector2(zoom.X - .01f, zoom.Y - .01f), false);
+                Stretch(new Vector2(_stretch.X - .01f, _stretch.Y - .01f), false);
                 _scene.ClearAndRedraw();
             }
 
             ForcePan(destination, speed, centerDestination);
 
-            while (original.X != zoom.X)
+            while (original.X != _stretch.X)
             {
-                Zoom(new Vector2(zoom.X + .01f, zoom.Y + .01f), false);
+                Stretch(new Vector2(_stretch.X + .01f, _stretch.Y + .01f), false);
                 ForcePan(destination, speed, centerDestination);
             }
 
-            Zoom(original, false);
+            Stretch(original, false);
             ForcePan(destination, speed, centerDestination);
         }
         /// <summary>
         /// Moves the camera vertically by the provided <c>amount</c>. Follows camera movement constrictions.
         /// A true value for <c>direction</c> indicates upward movement and a false value indicates a downward movement.
+        /// <c>stretchAmount</c> determines if the amount this camera is moved by is stretched by this cameras <c>stretch</c>.
         /// </summary>
-        public void MoveVertical(bool direction, int amount)
+        public void MoveVertical(bool direction, int amount, bool stretchAmount)
         {
             if (movementAllowedVertical)
             {
+                if (stretchAmount)
+                {
+                    amount = (int)(amount * _stretch.Y);
+                }
+
                 if (direction)
                 {
                     //moves up
@@ -358,7 +366,7 @@ namespace Fantasy.Content.Logic.graphics
         {
             if (stretchY)
             {
-                Y = (int)(Y * zoom.Y);
+                Y = (int)(Y * _stretch.Y);
             }
 
             if (centerDestination)
@@ -386,11 +394,17 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Moves the camera horizontally by the provided <c>amount</c>. Follows camera movement constrictions.
         /// A true value for <c>direction</c> indicates rightward movement and a false value indicates a leftward movement.
+        /// <c>stretchAmount</c> determines if the amount this camera is moved by is stretched by this cameras <c>stretch</c>.
         /// </summary>
-        public void MoveHorizontal(bool direction, int amount)
+        public void MoveHorizontal(bool direction, int amount, bool stretchAmount)
         {
             if (movementAllowedHorizontal)
             {
+                if (stretchAmount)
+                {
+                    amount = (int)(amount * _stretch.X);
+                }
+
                 if (direction)
                 {
                     //moves right
@@ -427,7 +441,7 @@ namespace Fantasy.Content.Logic.graphics
         {
             if (stretchX)
             {
-                X = (int)(X * zoom.X);
+                X = (int)(X * _stretch.X);
             }
 
             if (centerDestination)
@@ -464,9 +478,15 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Moves the camera vertically by the provided <c>amount</c>. Overrides camera movement constrictions.
         /// A true value for <c>direction</c> indicates upward movement and a false value indicates a downward movement.
+        /// <c>stretchAmount</c> determines if the amount this camera is moved by is stretched by this cameras <c>stretch</c>.
         /// </summary>
-        public void ForceMoveVertical(bool direction, int amount)
+        public void ForceMoveVertical(bool direction, int amount, bool stretchAmount)
         {
+            if (stretchAmount)
+            {
+                amount = (int)(amount * _stretch.Y);
+            }
+
             if (direction)
             {
                 //moves up
@@ -488,7 +508,7 @@ namespace Fantasy.Content.Logic.graphics
         {
             if (stretchY)
             {
-                Y = (int)(Y * zoom.Y);
+                Y = (int)(Y * _stretch.Y);
             }
 
             if (centerDestination)
@@ -502,9 +522,15 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Moves the camera horizontally by the provided <c>amount</c>. Overrides camera movement constrictions.
         /// A true value for <c>direction</c> indicates rightward movement and a false value indicates a leftward movement.
+        /// <c>stretchAmount</c> determines if the amount this camera is moved by is stretched by this cameras <c>stretch</c>.
         /// </summary>
-        public void ForceMoveHorizontal(bool direction, int amount)
+        public void ForceMoveHorizontal(bool direction, int amount, bool stretchAmount)
         {
+            if (stretchAmount)
+            {
+                amount = (int)(amount * _stretch.X);
+            }
+
             if (direction)
             {
                 //moves right
@@ -526,7 +552,7 @@ namespace Fantasy.Content.Logic.graphics
         {
             if (stretchX)
             {
-                X = (int)(X * zoom.X);
+                X = (int)(X * _stretch.X);
             }
 
             if (centerDestination)

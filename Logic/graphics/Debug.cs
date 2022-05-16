@@ -11,33 +11,22 @@ namespace Fantasy.Content.Logic.graphics
     {
         public static void DebugAll(Scene _scene)
         {
-            /*
-             _scene._spriteBatch.Begin(SpriteSortMode.BackToFront,
-                         BlendState.AlphaBlend,
-                         null,
-                         null,
-                         null,
-                         null,
-                         _scene._camera.GetTransformation(_scene._graphics.GraphicsDevice));
-            */
             DrawAxis(_scene);
-            DrawRectangle(_scene, _scene._tileMap.GetTileMapBounding(_scene._camera.zoom));
-            //DrawPoint(_scene, _scene._tileMap.GetTileMapCenter(_scene._camera.zoom), false);
+            DrawRectangle(_scene, _scene._tileMap.GetTileMapBounding(_scene._camera._stretch));
+            DrawPoint(_scene, _scene._tileMap.GetTileMapCenter(_scene._camera._stretch), false);
             DrawPoint(_scene, new Point(640, 640), true);
-
-            // _scene._spriteBatch.End();
         }
 
         public static void DrawAxis(Scene _scene)
         {
-            for (int i = 0; i <= _scene._tileMap.GetTileMapBounding(_scene._camera.zoom).Width + (64 * _scene._camera.zoom.X); i++)
+            for (int i = 0; i <= _scene._tileMap.GetTileMapBounding(_scene._camera._stretch).Width + (64 * _scene._camera._stretch.X); i++)
             {
                 _scene._spriteBatch.Draw(_scene._tileTextures[0],
                         new Vector2(i, 0),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
                         new Vector2(1, 1), new SpriteEffects(), 1);
             }
-            for (int i = 0; i <= _scene._tileMap.GetTileMapBounding(_scene._camera.zoom).Height + +(64 * _scene._camera.zoom.Y); i++)
+            for (int i = 0; i <= _scene._tileMap.GetTileMapBounding(_scene._camera._stretch).Height + +(64 * _scene._camera._stretch.Y); i++)
             {
                 _scene._spriteBatch.Draw(_scene._tileTextures[0],
                         new Vector2(0, -i),
@@ -82,20 +71,20 @@ namespace Fantasy.Content.Logic.graphics
             }
         }
 
-        public static void DrawPoint(Scene _scene, Point foo, bool useStretch)
+        public static void DrawPoint(Scene _scene, Point foo, bool stretchPosition)
         {
-            if (useStretch)
+            if (stretchPosition)
             {
                 _scene._spriteBatch.Draw(_scene._tileTextures[0],
-                            new Vector2(foo.X* _scene._camera.zoom.X, -foo.Y* _scene._camera.zoom.Y),
-                            new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
-                            _scene._camera.zoom, new SpriteEffects(), 1);
+                            new Vector2(foo.X* _scene._camera._stretch.X, -foo.Y* _scene._camera._stretch.Y),
+                            new Rectangle(0, 0, 2, 2), Color.White, 0, new Vector2(0, 0),
+                           new Vector2(1, 1), new SpriteEffects(), 1);
             }
             else
             {
                 _scene._spriteBatch.Draw(_scene._tileTextures[0],
                             new Vector2(foo.X, -foo.Y),
-                            new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
+                            new Rectangle(0, 0, 2, 2), Color.White, 0, new Vector2(0, 0),
                             new Vector2(1, 1), new SpriteEffects(), 1);
             }
         }

@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Fantasy.Content.Logic.utility;
 
 namespace Fantasy.Content.Logic.graphics
 {
     /// <summary>
-    /// Describes layers of tile maps from a given string description. Tiles are 64 by 64 pixels large.
+    /// Contains a tile maps from a given string description. Tiles are 64 by 64 pixels large.
     /// </summary>
     class TileMap
     {
@@ -120,30 +121,41 @@ namespace Fantasy.Content.Logic.graphics
         {
             tileTextures = null;
         }
-        public void DrawToMap(Texture2D texture, Color color, Vector2 stretch, SpriteBatch _spriteBatch, int row, int column, int horizontalOffSet, int verticalalOffSet)
+        /// <summary>
+        /// Draws the provided texture with the provided location and stretching.
+        /// </summary>
+        /// <param name="texture"></param> the texture to be drawn.
+        /// <param name="color"></param> the shading color of the texture.
+        /// <param name="_stretch"></param> the stretching of the texture.
+        /// <param name="_spriteBatch"></param> the spritebatch used to draw the texture.
+        /// <param name="column"></param> the column of this tilemap for this texture to be drawn.
+        /// <param name="row"></param> the row of this tilemap for this texture to be drawn.
+        /// <param name="horizontalOffSet"></param> the number of pixel the texture will be horizontally offset by.
+        /// <param name="verticalalOffSet"></param> the number of pixel the texture will be vertically offset by.
+        public void DrawToMap(Texture2D texture, Color color, Vector2 _stretch, SpriteBatch _spriteBatch, int column, int row, int horizontalOffSet, int verticalalOffSet)
         {
             _spriteBatch.Draw(texture,
-                            new Vector2(((row * 64)+horizontalOffSet) * stretch.X, ((-(column + 1) * 64) - verticalalOffSet )* stretch.Y),
+                            new Vector2(((column * 64)+horizontalOffSet) * _stretch.X, ((-(row + 1) * 64) - verticalalOffSet )* _stretch.Y),
                             new Rectangle(0, 0, 64, 64), color, 0, new Vector2(0, 0),
-                            stretch, new SpriteEffects(), 0);
+                            _stretch, new SpriteEffects(), 0);
         }
         /// <summary>
         /// Draws all tiles inside of the TileMap.
         /// </summary>
-        public void DrawLayers(Vector2 stretch, SpriteBatch _spriteBatch)
+        public void DrawLayers(Vector2 _stretch, SpriteBatch _spriteBatch)
         {
             foreach (TileMapLayer i in map)
             {
                 foreach (Tile j in i.map)
                 {
-                    DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                    DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                 }
             }
         }
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided layers.
         /// </summary>
-        public void DrawLayers(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers)
+        public void DrawLayers(Vector2 _stretch, SpriteBatch _spriteBatch, int[] layers)
         {
             foreach (int l in layers)
             {
@@ -153,7 +165,7 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         foreach (Tile j in i.map)
                         {
-                            DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                            DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                         }
                     }
                 }
@@ -162,7 +174,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided layer.
         /// </summary>
-        public void DrawLayer(Vector2 stretch, SpriteBatch _spriteBatch, int layer)
+        public void DrawLayer(Vector2 _stretch, SpriteBatch _spriteBatch, int layer)
         {
             foreach (TileMapLayer i in map)
             {
@@ -170,7 +182,7 @@ namespace Fantasy.Content.Logic.graphics
                 {
                     foreach (Tile j in i.map)
                     {
-                        DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                        DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                     }
                 }
             }
@@ -178,7 +190,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided rows.
         /// </summary>
-        public void DrawRows(Vector2 stretch, SpriteBatch _spriteBatch, int[] rows)
+        public void DrawRows(Vector2 _stretch, SpriteBatch _spriteBatch, int[] rows)
         {
             foreach (int r in rows)
             {
@@ -190,7 +202,7 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             foreach (Texture2D k in tileTextures)
                             {
-                                DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                                DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                             }
                         }
                     }
@@ -200,7 +212,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided rows and layers.
         /// </summary>
-        public void DrawRows(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers, int[] rows)
+        public void DrawRows(Vector2 _stretch, SpriteBatch _spriteBatch, int[] layers, int[] rows)
         {
             foreach (int r in rows)
             {
@@ -214,7 +226,7 @@ namespace Fantasy.Content.Logic.graphics
                             {
                                 if (j.tileMapCoordinate.X == r)
                                 {
-                                    DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                                    DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                                 }
                             }
                         }
@@ -225,7 +237,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided rows and layer.
         /// </summary>
-        public void DrawRows(Vector2 stretch, SpriteBatch _spriteBatch, int layer, int[] rows)
+        public void DrawRows(Vector2 _stretch, SpriteBatch _spriteBatch, int layer, int[] rows)
         {
             foreach (int r in rows)
             {
@@ -237,7 +249,7 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             if (j.tileMapCoordinate.X == r)
                             {
-                                DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                                DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                             }
                         }
                     }
@@ -247,7 +259,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided row.
         /// </summary>
-        public void DrawRow(Vector2 stretch, SpriteBatch _spriteBatch, int row)
+        public void DrawRow(Vector2 _stretch, SpriteBatch _spriteBatch, int row)
         {
             foreach (TileMapLayer i in map)
             {
@@ -255,7 +267,7 @@ namespace Fantasy.Content.Logic.graphics
                 {
                     if (j.tileMapCoordinate.X == row)
                     {
-                        DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                        DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                     }
                 }
             }
@@ -263,7 +275,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided row and layers.
         /// </summary>
-        public void DrawRow(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers, int row)
+        public void DrawRow(Vector2 _stretch, SpriteBatch _spriteBatch, int[] layers, int row)
         {
             foreach (int l in layers)
             {
@@ -275,7 +287,7 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             if (j.tileMapCoordinate.X == row)
                             {
-                                DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                                DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                             }
                         }
                     }
@@ -285,7 +297,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided row and layer.
         /// </summary>
-        public void DrawRows(Vector2 stretch, SpriteBatch _spriteBatch, int layer, int row)
+        public void DrawRows(Vector2 _stretch, SpriteBatch _spriteBatch, int layer, int row)
         {
             foreach (TileMapLayer i in map)
             {
@@ -295,7 +307,7 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         if (j.tileMapCoordinate.X == row)
                         {
-                            DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                            DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                         }
                     }
                 }
@@ -304,7 +316,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided columns.
         /// </summary>
-        public void DrawColumns(Vector2 stretch, SpriteBatch _spriteBatch, int[] columns)
+        public void DrawColumns(Vector2 _stretch, SpriteBatch _spriteBatch, int[] columns)
         {
             foreach (int c in columns)
             {
@@ -314,7 +326,7 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         if (j.tileMapCoordinate.X == c)
                         {
-                            DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                            DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                         }
                     }
                 }
@@ -323,7 +335,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided columns and layers.
         /// </summary>
-        public void DrawColumns(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers, int[] columns)
+        public void DrawColumns(Vector2 _stretch, SpriteBatch _spriteBatch, int[] layers, int[] columns)
         {
             foreach (int c in columns)
             {
@@ -337,7 +349,7 @@ namespace Fantasy.Content.Logic.graphics
                             {
                                 if (j.tileMapCoordinate.X == c)
                                 {
-                                    DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                                    DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                                 }
                             }
                         }
@@ -348,7 +360,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided columns and layer.
         /// </summary>
-        public void DrawColumns(Vector2 stretch, SpriteBatch _spriteBatch, int layer, int[] columns)
+        public void DrawColumns(Vector2 _stretch, SpriteBatch _spriteBatch, int layer, int[] columns)
         {
             foreach (int c in columns)
             {
@@ -360,7 +372,7 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             if (j.tileMapCoordinate.X == c)
                             {
-                                DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                                DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                             }
                         }
                     }
@@ -370,7 +382,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided column.
         /// </summary>
-        public void DrawColumn(Vector2 stretch, SpriteBatch _spriteBatch, int column)
+        public void DrawColumn(Vector2 _stretch, SpriteBatch _spriteBatch, int column)
         {
             foreach (TileMapLayer i in map)
             {
@@ -378,7 +390,7 @@ namespace Fantasy.Content.Logic.graphics
                 {
                     if (j.tileMapCoordinate.X == column)
                     {
-                        DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                        DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                     }
                 }
             }
@@ -386,7 +398,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided column and layers.
         /// </summary>
-        public void DrawColumn(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers, int column)
+        public void DrawColumn(Vector2 _stretch, SpriteBatch _spriteBatch, int[] layers, int column)
         {
             foreach (int l in layers)
             {
@@ -398,7 +410,7 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             if (j.tileMapCoordinate.X == column)
                             {
-                                DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                                DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                             }
                         }
                     }
@@ -408,7 +420,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy the provided column and layer.
         /// </summary>
-        public void DrawColumns(Vector2 stretch, SpriteBatch _spriteBatch, int layer, int column)
+        public void DrawColumns(Vector2 _stretch, SpriteBatch _spriteBatch, int layer, int column)
         {
             foreach (TileMapLayer i in map)
             {
@@ -418,7 +430,7 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         if (j.tileMapCoordinate.X == column)
                         {
-                            DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                            DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                         }
                     }
                 }
@@ -427,7 +439,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy within the provided rectangle <c>drawArea</c>.
         /// </summary>
-        public void DrawArea(Vector2 stretch, SpriteBatch _spriteBatch, Rectangle drawArea)
+        public void DrawArea(Vector2 _stretch, SpriteBatch _spriteBatch, Rectangle drawArea)
         {
             drawArea.Y = -drawArea.Y;
 
@@ -435,11 +447,15 @@ namespace Fantasy.Content.Logic.graphics
             {
                 foreach (Tile j in i.map)
                 {
-                    Rectangle tileArea = new Rectangle((int)(j.tileMapCoordinate.X * 64 * stretch.X), (int)(-j.tileMapCoordinate.Y * 64 * stretch.Y),
-                        (int)(64 * stretch.X), (int)(64 * stretch.Y));
+                    Rectangle tileArea = new Rectangle(
+                        (int)(j.tileMapCoordinate.X * 64 * _stretch.X),
+                        (int)(-(j.tileMapCoordinate.Y+1) * 64 * _stretch.Y),
+                        (int)(64 * _stretch.X),
+                        (int)(64 * _stretch.Y));
+
                     if (tileArea.Intersects(drawArea))
                     {
-                        DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                        DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                     }
                 }
             }
@@ -447,7 +463,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy within the provided layers and rectangle <c>drawArea</c>.
         /// </summary>
-        public void DrawArea(Vector2 stretch, SpriteBatch _spriteBatch, int[] layers, Rectangle drawArea)
+        public void DrawArea(Vector2 _stretch, SpriteBatch _spriteBatch, int[] layers, Rectangle drawArea)
         {
             drawArea.Y = -drawArea.Y;
 
@@ -460,14 +476,14 @@ namespace Fantasy.Content.Logic.graphics
                         foreach (Tile j in i.map)
                         {
                             Rectangle tileArea = new Rectangle(
-                                (int)(j.tileMapCoordinate.X * 64),
-                                (int)(-j.tileMapCoordinate.Y * 64),
-                                (int)(64),
-                                (int)(64));
+                                (int)(j.tileMapCoordinate.X * 64 * _stretch.X),
+                                (int)(-(j.tileMapCoordinate.Y + 1) * 64 * _stretch.Y),
+                                (int)(64 * _stretch.X),
+                                (int)(64 * _stretch.Y));
 
                             if (tileArea.Intersects(drawArea))
                             {
-                                DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                                DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                             }
                         }
                     }
@@ -477,7 +493,7 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Draws all tiles inside of the TileMap which occupy within the provided layer and rectangle <c>drawArea</c>.
         /// </summary>
-        public void DrawArea(Vector2 stretch, SpriteBatch _spriteBatch, int layer, Rectangle drawArea)
+        public void DrawArea(Vector2 _stretch, SpriteBatch _spriteBatch, int layer, Rectangle drawArea)
         {
             drawArea.Y = -drawArea.Y;
 
@@ -488,14 +504,14 @@ namespace Fantasy.Content.Logic.graphics
                     foreach (Tile j in i.map)
                     {
                         Rectangle tileArea = new Rectangle(
-                                (int)(j.tileMapCoordinate.X * 64),
-                                (int)(-j.tileMapCoordinate.Y * 64),
-                                (int)(64),
-                                (int)(64));
+                            (int)(j.tileMapCoordinate.X * 64 * _stretch.X),
+                            (int)(-(j.tileMapCoordinate.Y + 1) * 64 * _stretch.Y),
+                            (int)(64 * _stretch.X),
+                            (int)(64 * _stretch.Y));
 
                         if (tileArea.Intersects(drawArea))
                         {
-                            DrawToMap(tileTextures[j.graphicsIndex], j.color, stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
+                            DrawToMap(tileTextures[j.graphicsIndex], j.color, _stretch, _spriteBatch, j.tileMapCoordinate.X, j.tileMapCoordinate.Y, 0, 0);
                         }
                     }
                 }
@@ -517,9 +533,9 @@ namespace Fantasy.Content.Logic.graphics
             return count;
         }
         /// <summary>
-        /// Returns a rectangle that is the size and location of the TileMap with the provided <c>stretch</c>.
+        /// Returns a rectangle that is the size and location of the TileMap with the provided <c>_stretch</c>.
         /// </summary>
-        public Rectangle GetTileMapBounding(Vector2 stretch)
+        public Rectangle GetTileMapBounding(Vector2 _stretch)
         {
             int widthLargest = 1, widthSmallest = 1;
             int heightLargest = 1, heightSmallest = 1;
@@ -546,18 +562,18 @@ namespace Fantasy.Content.Logic.graphics
             }
 
             return new Rectangle(
-                (int)Math.Round((widthSmallest * 64 * stretch.X)),
-                (int)Math.Round(((heightLargest+1) * 64 * stretch.X)),
-                (int)Math.Round(((widthLargest - widthSmallest + 1) * 64 * stretch.X)),
-                (int)Math.Round(((heightLargest - heightSmallest + 1) * 64 * stretch.Y)));
+                (int)Math.Round((widthSmallest * 64 * _stretch.X)),
+                (int)Math.Round(((heightLargest+1) * 64 * _stretch.Y)),
+                (int)Math.Round(((widthLargest - widthSmallest + 1) * 64 * _stretch.X)),
+                (int)Math.Round(((heightLargest - heightSmallest + 1) * 64 * _stretch.Y)));
         }
         /// <summary>
-        /// Returns a rectangle that is the size and location of the provided <c>layers</c> in the TileMap with the provided <c>stretch</c>.
+        /// Returns a rectangle that is the size and location of the provided <c>layers</c> in the TileMap with the provided <c>_stretch</c>.
         /// </summary>
-        public Rectangle GetTileMapBounding(Vector2 stretch, int[] layers)
+        public Rectangle GetTileMapBounding(Vector2 _stretch, int[] layers)
         {
-            int widthLargest = 2, widthSmallest = 2;
-            int heightLargest = 2, heightSmallest = 2;
+            int widthLargest = 1, widthSmallest = 1;
+            int heightLargest = 1, heightSmallest = 1;
 
             foreach (int l in layers)
             {
@@ -587,18 +603,18 @@ namespace Fantasy.Content.Logic.graphics
             }
 
             return new Rectangle(
-                (int)Math.Round(((widthSmallest - 1) * 64 * stretch.X)),
-                (int)Math.Round(((heightSmallest - 1) * 64 * stretch.X)),
-                (int)Math.Round(((widthLargest - (widthSmallest - 1)) * 64 * stretch.X)),
-                (int)Math.Round(((heightLargest - (heightSmallest - 1)) * 64 * stretch.Y)));
+                 (int)Math.Round((widthSmallest * 64 * _stretch.X)),
+                 (int)Math.Round(((heightLargest + 1) * 64 * _stretch.Y)),
+                 (int)Math.Round(((widthLargest - widthSmallest + 1) * 64 * _stretch.X)),
+                 (int)Math.Round(((heightLargest - heightSmallest + 1) * 64 * _stretch.Y)));
         }
         /// <summary>
-        /// Returns a rectangle that is the size and location of the provided <c>layer</c> in the TileMap with the provided <c>stretch</c>.
+        /// Returns a rectangle that is the size and location of the provided <c>layer</c> in the TileMap with the provided <c>_stretch</c>.
         /// </summary>
-        public Rectangle GetTileMapBounding(Vector2 stretch, int layer)
+        public Rectangle GetTileMapBounding(Vector2 _stretch, int layer)
         {
-            int widthLargest = 2, widthSmallest = 2;
-            int heightLargest = 2, heightSmallest = 2;
+            int widthLargest = 1, widthSmallest = 1;
+            int heightLargest = 1, heightSmallest = 1;
 
             foreach (TileMapLayer i in map)
             {
@@ -625,118 +641,31 @@ namespace Fantasy.Content.Logic.graphics
             }
 
             return new Rectangle(
-                (int)Math.Round(((widthSmallest - 1) * 64 * stretch.X)),
-                (int)Math.Round(((heightSmallest - 1) * 64 * stretch.X)),
-                (int)Math.Round(((widthLargest - (widthSmallest - 1)) * 64 * stretch.X)),
-                (int)Math.Round(((heightLargest - (heightSmallest - 1)) * 64 * stretch.Y)));
+                 (int)Math.Round((widthSmallest * 64 * _stretch.X)),
+                 (int)Math.Round(((heightLargest + 1) * 64 * _stretch.Y)),
+                 (int)Math.Round(((widthLargest - widthSmallest + 1) * 64 * _stretch.X)),
+                 (int)Math.Round(((heightLargest - heightSmallest + 1) * 64 * _stretch.Y)));
         }
         /// <summary>
-        /// Returns a point that is the center of the TileMap with the provided <c>stretch</c>.
+        /// Returns a point that is the center of the TileMap with the provided <c>_stretch</c>.
         /// </summary>
-        public Point GetTileMapCenter(Vector2 stretch)
+        public Point GetTileMapCenter(Vector2 _stretch)
         {
-            int widthLargest = 2, widthSmallest = 2;
-            int heightLargest = 2, heightSmallest = 2;
-
-            foreach (TileMapLayer i in map)
-            {
-                if (i.width > widthLargest)
-                {
-                    widthLargest = i.width;
-                }
-                else if (i.width < widthSmallest)
-                {
-                    widthSmallest = i.width;
-                }
-
-                if (i.height > heightLargest)
-                {
-                    heightLargest = i.height;
-                }
-                else if (i.height < heightSmallest)
-                {
-                    heightSmallest = i.height;
-                }
-            }
-
-            return new Point(
-                (int)Math.Round((((widthSmallest - 1) * 64) + ((widthLargest - (widthSmallest - 1)) * 32)) * stretch.X),
-                (int)Math.Round((((heightSmallest - 1) * 64) + ((heightLargest - (heightSmallest - 1)) * 32)) * stretch.Y));
+            return util.GetRectangleCenter(GetTileMapBounding(_stretch));
         }
         /// <summary>
-        /// Returns a point that is the center of the TileMap of the provided <c>layers</c> in the TileMap with the provided <c>stretch</c>.
+        /// Returns a point that is the center of the TileMap of the provided <c>layers</c> in the TileMap with the provided <c>_stretch</c>.
         /// </summary>
-        public Point GetTileMapCenter(Vector2 stretch, int[] layers)
+        public Point GetTileMapCenter(Vector2 _stretch, int[] layers)
         {
-            int widthLargest = 2, widthSmallest = 2;
-            int heightLargest = 2, heightSmallest = 2;
-
-            foreach (int l in layers)
-            {
-                foreach (TileMapLayer i in map)
-                {
-                    if (i.layer == l)
-                    {
-                        if (i.width > widthLargest)
-                        {
-                            widthLargest = i.width;
-                        }
-                        else if (i.width < widthSmallest)
-                        {
-                            widthSmallest = i.width;
-                        }
-
-                        if (i.height > heightLargest)
-                        {
-                            heightLargest = i.height;
-                        }
-                        else if (i.height < heightSmallest)
-                        {
-                            heightSmallest = i.height;
-                        }
-                    }
-                }
-            }
-
-            return new Point(
-                (int)Math.Round((((widthSmallest - 1) * 64) + ((widthLargest - (widthSmallest - 1)) * 32)) * stretch.X),
-                (int)Math.Round((((heightSmallest - 1) * 64) + ((heightLargest - (heightSmallest - 1)) * 32)) * stretch.Y));
+            return util.GetRectangleCenter(GetTileMapBounding(_stretch, layers));
         }
         /// <summary>
-        /// Returns a point that is the center of the TileMap of the provided <c>layer</c> in the TileMap with the provided <c>stretch</c>.
+        /// Returns a point that is the center of the TileMap of the provided <c>layer</c> in the TileMap with the provided <c>_stretch</c>.
         /// </summary>
-        public Point GetTileMapCenter(Vector2 stretch, int layer)
+        public Point GetTileMapCenter(Vector2 _stretch, int layer)
         {
-            int widthLargest = 2, widthSmallest = 2;
-            int heightLargest = 2, heightSmallest = 2;
-
-            foreach (TileMapLayer i in map)
-            {
-                if (i.layer == layer)
-                {
-                    if (i.width > widthLargest)
-                    {
-                        widthLargest = i.width;
-                    }
-                    else if (i.width < widthSmallest)
-                    {
-                        widthSmallest = i.width;
-                    }
-
-                    if (i.height > heightLargest)
-                    {
-                        heightLargest = i.height;
-                    }
-                    else if (i.height < heightSmallest)
-                    {
-                        heightSmallest = i.height;
-                    }
-                }
-            }
-
-            return new Point(
-                (int)Math.Round((((widthSmallest - 1) * 64) + ((widthLargest - (widthSmallest - 1)) * 32)) * stretch.X),
-                (int)Math.Round((((heightSmallest - 1) * 64) + ((heightLargest - (heightSmallest - 1)) * 32)) * stretch.Y));
+            return util.GetRectangleCenter(GetTileMapBounding(_stretch, layer));
         }
     }
 }

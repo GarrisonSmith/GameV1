@@ -40,7 +40,7 @@ namespace Fantasy.Content.Logic.screen
                 null,
                 _camera.GetTransformation(_graphics.GraphicsDevice));
 
-            _tileMap.DrawLayers(_camera.zoom, _spriteBatch);
+            _tileMap.DrawArea(_camera._stretch, _spriteBatch, _camera.cameraPosition);
             _characters[0].DrawCharacter(_spriteBatch);
             Debug.DebugAll(this);
             
