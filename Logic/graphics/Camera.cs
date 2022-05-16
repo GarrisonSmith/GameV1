@@ -16,15 +16,15 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public Scene _scene;
         /// <summary>
-        /// The center pixel of the scenes Viewport.
+        /// The center pixel of whats on screen.
         /// </summary>
         public Point cameraCenter;
         /// <summary>
-        /// The rectangle the describes what is in the cameras view.
+        /// The rectangle that describes what is in the cameras view.
         /// </summary>
         public Rectangle cameraPosition;
         /// <summary>
-        /// The bounding area where the cameras center cannot move outside of.
+        /// The bounding area that the cameras center which can restricts the cameras movement.
         /// </summary>
         public Rectangle boundingBox;
         /// <summary>
@@ -41,73 +41,87 @@ namespace Fantasy.Content.Logic.graphics
         public Vector2 minStretch = new Vector2(.5f, .5f);
         /// <summary>
         /// Determines how much the final drawing of the spritebatch is rotated around the origin.
+        /// Not implemented fully.
         /// </summary>
         public float rotation = 0f;
         /// <summary>
-        /// Determines if camera movement is valid about the vertical axis.
+        /// Determines if vertical camera movement is restricted.
         /// </summary>
         public bool movementAllowedVertical = true;
         /// <summary>
-        /// Determines if camera movement is valid about the horizontal axis.
+        /// Determines if horizontal camera movement is restricted.
         /// </summary>
         public bool movementAllowedHorizontal = true;
 
         /// <summary>
-        /// Creates a Camera with the given properties. <c>startingCoordinate</c> becomes the cameraCenter.
-        /// <c>forceCentering</c> determines that if the boundingBox is smaller than camera view, then the camera is centered on the tileMap and movement is disable without override.
+        /// Creates a Camera with the given properties.
         /// </summary>
-        public Camera(Scene _scene, Point startingCoordinate, bool forceCentering)
+        /// <param name="_scene">The Scene this Cameras view is being drawn to.</param>
+        /// <param name="startingCoordinate">Describes the point the Camera begins at. By default this is the top right position of the Camera.</param>
+        /// <param name="centerStartingCoordinate">If true, centers the Camera on the starting coordinate.</param>
+        /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
+        public Camera(Scene _scene, Point startingCoordinate, bool centerStartingCoordinate, bool allowCentering)
         {
             this._scene = _scene;
-            this.cameraPosition.X = startingCoordinate.X;
-            this.cameraPosition.Y = startingCoordinate.Y;
             cameraPosition.Width = _scene._graphics.PreferredBackBufferWidth;
             cameraPosition.Height = _scene._graphics.PreferredBackBufferHeight;
-            Reposition();
-            SetBoundingBox(forceCentering);
-        }
-        /// <summary>
-        /// Creates a Camera with the given properties. <c>startingCoordinate</c> becomes the cameraCenter.
-        /// <c>forceCentering</c> determines that if the boundingBox is smaller than camera view, then the camera is centered on the tileMap and movement is disable without override.
-        /// </summary>
-        public Camera(Scene _scene, Point startingCoordinate, Vector2 stretch, bool forceCentering) : this(_scene, startingCoordinate, forceCentering)
-        {
-            Stretch(stretch, forceCentering);
-        }
-        /// <summary>
-        /// Sets the camera stretch by the provided <c>amount</c>. If <c>allowCentering</c> is true then the camera will lock on the scene tileMap center if the whole tileMap fits into view. 
-        /// </summary>
-        public void Stretch(Vector2 amount, bool allowCentering)
-        {
-            if (amount.X >= minStretch.X && amount.X <= maxStretch.X)
+            if (centerStartingCoordinate)
             {
-                cameraPosition.X += ((int)((cameraCenter.X * amount.X) / _stretch.X) - cameraCenter.X);
-                _stretch.X = amount.X;
+                startingCoordinate = new Point(startingCoordinate.X - ((int)cameraPosition.Width / 2), startingCoordinate.Y + ((int)cameraPosition.Height / 2));
             }
-            if (amount.Y >= minStretch.Y && amount.Y <= maxStretch.Y)
+            cameraPosition.X = startingCoordinate.X;
+            cameraPosition.Y = startingCoordinate.Y;
+            Reposition();
+            SetBoundingBox(allowCentering);
+        }
+        /// <summary>
+        /// Creates a Camera with the given properties.
+        /// </summary>
+        /// <param name="_scene">The Scene this Cameras view is being drawn to.</param>
+        /// <param name="startingCoordinate">Describes the point the Camera begins at. By default this is the top right position of the Camera.</param>
+        /// <param name="centerStartingCoordinate">If true, centers the Camera on the starting coordinate.</param>
+        /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
+        /// <param name="stretch">Stretch value this Camera will begin with.</param>
+        public Camera(Scene _scene, Point startingCoordinate, bool centerStartingCoordinate, bool allowCentering, Vector2 stretch) : this(_scene, startingCoordinate, centerStartingCoordinate, allowCentering)
+        {
+            Stretch(stretch, allowCentering);
+        }
+        /// <summary>
+        /// Sets the Camera stretch to the provided amount.
+        /// </summary>
+        /// <param name="newStretch">The stretch the Camera is being set to.</param>
+        /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
+        public void Stretch(Vector2 newStretch, bool allowCentering)
+        {
+            if (newStretch.X >= minStretch.X && newStretch.X <= maxStretch.X)
             {
-                cameraPosition.Y += ((int)((cameraCenter.Y * amount.Y) / _stretch.Y) - cameraCenter.Y);
-                _stretch.Y = amount.Y;
+                cameraPosition.X += ((int)((cameraCenter.X * newStretch.X) / _stretch.X) - cameraCenter.X);
+                _stretch.X = newStretch.X;
+            }
+            if (newStretch.Y >= minStretch.Y && newStretch.Y <= maxStretch.Y)
+            {
+                cameraPosition.Y += ((int)((cameraCenter.Y * newStretch.Y) / _stretch.Y) - cameraCenter.Y);
+                _stretch.Y = newStretch.Y;
             }
             Reposition();
             SetBoundingBox(allowCentering);
         }
         /// <summary>
-        /// Repositions <c>cameraPosition</c> to be consistant with <c>cameraCenter</c>.
+        /// Repositions cameraCenter to be consistant with cameraPosition.
         /// </summary>
         public void Reposition()
         {
             cameraCenter = util.GetRectangleCenter(cameraPosition);
         }
         /// <summary>
-        /// Sets boundingBox to conform to the scenes tileMap.
-        /// <c>forceCentering</c> determines that if the boundingBox is smaller than camera view, then the camera is centered on the tileMap and movement is disable without override.
+        /// Sets this Cameras boundingBox to conform to the boundingBox of the Cameras Scenes TileMap.
         /// </summary>
-        public void SetBoundingBox(bool forceCentering)
+        /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
+        public void SetBoundingBox(bool allowCentering)
         {
             Point mapCenter = _scene._tileMap.GetTileMapCenter(_stretch);
             Rectangle mapBounding = _scene._tileMap.GetTileMapBounding(_stretch);
-            if (mapBounding.Width <= (cameraPosition.Width / _stretch.X) && forceCentering)
+            if (mapBounding.Width <= (cameraPosition.Width / _stretch.X) && allowCentering)
             {
                 movementAllowedHorizontal = false;
                 cameraPosition.X = mapCenter.X - (int)(cameraPosition.Width / 2);
@@ -119,7 +133,7 @@ namespace Fantasy.Content.Logic.graphics
             boundingBox.X = mapBounding.X;
             boundingBox.Width = mapBounding.Width;
 
-            if (mapBounding.Height <= (cameraPosition.Height / _stretch.Y) && forceCentering)
+            if (mapBounding.Height <= (cameraPosition.Height / _stretch.Y) && allowCentering)
             {
                 movementAllowedVertical = false;
                 cameraPosition.Y = mapCenter.Y + (int)(cameraPosition.Height / 2);
@@ -134,8 +148,10 @@ namespace Fantasy.Content.Logic.graphics
             Reposition();
         }
         /// <summary>
-        /// Determines if <c>point</c> is inside of the camera boundingBox
+        /// Determines if a point is inside of the camera boundingBox.
         /// </summary>
+        /// <param name="point">The point to be assessed</param>
+        /// <returns>True if the point is inside or on the boundingBox, False if it not.</returns>
         public bool PointInBoundingBox(Point point)
         {
             if (util.PointInsideRectangle(point, boundingBox))
@@ -150,7 +166,8 @@ namespace Fantasy.Content.Logic.graphics
         /// <summary>
         /// Creates the transfromation matrix used to apply camera effects when drawing.
         /// </summary>
-        public Matrix GetTransformation(GraphicsDevice graphicsDevice)
+        /// <returns>Matrix used to apply camera effects (Camera movement, Camera rotation) when drawing in Scene.</returns>
+        public Matrix GetTransformation()
         {
             Matrix _transform =
                 Matrix.CreateTranslation(new Vector3(-cameraPosition.X, cameraPosition.Y, 0)) *
@@ -158,8 +175,12 @@ namespace Fantasy.Content.Logic.graphics
             return _transform;
         }
         /// <summary>
-        /// Pans the camera to <c>destination</c> with the provided <c>speed</c>. Follows camera movement constrictions.
+        /// Pans the camera to a point with the provided speed. Follows camera movement constrictions.
+        /// Causes Scene clears and redraws.
         /// </summary>
+        /// <param name="destination">Point for the camera to pan to.  By default this is the top right position of the Camera.</param>
+        /// <param name="speed">Speed the camera moves by when panning.</param>
+        /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
         public void Pan(Point destination, int speed, bool centerDestination)
         {
             destination.X = (int)(destination.X * _stretch.X);
@@ -207,8 +228,8 @@ namespace Fantasy.Content.Logic.graphics
             }
         }
         /// <summary>
-        /// Pans the camera to <c>destination</c> with the provided <c>speed</c>. Overrides camera movement constrictions.
-        /// <c>centerDestination</c> determines if the destination will be in the middle of the screen if true, top left if false.
+        /// Pans the camera to destination with the provided speed. Overrides camera movement constrictions.
+        /// centerDestination determines if the destination will be in the middle of the screen if true, top left if false.
         /// </summary>
         public void ForcePan(Point destination, int speed, bool centerDestination)
         {
@@ -253,8 +274,8 @@ namespace Fantasy.Content.Logic.graphics
             }
         }
         /// <summary>
-        /// Pans the camera to <c>destination</c> with the provided <c>speed</c> by first stretching out before panning then stretching back in after panning. Follows camera movement constrictions.
-        /// <c>centerDestination</c> determines if the destination will be in the middle of the screen if true, top left if false.
+        /// Pans the camera to destination with the provided speed by first stretching out before panning then stretching back in after panning. Follows camera movement constrictions.
+        /// centerDestination determines if the destination will be in the middle of the screen if true, top left if false.
         /// </summary>
         public void PanWithStretch(Point destination, int speed, bool centerDestination)
         {
@@ -289,7 +310,7 @@ namespace Fantasy.Content.Logic.graphics
 
         }
         /// <summary>
-        /// Pans the camera to <c>destination</c> with the provided <c>speed</c> by first stretching out before panning then stretching back in after panning. Overrides camera movement constrictions.
+        /// Pans the camera to destination with the provided speed by first stretching out before panning then stretching back in after panning. Overrides camera movement constrictions.
         /// </summary>
         public void ForcePanWithStretch(Point destination, int speed, bool centerDestination)
         {
@@ -317,9 +338,9 @@ namespace Fantasy.Content.Logic.graphics
             ForcePan(destination, speed, centerDestination);
         }
         /// <summary>
-        /// Moves the camera vertically by the provided <c>amount</c>. Follows camera movement constrictions.
-        /// A true value for <c>direction</c> indicates upward movement and a false value indicates a downward movement.
-        /// <c>stretchAmount</c> determines if the amount this camera is moved by is stretched by this cameras <c>stretch</c>.
+        /// Moves the camera vertically by the provided amount. Follows camera movement constrictions.
+        /// A true value for direction indicates upward movement and a false value indicates a downward movement.
+        /// stretchAmount determines if the amount this camera is moved by is stretched by this cameras stretch.
         /// </summary>
         public void MoveVertical(bool direction, int amount, bool stretchAmount)
         {
@@ -358,9 +379,9 @@ namespace Fantasy.Content.Logic.graphics
             }
         }
         /// <summary>
-        /// Sets the camera vetical coordinate to the provided <c>Y</c>. Follows camera movement constrictions.
-        /// <c>centerDestination</c> determines if the destination will be in the middle of the screen if true, top left if false.
-        /// <c>stretchY</c> determines if this cameras <c>stretch</c> value is applied to the destination <c>Y</c>.
+        /// Sets the camera vetical coordinate to the provided Y. Follows camera movement constrictions.
+        /// centerDestination determines if the destination will be in the middle of the screen if true, top left if false.
+        /// stretchY determines if this cameras stretch value is applied to the destination Y.
         /// </summary>
         public void SetVertical(int Y, bool centerDestination, bool stretchY)
         {
@@ -392,9 +413,9 @@ namespace Fantasy.Content.Logic.graphics
             }
         }
         /// <summary>
-        /// Moves the camera horizontally by the provided <c>amount</c>. Follows camera movement constrictions.
-        /// A true value for <c>direction</c> indicates rightward movement and a false value indicates a leftward movement.
-        /// <c>stretchAmount</c> determines if the amount this camera is moved by is stretched by this cameras <c>stretch</c>.
+        /// Moves the camera horizontally by the provided amount. Follows camera movement constrictions.
+        /// A true value for direction indicates rightward movement and a false value indicates a leftward movement.
+        /// stretchAmount determines if the amount this camera is moved by is stretched by this cameras stretch.
         /// </summary>
         public void MoveHorizontal(bool direction, int amount, bool stretchAmount)
         {
@@ -433,9 +454,9 @@ namespace Fantasy.Content.Logic.graphics
             }
         }
         /// <summary>
-        /// Sets the camera horizontal coordinate to the provided <c>X</c>. Follows camera movement constrictions.
-        /// <c>centerDestination</c> determines if the destination will be in the middle of the screen if true, top left if false.
-        /// <c>stretchX</c> determines if this cameras <c>stretch</c> value is applied to the destination <c>X</c>.
+        /// Sets the camera horizontal coordinate to the provided X. Follows camera movement constrictions.
+        /// centerDestination determines if the destination will be in the middle of the screen if true, top left if false.
+        /// stretchX determines if this cameras stretch value is applied to the destination X.
         /// </summary>
         public void SetHorizontal(int X, bool centerDestination, bool stretchX)
         {
@@ -467,8 +488,8 @@ namespace Fantasy.Content.Logic.graphics
             }
         }
         /// <summary>
-        /// Sets the camera center to the <c>cameraCenter</c>. Follows camerea movement constrictions.
-        /// <c>stretchCoordinate</c> determines if this cameras <c>stretch</c> value is applied to the destination <c>coordinate</c>.
+        /// Sets the camera center to the cameraCenter. Follows camerea movement constrictions.
+        /// stretchCoordinate determines if this cameras stretch value is applied to the destination coordinate.
         /// </summary>
         public void SetCenter(Point coordinate, bool stretchCoordinate)
         {
@@ -476,9 +497,9 @@ namespace Fantasy.Content.Logic.graphics
             SetVertical(coordinate.Y, true, stretchCoordinate);
         }
         /// <summary>
-        /// Moves the camera vertically by the provided <c>amount</c>. Overrides camera movement constrictions.
-        /// A true value for <c>direction</c> indicates upward movement and a false value indicates a downward movement.
-        /// <c>stretchAmount</c> determines if the amount this camera is moved by is stretched by this cameras <c>stretch</c>.
+        /// Moves the camera vertically by the provided amount. Overrides camera movement constrictions.
+        /// A true value for direction indicates upward movement and a false value indicates a downward movement.
+        /// stretchAmount determines if the amount this camera is moved by is stretched by this cameras stretch.
         /// </summary>
         public void ForceMoveVertical(bool direction, int amount, bool stretchAmount)
         {
@@ -500,9 +521,9 @@ namespace Fantasy.Content.Logic.graphics
             Reposition();
         }
         /// <summary>
-        /// Sets the camera vetical coordinate to the provided <c>Y</c>. Overrides camera movement constrictions.
-        /// <c>centerDestination</c> determines if the destination will be in the middle of the screen if true, top left if false.
-        /// <c>stretchY</c> determines if this cameras <c>stretch</c> value is applied to the destination <c>Y</c>.
+        /// Sets the camera vetical coordinate to the provided Y. Overrides camera movement constrictions.
+        /// centerDestination determines if the destination will be in the middle of the screen if true, top left if false.
+        /// stretchY determines if this cameras stretch value is applied to the destination Y.
         /// </summary>
         public void ForceSetVertical(int Y, bool centerDestination, bool stretchY)
         {
@@ -520,9 +541,9 @@ namespace Fantasy.Content.Logic.graphics
             Reposition();
         }
         /// <summary>
-        /// Moves the camera horizontally by the provided <c>amount</c>. Overrides camera movement constrictions.
-        /// A true value for <c>direction</c> indicates rightward movement and a false value indicates a leftward movement.
-        /// <c>stretchAmount</c> determines if the amount this camera is moved by is stretched by this cameras <c>stretch</c>.
+        /// Moves the camera horizontally by the provided amount. Overrides camera movement constrictions.
+        /// A true value for direction indicates rightward movement and a false value indicates a leftward movement.
+        /// stretchAmount determines if the amount this camera is moved by is stretched by this cameras stretch.
         /// </summary>
         public void ForceMoveHorizontal(bool direction, int amount, bool stretchAmount)
         {
@@ -544,9 +565,9 @@ namespace Fantasy.Content.Logic.graphics
             Reposition();
         }
         /// <summary>
-        /// Sets the camera horizontal coordinate to the provided <c>X</c>. Overrides camera movement constrictions.
-        /// <c>centerDestination</c> determines if the destination will be in the middle of the screen if true, top left if false.
-        /// <c>stretchX</c> determines if this cameras <c>stretch</c> value is applied to the destination <c>X</c>.
+        /// Sets the camera horizontal coordinate to the provided X. Overrides camera movement constrictions.
+        /// centerDestination determines if the destination will be in the middle of the screen if true, top left if false.
+        /// stretchX determines if this cameras stretch value is applied to the destination X.
         /// </summary>
         public void ForceSetHorizontal(int X, bool centerDestination, bool stretchX)
         {
@@ -564,8 +585,8 @@ namespace Fantasy.Content.Logic.graphics
             Reposition();
         }
         /// <summary>
-        /// Sets the camera center to the <c>cameraCenter</c>. Overrides camerea movement constrictions.
-        /// <c>stretchCoordinate</c> determines if this cameras <c>stretch</c> value is applied to the destination <c>coordinate</c>.
+        /// Sets the camera center to the cameraCenter. Overrides camerea movement constrictions.
+        /// stretchCoordinate determines if this cameras stretch value is applied to the destination coordinate.
         /// </summary>
         public void ForceSetCenter(Point coordinate, bool stretchCoordinate)
         {
