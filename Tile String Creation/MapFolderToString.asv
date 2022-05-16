@@ -110,9 +110,9 @@ function foo = get_tile_string(tile) %gets the provided tile's string from tileI
     end
 end
 
-function foo = remove_empty_rows(mapString) %removes any empty rows from the bottom of the string.
+function foo = remove_empty_rows(mapString) %removes the max amount of rows from the mapString layers.
     
-    lengthDif = 0;
+    lengthDif = intmax;
     for index=1:1:length(mapString)
         layerString = mapString(index);
         
@@ -127,15 +127,24 @@ function foo = remove_empty_rows(mapString) %removes any empty rows from the bot
                 end
             
                 if (empty)
-                    if (legthDif > (strlength(layerString)-i))
-                        le
+                    if (lengthDif > (strlength(layerString)-i))
+                        lengthDif = (strlength(layerString)-i);
                     end
                     break;
                 end
             end
         end
-        
+    end
+    
+    for index=1:1:length(mapString)
+        layerString = mapString(index);
+        layerString = layerString{1}(1:(strlength(layerString)-lengthDif));
         mapString(index) = layerString;
     end
     foo = mapString;
+end
+
+function foo = remove_empty_columns(mapString)
+    foo = strrep(mapString,":;",";")
+    while foo
 end

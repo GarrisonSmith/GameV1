@@ -43,10 +43,11 @@ function foo = get_maps_string(mapFolder)
         mapString(index) = mapString(index) + "<" +tileMapFile.name(end-4:end-4) + ">";
         tileMap = imread(string(tileMapFile.folder)+"\"+string(tileMapFile.name));
         mapLayer = construct_map_string(tileMap);
-        mapString(index) = mapString(index) + mapLayer;
+        mapString(index) = mapString(index) + remove_empty_columns(mapLayer);
         index = index + 1;
     end
     mapString = remove_empty_rows(mapString);
+    %mapString = remove_empty_columns(mapString);
     foo= "";
     for index = 1:length(mapString) 
         foo = foo + mapString(index);
@@ -110,7 +111,7 @@ function foo = get_tile_string(tile) %gets the provided tile's string from tileI
     end
 end
 
-function foo = remove_empty_rows(mapString) %removes any empty rows from the bottom of the string.
+function foo = remove_empty_rows(mapString) %removes the max amount of rows from the mapString layers.
     
     lengthDif = intmax;
     for index=1:1:length(mapString)
@@ -142,4 +143,11 @@ function foo = remove_empty_rows(mapString) %removes any empty rows from the bot
         mapString(index) = layerString;
     end
     foo = mapString;
+end
+
+function foo = remove_empty_columns(mapString)
+    foo = strrep(mapString,"::;",":;");
+    while foo ~= strrep(foo,"::;",":;")
+        foo = strrep(foo,"::;",":;");
+    end
 end
