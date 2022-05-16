@@ -175,7 +175,8 @@ namespace Fantasy.Content.Logic.graphics
             return _transform;
         }
         /// <summary>
-        /// Pans the camera to a point with the provided speed. Follows camera movement constrictions.
+        /// Pans the camera to a point with the provided speed. 
+        /// Follows camera movement constrictions.
         /// Causes Scene clears and redraws.
         /// </summary>
         /// <param name="destination">Point for the camera to pan to.  By default this is the top right position of the Camera.</param>
@@ -228,9 +229,13 @@ namespace Fantasy.Content.Logic.graphics
             }
         }
         /// <summary>
-        /// Pans the camera to destination with the provided speed. Overrides camera movement constrictions.
-        /// centerDestination determines if the destination will be in the middle of the screen if true, top left if false.
+        /// Pans the Camera to a point with the provided speed. 
+        /// Overrides Camera movement constrictions.
+        /// Causes Scene clears and redraws.
         /// </summary>
+        /// <param name="destination">Point for the Camera to pan to.  By default this is the top right position of the Camera.</param>
+        /// <param name="speed">Speed the Camera moves by when panning.</param>
+        /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
         public void ForcePan(Point destination, int speed, bool centerDestination)
         {
             destination.X = (int)(destination.X * _stretch.X);
@@ -274,9 +279,14 @@ namespace Fantasy.Content.Logic.graphics
             }
         }
         /// <summary>
-        /// Pans the camera to destination with the provided speed by first stretching out before panning then stretching back in after panning. Follows camera movement constrictions.
-        /// centerDestination determines if the destination will be in the middle of the screen if true, top left if false.
+        /// Pans the Camera to a point with the provided speed by first stretching textures until the point is in the cameres views (or until reaching Camera max stretch)
+        /// then returning back to the starting stretching after panning. Provides a zoom out --> Pan to Point --> zoom back in effect.
+        /// Follows Camera movement constrictions.
+        /// Causes Scene clears and redraws.
         /// </summary>
+        /// <param name="destination">Point for the Camera to pan to.  By default this is the top right position of the Camera.</param>
+        /// <param name="speed">Speed the Camera moves by when panning.</param>
+        /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
         public void PanWithStretch(Point destination, int speed, bool centerDestination)
         {
             if (movementAllowedVertical && movementAllowedHorizontal)
@@ -310,8 +320,14 @@ namespace Fantasy.Content.Logic.graphics
 
         }
         /// <summary>
-        /// Pans the camera to destination with the provided speed by first stretching out before panning then stretching back in after panning. Overrides camera movement constrictions.
+        /// Pans the Camera to a point with the provided speed by first stretching textures until the point is in the cameres views (or until reaching Camera max stretch)
+        /// then returning back to the starting stretching after panning. Provides a zoom out --> Pan to Point --> zoom back in effect.
+        /// Overrides Camera movement constrictions.
+        /// Causes Scene clears and redraws.
         /// </summary>
+        /// <param name="destination">Point for the Camera to pan to.  By default this is the top right position of the Camera.</param>
+        /// <param name="speed">Speed the Camera moves by when panning.</param>
+        /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
         public void ForcePanWithStretch(Point destination, int speed, bool centerDestination)
         {
             Vector2 original = _stretch;
@@ -338,10 +354,12 @@ namespace Fantasy.Content.Logic.graphics
             ForcePan(destination, speed, centerDestination);
         }
         /// <summary>
-        /// Moves the camera vertically by the provided amount. Follows camera movement constrictions.
-        /// A true value for direction indicates upward movement and a false value indicates a downward movement.
-        /// stretchAmount determines if the amount this camera is moved by is stretched by this cameras stretch.
+        /// Moves the Camera vertically by the provided amount.
+        /// Follows Camera movement constrictions.
         /// </summary>
+        /// <param name="direction">True results in the Camera moving up, False results in the Camera moving down.</param>
+        /// <param name="amount">The amount the Camera will move in the provided direction.</param>
+        /// <param name="stretchAmount">True results in the amount the Camera is moved being multiplied by the Camera stretching, False leaves the amount as is.</param>
         public void MoveVertical(bool direction, int amount, bool stretchAmount)
         {
             if (movementAllowedVertical)
@@ -379,10 +397,12 @@ namespace Fantasy.Content.Logic.graphics
             }
         }
         /// <summary>
-        /// Sets the camera vetical coordinate to the provided Y. Follows camera movement constrictions.
-        /// centerDestination determines if the destination will be in the middle of the screen if true, top left if false.
-        /// stretchY determines if this cameras stretch value is applied to the destination Y.
+        /// Sets the Camera vetical coordinate to the provided Y.
+        /// Follows Camera movement constrictions.
         /// </summary>
+        /// <param name="Y">New Y coordinate for this Camera. By default this is the top right position of the Camera.</param>
+        /// <param name="centerDestination">If true, the Camera set the Y as the center.</param>
+        /// <param name="stretchY">True results in the Y being multiplied by the Camera stretching. False leaves the Y as is.</param>
         public void SetVertical(int Y, bool centerDestination, bool stretchY)
         {
             if (stretchY)
@@ -413,10 +433,12 @@ namespace Fantasy.Content.Logic.graphics
             }
         }
         /// <summary>
-        /// Moves the camera horizontally by the provided amount. Follows camera movement constrictions.
-        /// A true value for direction indicates rightward movement and a false value indicates a leftward movement.
-        /// stretchAmount determines if the amount this camera is moved by is stretched by this cameras stretch.
+        /// Moves the camera horizontally by the provided amount.
+        /// Follows camera movement constrictions.
         /// </summary>
+        /// <param name="direction">True results in the Camera moving right, False results in the Camera moving left.</param>
+        /// <param name="amount">The amount the camera will move in the provided direction.</param>
+        /// <param name="stretchAmount">True results in the amount the camera is moved being multiplied by the camera stretching, False leaves the amount as is.</param>
         public void MoveHorizontal(bool direction, int amount, bool stretchAmount)
         {
             if (movementAllowedHorizontal)
@@ -454,10 +476,12 @@ namespace Fantasy.Content.Logic.graphics
             }
         }
         /// <summary>
-        /// Sets the camera horizontal coordinate to the provided X. Follows camera movement constrictions.
-        /// centerDestination determines if the destination will be in the middle of the screen if true, top left if false.
-        /// stretchX determines if this cameras stretch value is applied to the destination X.
+        /// Sets the camera horizontal coordinate to the provided X. 
+        /// Follows camera movement constrictions.
         /// </summary>
+        /// <param name="X">New X coordinate for this Camera. By default this is the top right position of the Camera.</param>
+        /// <param name="centerDestination">If true, the Camera set the X as the center.</param>
+        /// <param name="stretchX">True results in the X being multiplied by the Camera stretching. False leaves the X as is.</param>
         public void SetHorizontal(int X, bool centerDestination, bool stretchX)
         {
             if (stretchX)
@@ -488,19 +512,24 @@ namespace Fantasy.Content.Logic.graphics
             }
         }
         /// <summary>
-        /// Sets the camera center to the cameraCenter. Follows camerea movement constrictions.
-        /// stretchCoordinate determines if this cameras stretch value is applied to the destination coordinate.
+        /// Sets the camera center to the cameraCenter. 
+        /// Follows camerea movement constrictions.
         /// </summary>
-        public void SetCenter(Point coordinate, bool stretchCoordinate)
+        /// <param name="coordinate">New coordinate for this Camera. By default this is the top right position of the Camera.</param>
+        /// <param name="stretchCoordinate">True results in the coordinate being multiplied by the camera stretching, False leaves the amount as is.</param>
+        /// <param name="centerDestination">If true, the coordinate is set as the Camera center.</param>
+        public void SetCenter(Point coordinate, bool centerDestination, bool stretchCoordinate)
         {
-            SetHorizontal(coordinate.X, true, stretchCoordinate);
-            SetVertical(coordinate.Y, true, stretchCoordinate);
+            SetHorizontal(coordinate.X, centerDestination, stretchCoordinate);
+            SetVertical(coordinate.Y, centerDestination, stretchCoordinate);
         }
         /// <summary>
-        /// Moves the camera vertically by the provided amount. Overrides camera movement constrictions.
-        /// A true value for direction indicates upward movement and a false value indicates a downward movement.
-        /// stretchAmount determines if the amount this camera is moved by is stretched by this cameras stretch.
+        /// Moves the camera vertically by the provided amount.
+        /// Overrides camera movement constrictions.
         /// </summary>
+        /// <param name="direction">True results in the camera moving up, False results in the camera moving down.</param>
+        /// <param name="amount">The amount the camera will move in the provided direction.</param>
+        /// <param name="stretchAmount">True results in the amount the camera is moved being multiplied by the camera stretching, False leaves the amount as is.</param>
         public void ForceMoveVertical(bool direction, int amount, bool stretchAmount)
         {
             if (stretchAmount)
@@ -521,10 +550,12 @@ namespace Fantasy.Content.Logic.graphics
             Reposition();
         }
         /// <summary>
-        /// Sets the camera vetical coordinate to the provided Y. Overrides camera movement constrictions.
-        /// centerDestination determines if the destination will be in the middle of the screen if true, top left if false.
-        /// stretchY determines if this cameras stretch value is applied to the destination Y.
+        /// Sets the camera vetical coordinate to the provided Y. 
+        /// Overrides camera movement constrictions.
         /// </summary>
+        /// <param name="Y">New Y coordinate for this Camera. By default this is the top right position of the Camera.</param>
+        /// <param name="centerDestination">If true, the Camera set the Y as the center.</param>
+        /// <param name="stretchY">True results in the Y being multiplied by the Camera stretching. False leaves the Y as is.</param>
         public void ForceSetVertical(int Y, bool centerDestination, bool stretchY)
         {
             if (stretchY)
@@ -541,10 +572,12 @@ namespace Fantasy.Content.Logic.graphics
             Reposition();
         }
         /// <summary>
-        /// Moves the camera horizontally by the provided amount. Overrides camera movement constrictions.
-        /// A true value for direction indicates rightward movement and a false value indicates a leftward movement.
-        /// stretchAmount determines if the amount this camera is moved by is stretched by this cameras stretch.
+        /// Moves the camera horizontally by the provided amount. 
+        /// Overrides camera movement constrictions.
         /// </summary>
+        /// <param name="direction">True results in the Camera moving right, False results in the Camera moving left.</param>
+        /// <param name="amount">The amount the camera will move in the provided direction.</param>
+        /// <param name="stretchAmount">True results in the amount the camera is moved being multiplied by the camera stretching, False leaves the amount as is.</param>
         public void ForceMoveHorizontal(bool direction, int amount, bool stretchAmount)
         {
             if (stretchAmount)
@@ -565,10 +598,12 @@ namespace Fantasy.Content.Logic.graphics
             Reposition();
         }
         /// <summary>
-        /// Sets the camera horizontal coordinate to the provided X. Overrides camera movement constrictions.
-        /// centerDestination determines if the destination will be in the middle of the screen if true, top left if false.
-        /// stretchX determines if this cameras stretch value is applied to the destination X.
+        /// Sets the camera horizontal coordinate to the provided X. 
+        /// Overrides camera movement constrictions.
         /// </summary>
+        /// <param name="X">New X coordinate for this Camera. By default this is the top right position of the Camera.</param>
+        /// <param name="centerDestination">If true, the Camera set the X as the center.</param>
+        /// <param name="stretchX">True results in the X being multiplied by the Camera stretching. False leaves the X as is.</param>
         public void ForceSetHorizontal(int X, bool centerDestination, bool stretchX)
         {
             if (stretchX)
@@ -585,13 +620,16 @@ namespace Fantasy.Content.Logic.graphics
             Reposition();
         }
         /// <summary>
-        /// Sets the camera center to the cameraCenter. Overrides camerea movement constrictions.
-        /// stretchCoordinate determines if this cameras stretch value is applied to the destination coordinate.
+        /// Sets the camera center to the cameraCenter. 
+        /// Overrides camerea movement constrictions.
         /// </summary>
-        public void ForceSetCenter(Point coordinate, bool stretchCoordinate)
+        /// <param name="coordinate">New coordinate for this Camera. By default this is the top right position of the Camera.</param>
+        /// <param name="stretchCoordinate">True results in the coordinate being multiplied by the camera stretching, False leaves the amount as is.</param>
+        /// <param name="centerDestination">If true, the coordinate is set as the Camera center.</param> 
+        public void ForceSetCenter(Point coordinate, bool centerDestination, bool stretchCoordinate)
         {
-            ForceSetHorizontal(coordinate.X, true, stretchCoordinate);
-            ForceSetVertical(coordinate.Y, true, stretchCoordinate);
+            ForceSetHorizontal(coordinate.X, centerDestination, stretchCoordinate);
+            ForceSetVertical(coordinate.Y, centerDestination, stretchCoordinate);
         }
     }
 }
