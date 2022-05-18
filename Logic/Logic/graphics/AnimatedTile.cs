@@ -1,42 +1,26 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Fantasy.Content.Logic.graphics
 {
-    /// <summary>
-    /// Describes A tile in a given TileMapLayer.
-    /// </summary>
-    class Tile
+    class AnimatedTile : Tile
     {
         /// <summary>
-        /// Name of the tile set this tile describes.
+        /// Manages the tiles animation.
         /// </summary>
-        public string tileSetName;
-        /// <summary>
-        /// Top left coordinate of the tile area this tile describes inside of the given tile set.
-        /// </summary>
-        public Point tileSetCoordinate;
-        /// <summary>
-        /// Point this tile occupies in its TileMapLayer. The X value is the horizontal position and the Y value is the vertical position.
-        /// </summary>
-        public Point tileMapCoordinate;
-        /// <summary>
-        /// Color this tile loads when drawn.
-        /// </summary>
-        public Color color;
-        /// <summary>
-        /// The index of the graphic in the TileMap for this tile.
-        /// </summary>
-        public int graphicsIndex;
+        public Animation frames;
 
-        public Tile() { }
         /// <summary>
-        /// Constructs a tile with the given properties.
+        /// Constructs a animated tile with the given properties.
         /// <param name="tileID">is parsed to get the tiles tileSetName and tiles x and y values.</param>
         /// <param name="column">the column this tile occupies on its TileMapLayer.</param>
         /// <param name="row">the row this tile occupies on its TileMapLayer.</param>
+        /// <param name="frameAmount">the number of frames this animated tile has.</param>
+        /// <param name="minFrameDuration">the minimum number of milliseconds a frame will be drawn for.</param>
+        /// <param name="maxFrameDuration">the maximum number of milliseconds a frame will be drawn for.</param>
         /// </summary>
-        public Tile(string tileID, int column, int row)
+        public AnimatedTile(string tileID, int column, int row, int frameAmount, int minFrameDuration, int maxFrameDuration)
         {
             tileMapCoordinate = new Point(column, row);
             if (tileID == "BLACK")
@@ -55,17 +39,16 @@ namespace Fantasy.Content.Logic.graphics
                     );
                 color = Color.White;
             }
+            frames = new Animation(minFrameDuration, maxFrameDuration, 0, frameAmount - 1, tileSetCoordinate.Y / 64, tileSetCoordinate.X / 64, 64, 64, AnimationState.cycling);
         }
         /// <summary>
-        /// Draws the tile with the provided stretch.
+        /// Draws the current tile frame with the provided stretch.
         /// </summary>
         /// <param name="tileSet">the reference tileSet this tiles graphic references.</param>
         /// <param name="_stretch">the stretching of the texture,</param>
-        public void DrawTile(Texture2D tileSet, Vector2 _stretch)
+        new public void DrawTile(Texture2D tileSet, Vector2 _stretch)
         {
-            Global._spriteBatch.Draw(tileSet, new Vector2(tileMapCoordinate.X * 64 * _stretch.X, -(tileMapCoordinate.Y+1) * 64 * _stretch.Y),
-                new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64),
-                color, 0f, new Vector2(0, 0), _stretch, new SpriteEffects(), 0);
+            frames.DrawAnimation(new Point(tileMapCoordinate.X * 64, (tileMapCoordinate.Y + 1) * 64), tileSet, color, _stretch);
         }
     }
 }

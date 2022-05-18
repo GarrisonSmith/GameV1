@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Content.Logic.screen;
 using Fantasy.Content.Logic.utility;
 
@@ -41,7 +40,7 @@ namespace Fantasy.Content.Logic.graphics
         public Vector2 minStretch = new Vector2(.5f, .5f);
         /// <summary>
         /// Determines how much the final drawing of the spritebatch is rotated around the origin.
-        /// Not implemented fully.
+        /// TODO Not implemented fully.
         /// </summary>
         public float rotation = 0f;
         /// <summary>
@@ -63,8 +62,8 @@ namespace Fantasy.Content.Logic.graphics
         public Camera(Scene _scene, Point startingCoordinate, bool centerStartingCoordinate, bool allowCentering)
         {
             this._scene = _scene;
-            cameraPosition.Width = _scene._graphics.PreferredBackBufferWidth;
-            cameraPosition.Height = _scene._graphics.PreferredBackBufferHeight;
+            cameraPosition.Width = Global._graphics.PreferredBackBufferWidth;
+            cameraPosition.Height = Global._graphics.PreferredBackBufferHeight;
             if (centerStartingCoordinate)
             {
                 startingCoordinate = new Point(startingCoordinate.X - ((int)cameraPosition.Width / 2), startingCoordinate.Y + ((int)cameraPosition.Height / 2));
@@ -179,6 +178,7 @@ namespace Fantasy.Content.Logic.graphics
         /// Follows camera movement constrictions.
         /// Causes Scene clears and redraws.
         /// </summary>
+        /// TODO add stretching on camera pan speed.
         /// <param name="destination">Point for the camera to pan to.  By default this is the top right position of the Camera.</param>
         /// <param name="speed">Speed the camera moves by when panning.</param>
         /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
@@ -233,6 +233,7 @@ namespace Fantasy.Content.Logic.graphics
         /// Overrides Camera movement constrictions.
         /// Causes Scene clears and redraws.
         /// </summary>
+        /// TODO add stretching on camera pan speed.
         /// <param name="destination">Point for the Camera to pan to.  By default this is the top right position of the Camera.</param>
         /// <param name="speed">Speed the Camera moves by when panning.</param>
         /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
@@ -284,6 +285,7 @@ namespace Fantasy.Content.Logic.graphics
         /// Follows Camera movement constrictions.
         /// Causes Scene clears and redraws.
         /// </summary>
+        /// TODO add stretching on camera pan speed.
         /// <param name="destination">Point for the Camera to pan to.  By default this is the top right position of the Camera.</param>
         /// <param name="speed">Speed the Camera moves by when panning.</param>
         /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
@@ -325,6 +327,7 @@ namespace Fantasy.Content.Logic.graphics
         /// Overrides Camera movement constrictions.
         /// Causes Scene clears and redraws.
         /// </summary>
+        /// TODO add stretching on camera pan speed.
         /// <param name="destination">Point for the Camera to pan to.  By default this is the top right position of the Camera.</param>
         /// <param name="speed">Speed the Camera moves by when panning.</param>
         /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>

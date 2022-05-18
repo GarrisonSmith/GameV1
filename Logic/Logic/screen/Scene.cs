@@ -9,29 +9,23 @@ namespace Fantasy.Content.Logic.screen
 {
     class Scene
     {
-        public GraphicsDeviceManager _graphics;
-        public SpriteBatch _spriteBatch;
         public Camera _camera;
         public TileMap _tileMap;
-        public Texture2D[] _tileTextures;
         public Character _character;
-        public Scene(GraphicsDeviceManager _graphics, SpriteBatch _spriteBatch, TileMap _tileMap, Texture2D[] _tileTextures)
+        public Scene(TileMap _tileMap)
         {
-            this._graphics = _graphics;
-            this._spriteBatch = _spriteBatch;
             this._tileMap = _tileMap;
-            this._tileTextures = _tileTextures;
-            this._character = new Character("character one", _tileTextures[5], 1, new Rectangle(0,0,64,128), 5, Orientation.up);
+            this._character = new Character("character_two", "character_two_spritesheet", 1, new Rectangle(0,0,64,128), 3, Orientation.up);
 
             _camera = new Camera(this, new Point(640, 640), true, false);
         }
         public void LoadScene()
         {
-            _tileMap.LoadTileTextures(_tileTextures, _graphics);
+            _tileMap.LoadTileTextures();
         }
         public void DrawScene()
         {
-            _spriteBatch.Begin(SpriteSortMode.Deferred, //first things drawn on bottom, last things on top
+            Global._spriteBatch.Begin(SpriteSortMode.Deferred, //first things drawn on bottom, last things on top
                 BlendState.AlphaBlend,
                 null,
                 null,
@@ -39,38 +33,38 @@ namespace Fantasy.Content.Logic.screen
                 null,
                 _camera.GetTransformation());
 
-            _tileMap.DrawArea(_camera._stretch, _spriteBatch, _camera.cameraPosition);
+            _tileMap.DrawArea(_camera._stretch, 1, _camera.cameraPosition);
             Debug.DebugOnScene(this);
-            _character.DrawCharacter(_camera._stretch, _spriteBatch);
+            _character.DrawCharacter(_camera._stretch, Global._spriteBatch);
 
-            _spriteBatch.End();
+            Global._spriteBatch.End();
 
-            _spriteBatch.Begin();
+            Global._spriteBatch.Begin();
 
             Debug.DebugOverlay(this);
 
-            _spriteBatch.End();
+            Global._spriteBatch.End();
         }
         public void ClearAndRedraw()
         {
-            _graphics.GraphicsDevice.Clear(Color.Gray);
-            _graphics.BeginDraw();
+            Global._graphics.GraphicsDevice.Clear(Color.Gray);
+            Global._graphics.BeginDraw();
             DrawScene();
-            _graphics.EndDraw();
+            Global._graphics.EndDraw();
         }
-        public void TransitionScene(String tileMapString, Texture2D[] tileSets)
+        public void TransitionScene(String tileMapString)
         {
             _tileMap.UnloadTileTextures();
             _tileMap = new TileMap(tileMapString);
-            _tileMap.LoadTileTextures(tileSets, _graphics);
+            _tileMap.LoadTileTextures();
             _camera.SetBoundingBox(true);
             ClearAndRedraw();
         }
         public void BufferTest()
         {
-            _graphics.PreferredBackBufferWidth = 500;
-            _graphics.PreferredBackBufferHeight = 500;
-            _graphics.ApplyChanges();
+            Global._graphics.PreferredBackBufferWidth = 500;
+            Global._graphics.PreferredBackBufferHeight = 500;
+            Global._graphics.ApplyChanges();
             this._camera = new Camera(this, this._camera.cameraCenter, true, true);
         }
     }

@@ -14,14 +14,16 @@ namespace Fantasy.Content.Logic.entities
 
         public Character() { }
 
-        public Character(string id, Texture2D spritesheet, int layer, Rectangle positionBox, int speed, Orientation orientation)
+        public Character(string id, string spriteSheetName, int layer, Rectangle positionBox, int speed, Orientation orientation)
         {
             this.id = id;
-            this.spritesheet = spritesheet;
+            this.spriteSheetName = spriteSheetName;
             this.layer = layer;
             this.positionBox = positionBox;
             this.speed = speed;
             this.orientation = orientation;
+
+            spriteSheet = Global._content.Load<Texture2D>(spriteSheetName);
         }
 
         public void DrawCharacter(Vector2 _stretch, SpriteBatch _spriteBatch)
@@ -31,16 +33,16 @@ namespace Fantasy.Content.Logic.entities
                 switch (orientation)
                 {
                     case Orientation.up:
-                        frames = new Animation(400, 0, 3, 3, 64, 128, AnimationState.idle);
+                        frames = new Animation(400, 400, 0, 3, 3, 0, 64, 128, AnimationState.idle);
                         break;
                     case Orientation.right:
-                        frames = new Animation(400, 0, 3, 1, 64, 128, AnimationState.idle);
+                        frames = new Animation(400, 400, 0, 3, 1, 0, 64, 128, AnimationState.idle);
                         break;
                     case Orientation.left:
-                        frames = new Animation(400, 0, 3, 2, 64, 128, AnimationState.idle);
+                        frames = new Animation(400, 400, 0, 3, 2, 0, 64, 128, AnimationState.idle);
                         break;
                     case Orientation.down:
-                        frames = new Animation(400, 0, 3, 0, 64, 128, AnimationState.idle);
+                        frames = new Animation(400, 400, 0, 3, 0, 0, 64, 128, AnimationState.idle);
                         break;
                 }
             }
@@ -56,11 +58,11 @@ namespace Fantasy.Content.Logic.entities
 
             if (characterIsMoving)
             {
-                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spritesheet, Color.White, _stretch, _spriteBatch);
+                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spriteSheet, Color.White, _stretch);
             }
             else
             {
-                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spritesheet, Color.White, _stretch, _spriteBatch);
+                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spriteSheet, Color.White, _stretch);
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using System.Xml;
 
 namespace Fantasy.Content.Logic.graphics
 {
@@ -31,10 +32,14 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         /// <param name="layer">The layer this TileMapLayer occupies in its TileMap</param>
         /// <param name="initialize">string to be parsed to describe the Tiles in the TileMapLayer.</param>
-        public TileMapLayer(int layer, String initialize)
+        public TileMapLayer(int layer, string initialize)
         {
             this.map = new List<Tile>();
             this.layer = layer;
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(@"Content\tile-sets\animated_tiles_config.xml");
+
             string[] columnTemp;
             string[] rowTemp;
             int row = 1;
@@ -51,7 +56,32 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         if (j != "")
                         {
-                            map.Add(new Tile(j, column, row));
+                            bool animated = false;
+                            int frames = 1;
+                            int minDuration = 0;
+                            int maxDuration = 0;
+                            foreach (XmlElement foo in doc.GetElementsByTagName("tile"))
+                            {
+                                if (j == foo.GetAttribute("name"))
+                                {
+                                    animated = true;
+                                    frames = int.Parse(foo.ChildNodes[0].InnerText);
+                                    minDuration = int.Parse(foo.ChildNodes[1].InnerText);
+                                    maxDuration = int.Parse(foo.ChildNodes[2].InnerText);
+                                    break;
+                                }
+                            }
+
+                            if (animated)
+                            {
+                                map.Add(new AnimatedTile(j, column, row, frames, minDuration, maxDuration));
+                            }
+                            else
+                            {
+                                map.Add(new Tile(j, column, row));
+                            }
+                            
+                            
                             if (column > this.width)
                             {
                                 this.width = column;
