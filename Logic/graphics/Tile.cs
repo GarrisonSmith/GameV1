@@ -56,6 +56,11 @@ namespace Fantasy.Content.Logic.graphics
                 color = Color.White;
             }
         }
+        /// <summary>
+        /// Draws the tile with the provided stretch.
+        /// </summary>
+        /// <param name="tileSet">the reference tileSet this tiles graphic references.</param>
+        /// <param name="_stretch">the stretching of the texture,</param>
         public void DrawTile(Texture2D tileSet, Vector2 _stretch)
         {
             Global._spriteBatch.Draw(tileSet, new Vector2(tileMapCoordinate.X * 64 * _stretch.X, -(tileMapCoordinate.Y+1) * 64 * _stretch.Y),

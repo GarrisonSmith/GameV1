@@ -57,18 +57,24 @@ namespace Fantasy.Content.Logic.graphics
                         if (j != "")
                         {
                             bool animated = false;
+                            int frames = 1;
+                            int minDuration = 0;
+                            int maxDuration = 0;
                             foreach (XmlElement foo in doc.GetElementsByTagName("tile"))
                             {
                                 if (j == foo.GetAttribute("name"))
                                 {
                                     animated = true;
+                                    frames = int.Parse(foo.ChildNodes[0].InnerText);
+                                    minDuration = int.Parse(foo.ChildNodes[1].InnerText);
+                                    maxDuration = int.Parse(foo.ChildNodes[2].InnerText);
                                     break;
                                 }
                             }
 
                             if (animated)
                             {
-                                map.Add(new AnimatedTile(j, column, row, 2));
+                                map.Add(new AnimatedTile(j, column, row, frames, minDuration, maxDuration));
                             }
                             else
                             {

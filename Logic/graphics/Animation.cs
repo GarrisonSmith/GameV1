@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Content.Logic.entities;
 
@@ -6,7 +7,12 @@ namespace Fantasy.Content.Logic.graphics
 {
     class Animation
     {
+        public static bool freezeAllAnimations = false;
+        public bool freezeAnimation = false;
+
         public double frameDuration;
+        public int minFrameDuration;
+        public int maxFrameDuration;
         public double lastFrameGameTime;
         public int currentFrame;
         public int maxFrame;
@@ -17,9 +23,11 @@ namespace Fantasy.Content.Logic.graphics
         public int sourceHeight;
         public AnimationState animationState;
 
-        public Animation(double frameDuration, int startingFrame, int maxFrame, int rowReference, int columnReference, int sourceWidth, int sourceHeight, AnimationState animationState)
+        public Animation(int minFrameDuration, int maxFrameDuration, int startingFrame, int maxFrame, int rowReference, int columnReference, int sourceWidth, int sourceHeight, AnimationState animationState)
         {
-            this.frameDuration = frameDuration;
+            this.minFrameDuration = minFrameDuration;
+            this.maxFrameDuration = maxFrameDuration;
+            frameDuration = new Random().Next(minFrameDuration, maxFrameDuration);
             currentFrame = startingFrame;
             this.maxFrame = maxFrame;
             this.rowReference = newRow = rowReference;
@@ -31,51 +39,60 @@ namespace Fantasy.Content.Logic.graphics
 
         public void DrawAnimation(Point position, Texture2D texture, Color color, Vector2 _stretch)
         {
-            switch (animationState)
+            if (!freezeAllAnimations && !freezeAnimation)
             {
-                case AnimationState.cycling:
-                    if (Global._gameTime.TotalGameTime.TotalMilliseconds - lastFrameGameTime >= frameDuration)
-                    {
-                        lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
-                        if (currentFrame < maxFrame)
+                switch (animationState)
+                {
+                    case AnimationState.cycling:
+                        if (Global._gameTime.TotalGameTime.TotalMilliseconds - lastFrameGameTime >= frameDuration)
                         {
-                            currentFrame++;
+                            frameDuration = new Random().Next(minFrameDuration, maxFrameDuration);
+                            lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+                            if (currentFrame < maxFrame)
+                            {
+                                currentFrame++;
+                            }
+                            else
+                            {
+                                currentFrame = 0;
+                            }
                         }
-                        else
-                        {
-                            currentFrame = 0;
-                        }
-                    }
-                    rowReference = newRow;
-                    break;
+                        rowReference = newRow;
+                        break;
 
-                case AnimationState.finishing:
-                    if (Global._gameTime.TotalGameTime.TotalMilliseconds - lastFrameGameTime >= frameDuration)
-                    {
-                        lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
-                        if (currentFrame < maxFrame)
+                    case AnimationState.finishing:
+                        if (Global._gameTime.TotalGameTime.TotalMilliseconds - lastFrameGameTime >= frameDuration)
                         {
-                            currentFrame++;
+                            frameDuration = new Random().Next(minFrameDuration, maxFrameDuration);
+                            lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+                            if (currentFrame < maxFrame)
+                            {
+                                currentFrame++;
+                            }
+                            else
+                            {
+                                currentFrame = 0;
+                            }
+                            currentFrame -= (currentFrame % 2);
+                            animationState = AnimationState.idle;
                         }
-                        else
-                        {
-                            currentFrame = 0;
-                        }
-                        currentFrame -= (currentFrame % 2);
-                        animationState = AnimationState.idle;
-                    }
-                    rowReference = newRow;
-                    break;
+                        rowReference = newRow;
+                        break;
 
-                case AnimationState.idle:
-                    //changes nothing about what is being drawn.
-                    break;
+                    case AnimationState.idle:
+                        //changes nothing about what is being drawn.
+                        break;
+                }
             }
-            Global._spriteBatch.Draw(texture,
-                new Vector2(position.X * _stretch.X, -position.Y * _stretch.Y),
+            else 
+            {
+                lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+            }
+            Global._spriteBatch.Draw(
+                texture, new Vector2(position.X * _stretch.X, -position.Y * _stretch.Y),
                 new Rectangle(((currentFrame + columnReference) * sourceWidth), (rowReference * sourceHeight), sourceWidth, sourceHeight),
-                color, 0, new Vector2(0, 0),
-                _stretch, new SpriteEffects(), 0);
+                color, 0, new Vector2(0, 0),_stretch, new SpriteEffects(), 0);
+
         }
 
         public void ChangeOrientation(Orientation orientation)

@@ -33,16 +33,16 @@ namespace Fantasy.Content.Logic.entities
                 switch (orientation)
                 {
                     case Orientation.up:
-                        frames = new Animation(400, 0, 3, 3, 0, 64, 128, AnimationState.idle);
+                        frames = new Animation(400, 400, 0, 3, 3, 0, 64, 128, AnimationState.idle);
                         break;
                     case Orientation.right:
-                        frames = new Animation(400, 0, 3, 1, 0, 64, 128, AnimationState.idle);
+                        frames = new Animation(400, 400, 0, 3, 1, 0, 64, 128, AnimationState.idle);
                         break;
                     case Orientation.left:
-                        frames = new Animation(400, 0, 3, 2, 0, 64, 128, AnimationState.idle);
+                        frames = new Animation(400, 400, 0, 3, 2, 0, 64, 128, AnimationState.idle);
                         break;
                     case Orientation.down:
-                        frames = new Animation(400, 0, 3, 0, 0, 64, 128, AnimationState.idle);
+                        frames = new Animation(400, 400, 0, 3, 0, 0, 64, 128, AnimationState.idle);
                         break;
                 }
             }
