@@ -11,19 +11,17 @@ namespace Fantasy.Content.Logic.screen
     {
         public Camera _camera;
         public TileMap _tileMap;
-        public Texture2D[] _tileTextures;
         public Character _character;
-        public Scene(TileMap _tileMap, Texture2D[] _tileTextures)
+        public Scene(TileMap _tileMap)
         {
             this._tileMap = _tileMap;
-            this._tileTextures = _tileTextures;
-            this._character = new Character("character one", _tileTextures[5], 1, new Rectangle(0,0,64,128), 3, Orientation.up);
+            this._character = new Character("character_two", "character_two_spritesheet", 1, new Rectangle(0,0,64,128), 3, Orientation.up);
 
             _camera = new Camera(this, new Point(640, 640), true, false);
         }
         public void LoadScene()
         {
-            _tileMap.LoadTileTextures(_tileTextures, Global._graphics);
+            _tileMap.LoadTileTextures();
         }
         public void DrawScene()
         {
@@ -54,11 +52,11 @@ namespace Fantasy.Content.Logic.screen
             DrawScene();
             Global._graphics.EndDraw();
         }
-        public void TransitionScene(String tileMapString, Texture2D[] tileSets)
+        public void TransitionScene(String tileMapString)
         {
             _tileMap.UnloadTileTextures();
             _tileMap = new TileMap(tileMapString);
-            _tileMap.LoadTileTextures(tileSets, Global._graphics);
+            _tileMap.LoadTileTextures();
             _camera.SetBoundingBox(true);
             ClearAndRedraw();
         }

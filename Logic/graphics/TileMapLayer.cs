@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using System.Xml;
 
 namespace Fantasy.Content.Logic.graphics
 {
@@ -31,10 +32,16 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         /// <param name="layer">The layer this TileMapLayer occupies in its TileMap</param>
         /// <param name="initialize">string to be parsed to describe the Tiles in the TileMapLayer.</param>
-        public TileMapLayer(int layer, String initialize)
+        public TileMapLayer(int layer, string initialize)
         {
             this.map = new List<Tile>();
             this.layer = layer;
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(@"Content\tile-sets\animated_tiles_config.xml");
+            //XmlElement foo = (XmlElement)doc.GetElementsByTagName("tile")[0];
+            //System.Diagnostics.Debug.WriteLine(foo.GetAttribute("name"));
+
             string[] columnTemp;
             string[] rowTemp;
             int row = 1;
@@ -51,7 +58,26 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         if (j != "")
                         {
-                            map.Add(new Tile(j, column, row));
+                            bool animated = false;
+                            foreach (XmlElement foo in doc.GetElementsByTagName("tile"))
+                            {
+                                if (j == foo.GetAttribute("name"))
+                                {
+                                    animated = true;
+                                    break;
+                                }
+                            }
+
+                            if (animated)
+                            {
+                                map.Add(new AnimatedTile(j, column, row, 2));
+                            }
+                            else
+                            {
+                                map.Add(new Tile(j, column, row));
+                            }
+                            
+                            
                             if (column > this.width)
                             {
                                 this.width = column;

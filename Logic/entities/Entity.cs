@@ -6,19 +6,22 @@ namespace Fantasy.Content.Logic.entities
     class Entity
     {
         public string id;
-        public Texture2D spritesheet;
+        public string spriteSheetName;
         public int layer;
         public Rectangle positionBox;
         public Rectangle hitBox;
+        public Texture2D spriteSheet;
 
         public Entity() { }
 
-        public Entity(string id, Texture2D spritesheet, int layer, Rectangle positionBox)
+        public Entity(string id, string spriteSheetName, int layer, Rectangle positionBox)
         {
             this.id = id;
-            this.spritesheet = spritesheet;
+            this.spriteSheetName = spriteSheetName;
             this.layer = layer;
             this.positionBox = positionBox;
+
+            spriteSheet = Global._content.Load<Texture2D>(spriteSheetName);
         }
     }
 }

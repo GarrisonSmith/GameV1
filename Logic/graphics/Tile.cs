@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Fantasy.Content.Logic.graphics
 {
@@ -16,7 +17,7 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public Point tileSetCoordinate;
         /// <summary>
-        /// Point this tile occupies in its TileMapLayer. The X value is the column and the Y value is the row.
+        /// Point this tile occupies in its TileMapLayer. The X value is the horizontal position and the Y value is the vertical position.
         /// </summary>
         public Point tileMapCoordinate;
         /// <summary>
@@ -28,6 +29,7 @@ namespace Fantasy.Content.Logic.graphics
         /// </summary>
         public int graphicsIndex;
 
+        public Tile() { }
         /// <summary>
         /// Constructs a tile with the given properties.
         /// <param name="tileID">is parsed to get the tiles tileSetName and tiles x and y values.</param>
@@ -53,6 +55,12 @@ namespace Fantasy.Content.Logic.graphics
                     );
                 color = Color.White;
             }
+        }
+        public void DrawTile(Texture2D tileSet, Vector2 _stretch)
+        {
+            Global._spriteBatch.Draw(tileSet, new Vector2(tileMapCoordinate.X * 64 * _stretch.X, -(tileMapCoordinate.Y+1) * 64 * _stretch.Y),
+                new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64),
+                color, 0f, new Vector2(0, 0), _stretch, new SpriteEffects(), 0);
         }
     }
 }

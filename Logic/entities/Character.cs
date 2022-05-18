@@ -14,14 +14,16 @@ namespace Fantasy.Content.Logic.entities
 
         public Character() { }
 
-        public Character(string id, Texture2D spritesheet, int layer, Rectangle positionBox, int speed, Orientation orientation)
+        public Character(string id, string spriteSheetName, int layer, Rectangle positionBox, int speed, Orientation orientation)
         {
             this.id = id;
-            this.spritesheet = spritesheet;
+            this.spriteSheetName = spriteSheetName;
             this.layer = layer;
             this.positionBox = positionBox;
             this.speed = speed;
             this.orientation = orientation;
+
+            spriteSheet = Global._content.Load<Texture2D>(spriteSheetName);
         }
 
         public void DrawCharacter(Vector2 _stretch, SpriteBatch _spriteBatch)
@@ -56,11 +58,11 @@ namespace Fantasy.Content.Logic.entities
 
             if (characterIsMoving)
             {
-                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spritesheet, Color.White, _stretch);
+                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spriteSheet, Color.White, _stretch);
             }
             else
             {
-                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spritesheet, Color.White, _stretch);
+                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spriteSheet, Color.White, _stretch);
             }
         }
 
