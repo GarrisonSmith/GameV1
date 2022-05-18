@@ -1,64 +1,105 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Fantasy.Content.Logic.entities;
 
 namespace Fantasy.Content.Logic.graphics
 {
     class Animation
     {
-        public int rowReference = 0;
-        public int currentFrame = 0;
-        public int maxFrame = 0;
-        public int frameMinDrawAmount = 15;
-        public int frameIncrement = 10;
-        public Rectangle drawArea = new Rectangle(0, 0, 64, 128);
+        public double frameDuration;
+        public double lastFrameGameTime;
+        public int currentFrame;
+        public int maxFrame;
+        public int rowReference;
+        public int newRow;
+        public int sourceWidth;
+        public int sourceHeight;
+        public AnimationState animationState;
 
-        public Animation(int rowReference, int maxFrame)
+        public Animation(double frameDuration, int startingFrame, int maxFrame, int rowReference, int sourceWidth, int sourceHeight, AnimationState animationState)
         {
-            this.rowReference = rowReference;
+            this.frameDuration = frameDuration;
+            currentFrame = startingFrame;
             this.maxFrame = maxFrame;
-            this.drawArea = new Rectangle(currentFrame * 64, rowReference * 128, 64, 128);
+            this.rowReference = newRow = rowReference;
+            this.sourceWidth = sourceWidth;
+            this.sourceHeight = sourceHeight;
+            this.animationState = animationState;
         }
 
-        public Animation(int rowReference, int maxFrame, int currentFrame) : this(rowReference, maxFrame)
+        public void DrawAnimation(Point position, Texture2D texture, Color color, Vector2 _stretch)
         {
-            this.currentFrame = currentFrame;
+            switch (animationState)
+            {
+                case AnimationState.cycling:
+                    if (Global._gameTime.TotalGameTime.TotalMilliseconds - lastFrameGameTime >= frameDuration)
+                    {
+                        lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+                        if (currentFrame < maxFrame)
+                        {
+                            currentFrame++;
+                        }
+                        else
+                        {
+                            currentFrame = 0;
+                        }
+                    }
+                    rowReference = newRow;
+                    break;
+
+                case AnimationState.finishing:
+                    if (Global._gameTime.TotalGameTime.TotalMilliseconds - lastFrameGameTime >= frameDuration)
+                    {
+                        lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+                        if (currentFrame < maxFrame)
+                        {
+                            currentFrame++;
+                        }
+                        else
+                        {
+                            currentFrame = 0;
+                        }
+                        currentFrame -= (currentFrame % 2);
+                        animationState = AnimationState.idle;
+                    }
+                    rowReference = newRow;
+                    break;
+
+                case AnimationState.idle:
+                    //changes nothing about what is being drawn.
+                    break;
+            }
+            Global._spriteBatch.Draw(texture,
+                new Vector2(position.X * _stretch.X, -position.Y * _stretch.Y),
+                new Rectangle((currentFrame * sourceWidth), (rowReference * sourceHeight), sourceWidth, sourceHeight),
+                color, 0, new Vector2(0, 0),
+                _stretch, new SpriteEffects(), 0);
         }
 
-        public void DrawNextFrame(Texture2D spritesheet,  SpriteBatch _spriteBatch, Vector2 position)
+        public void ChangeOrientation(Orientation orientation)
         {
-            if (frameIncrement < frameMinDrawAmount)
+            switch (orientation)
             {
-                _spriteBatch.Draw(spritesheet, position, drawArea, Color.White, 0, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), .5f);
-                frameIncrement++;
-            }
-            else
-            {
-                frameIncrement = 0;
-                if (currentFrame + 1 <= maxFrame)
-                {
-                    currentFrame++;
-                }
-                else
-                {
-                    currentFrame = 0;
-                }
-                drawArea = new Rectangle(currentFrame * 64, rowReference * 128, 64, 128);
-                _spriteBatch.Draw(spritesheet, position, drawArea, Color.White, 0, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), .5f);
+                case Orientation.up:
+                    newRow = 3;
+                    break;
+                case Orientation.right:
+                    newRow = 1;
+                    break;
+                case Orientation.left:
+                    newRow = 2;
+                    break;
+                case Orientation.down:
+                    newRow = 0;
+                    break;
             }
         }
-        public void FinishAnimation(Texture2D spritesheet,  SpriteBatch _spriteBatch, Vector2 position)
-        {
-            if (frameIncrement < frameMinDrawAmount)
-            {
-                _spriteBatch.Draw(spritesheet, position, drawArea, Color.White, 0, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), .5f);
-                frameIncrement++;
-            }
-            else
-            {
-                frameIncrement = 10;
-                drawArea = new Rectangle(0, rowReference * 128, 64, 128);
-                _spriteBatch.Draw(spritesheet, position, drawArea, Color.White, 0, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), .5f);
-            }
-        }
+    }
+
+    public enum AnimationState
+    {
+        cycling,
+        finishing,
+        idle
     }
 }

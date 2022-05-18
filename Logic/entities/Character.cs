@@ -2,58 +2,65 @@
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Content.Logic.graphics;
 
+
 namespace Fantasy.Content.Logic.entities
 {
-    class Character
+    class Character : Entity
     {
-        public string id;
-        public Texture2D spritesheet;
         public bool characterIsMoving;
         public int speed;
-        public int layer;
         public Orientation orientation;
         public Animation frames;
-        public Point position;
-        public Rectangle hitBox;
 
-        public Character(string id, Texture2D spritesheet, int speed, int layer, Orientation orientation, Point position)
+        public Character() { }
+
+        public Character(string id, Texture2D spritesheet, int layer, Rectangle positionBox, int speed, Orientation orientation)
         {
             this.id = id;
             this.spritesheet = spritesheet;
-            this.speed = speed;
             this.layer = layer;
+            this.positionBox = positionBox;
+            this.speed = speed;
             this.orientation = orientation;
-            this.position = position;
         }
 
-        public void DrawCharacter( SpriteBatch _spriteBatch)
+        public void DrawCharacter(Vector2 _stretch, SpriteBatch _spriteBatch)
         {
             if (frames == null)
             {
                 switch (orientation)
                 {
-                    case Orientation.forward:
-                        frames = new Animation(0, 3);
+                    case Orientation.up:
+                        frames = new Animation(400, 0, 3, 3, 64, 128, AnimationState.idle);
                         break;
                     case Orientation.right:
-                        frames = new Animation(1, 3);
+                        frames = new Animation(400, 0, 3, 1, 64, 128, AnimationState.idle);
                         break;
                     case Orientation.left:
-                        frames = new Animation(2, 3);
+                        frames = new Animation(400, 0, 3, 2, 64, 128, AnimationState.idle);
                         break;
-                    case Orientation.backward:
-                        frames = new Animation(3, 3);
+                    case Orientation.down:
+                        frames = new Animation(400, 0, 3, 0, 64, 128, AnimationState.idle);
                         break;
                 }
             }
 
             if (characterIsMoving)
             {
-                frames.DrawNextFrame(spritesheet, _spriteBatch, new Vector2((position.X - 0), position.Y));
+                frames.animationState = AnimationState.cycling;
+            }
+            else if (frames.animationState != AnimationState.idle)
+            {
+                frames.animationState = AnimationState.finishing;
+            }
+
+            if (characterIsMoving)
+            {
+                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spritesheet, Color.White, _stretch);
             }
             else
             {
-                frames.FinishAnimation(spritesheet, _spriteBatch, new Vector2((position.X - 0), position.Y));
+                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spritesheet, Color.White, _stretch);
             }
         }
 
@@ -62,22 +69,22 @@ namespace Fantasy.Content.Logic.entities
             characterIsMoving = true;
             switch (direction)
             {
-                case Orientation.forward:
-                    position.Y += speed;
+                case Orientation.up:
+                    positionBox.Y += speed;
                     break;
                 case Orientation.right:
-                    position.X += speed;
+                    positionBox.X += speed;
                     break;
                 case Orientation.left:
-                    position.X -= speed;
+                    positionBox.X -= speed;
                     break;
-                case Orientation.backward:
-                    position.Y -= speed;
+                case Orientation.down:
+                    positionBox.Y -= speed;
                     break;
             }
             if (direction != orientation)
             {
-                frames = null;
+                frames.ChangeOrientation(direction);
                 orientation = direction;
             }
         }

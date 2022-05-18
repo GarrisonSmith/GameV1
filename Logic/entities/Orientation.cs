@@ -6,9 +6,9 @@ namespace Fantasy.Content.Logic.entities
 {
     public enum Orientation
     {
-        forward,
+        up,
         right,
         left,
-        backward
+        down
     }
 }
