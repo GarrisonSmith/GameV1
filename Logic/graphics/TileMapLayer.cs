@@ -39,8 +39,6 @@ namespace Fantasy.Content.Logic.graphics
 
             XmlDocument doc = new XmlDocument();
             doc.Load(@"Content\tile-sets\animated_tiles_config.xml");
-            //XmlElement foo = (XmlElement)doc.GetElementsByTagName("tile")[0];
-            //System.Diagnostics.Debug.WriteLine(foo.GetAttribute("name"));
 
             string[] columnTemp;
             string[] rowTemp;

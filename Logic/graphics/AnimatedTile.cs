@@ -25,12 +25,12 @@ namespace Fantasy.Content.Logic.graphics
                     );
                 color = Color.White;
             }
-            frames = new Animation(400, 0, frameAmount-1, -row*64, 64, 64, AnimationState.cycling);
+            frames = new Animation(400, 0, frameAmount - 1, tileSetCoordinate.Y / 64, tileSetCoordinate.X / 64, 64, 64, AnimationState.cycling);
         }
 
-        public void DrawTile(Texture2D tileSet, Vector2 _stretch)
+        new public void DrawTile(Texture2D tileSet, Vector2 _stretch)
         {
-            frames.DrawAnimation(tileMapCoordinate, tileSet, color, _stretch);
+            frames.DrawAnimation(new Point(tileMapCoordinate.X * 64, (tileMapCoordinate.Y + 1) * 64), tileSet, color, _stretch);
         }
     }
 }

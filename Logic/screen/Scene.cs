@@ -33,7 +33,7 @@ namespace Fantasy.Content.Logic.screen
                 null,
                 _camera.GetTransformation());
 
-            _tileMap.DrawArea(_camera._stretch, _camera.cameraPosition);
+            _tileMap.DrawArea(_camera._stretch, 1, _camera.cameraPosition);
             Debug.DebugOnScene(this);
             _character.DrawCharacter(_camera._stretch, Global._spriteBatch);
 

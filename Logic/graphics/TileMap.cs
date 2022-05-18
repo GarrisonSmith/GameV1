@@ -142,7 +142,14 @@ namespace Fantasy.Content.Logic.graphics
             {
                 foreach (Tile j in i.map)
                 {
-                    j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                    if (j is AnimatedTile)
+                    {
+                        ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                    }
+                    else
+                    {
+                        j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                    }
                 }
             }
         }
@@ -161,7 +168,14 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         foreach (Tile j in i.map)
                         {
-                            j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            if (j is AnimatedTile)
+                            {
+                                ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            }
+                            else
+                            {
+                                j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            }
                         }
                     }
                 }
@@ -180,7 +194,14 @@ namespace Fantasy.Content.Logic.graphics
                 {
                     foreach (Tile j in i.map)
                     {
-                        j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                        if (j is AnimatedTile)
+                        {
+                            ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                        }
+                        else
+                        {
+                            j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                        }
                     }
                 }
             }
@@ -202,7 +223,14 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             foreach (Texture2D k in tileTextures)
                             {
-                                j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                if (j is AnimatedTile)
+                                {
+                                    ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                }
+                                else
+                                {
+                                    j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                }
                             }
                         }
                     }
@@ -229,7 +257,14 @@ namespace Fantasy.Content.Logic.graphics
                             {
                                 if (j.tileMapCoordinate.X == r)
                                 {
-                                    j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                    if (j is AnimatedTile)
+                                    {
+                                        ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                    }
+                                    else
+                                    {
+                                        j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                    }
                                 }
                             }
                         }
@@ -255,7 +290,14 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             if (j.tileMapCoordinate.X == r)
                             {
-                                j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                if (j is AnimatedTile)
+                                {
+                                    ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                }
+                                else
+                                {
+                                    j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                }
                             }
                         }
                     }
@@ -275,7 +317,14 @@ namespace Fantasy.Content.Logic.graphics
                 {
                     if (j.tileMapCoordinate.X == row)
                     {
-                        j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                        if (j is AnimatedTile)
+                        {
+                            ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                        }
+                        else
+                        {
+                            j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                        }
                     }
                 }
             }
@@ -298,7 +347,14 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             if (j.tileMapCoordinate.X == row)
                             {
-                                j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                if (j is AnimatedTile)
+                                {
+                                    ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                }
+                                else
+                                {
+                                    j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                }
                             }
                         }
                     }
@@ -321,7 +377,14 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         if (j.tileMapCoordinate.X == row)
                         {
-                            j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            if (j is AnimatedTile)
+                            {
+                                ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            }
+                            else
+                            {
+                                j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            }
                         }
                     }
                 }
@@ -342,7 +405,14 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         if (j.tileMapCoordinate.X == c)
                         {
-                            j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            if (j is AnimatedTile)
+                            {
+                                ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            }
+                            else
+                            {
+                                j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            }
                         }
                     }
                 }
@@ -368,7 +438,14 @@ namespace Fantasy.Content.Logic.graphics
                             {
                                 if (j.tileMapCoordinate.X == c)
                                 {
-                                    j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                    if (j is AnimatedTile)
+                                    {
+                                        ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                    }
+                                    else
+                                    {
+                                        j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                    }
                                 }
                             }
                         }
@@ -394,7 +471,14 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             if (j.tileMapCoordinate.X == c)
                             {
-                                j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                if (j is AnimatedTile)
+                                {
+                                    ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                }
+                                else
+                                {
+                                    j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                }
                             }
                         }
                     }
@@ -414,7 +498,14 @@ namespace Fantasy.Content.Logic.graphics
                 {
                     if (j.tileMapCoordinate.X == column)
                     {
-                        j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                        if (j is AnimatedTile)
+                        {
+                            ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                        }
+                        else
+                        {
+                            j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                        }
                     }
                 }
             }
@@ -437,7 +528,14 @@ namespace Fantasy.Content.Logic.graphics
                         {
                             if (j.tileMapCoordinate.X == column)
                             {
-                                j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                if (j is AnimatedTile)
+                                {
+                                    ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                }
+                                else
+                                {
+                                    j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                }
                             }
                         }
                     }
@@ -460,7 +558,14 @@ namespace Fantasy.Content.Logic.graphics
                     {
                         if (j.tileMapCoordinate.X == column)
                         {
-                            j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            if (j is AnimatedTile)
+                            {
+                                ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            }
+                            else
+                            {
+                                j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            }
                         }
                     }
                 }
@@ -525,7 +630,14 @@ namespace Fantasy.Content.Logic.graphics
 
                             if (tileArea.Intersects(drawArea))
                             {
-                                j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                if (j is AnimatedTile)
+                                {
+                                    ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                }
+                                else
+                                {
+                                    j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                                }
                             }
                         }
                     }
@@ -544,7 +656,7 @@ namespace Fantasy.Content.Logic.graphics
 
             foreach (TileMapLayer i in map)
             {
-                if (0 == layer)
+                if (i.layer == layer)
                 {
                     foreach (Tile j in i.map)
                     {
@@ -556,7 +668,14 @@ namespace Fantasy.Content.Logic.graphics
 
                         if (tileArea.Intersects(drawArea))
                         {
-                            j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            if (j is AnimatedTile)
+                            {
+                                ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            }
+                            else
+                            {
+                                j.DrawTile(tileTextures[j.graphicsIndex], _stretch);
+                            }
                         }
                     }
                 }

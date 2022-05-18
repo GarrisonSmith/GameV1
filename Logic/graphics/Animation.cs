@@ -11,17 +11,19 @@ namespace Fantasy.Content.Logic.graphics
         public int currentFrame;
         public int maxFrame;
         public int rowReference;
+        public int columnReference;
         public int newRow;
         public int sourceWidth;
         public int sourceHeight;
         public AnimationState animationState;
 
-        public Animation(double frameDuration, int startingFrame, int maxFrame, int rowReference, int sourceWidth, int sourceHeight, AnimationState animationState)
+        public Animation(double frameDuration, int startingFrame, int maxFrame, int rowReference, int columnReference, int sourceWidth, int sourceHeight, AnimationState animationState)
         {
             this.frameDuration = frameDuration;
             currentFrame = startingFrame;
             this.maxFrame = maxFrame;
             this.rowReference = newRow = rowReference;
+            this.columnReference = columnReference;
             this.sourceWidth = sourceWidth;
             this.sourceHeight = sourceHeight;
             this.animationState = animationState;
@@ -71,7 +73,7 @@ namespace Fantasy.Content.Logic.graphics
             }
             Global._spriteBatch.Draw(texture,
                 new Vector2(position.X * _stretch.X, -position.Y * _stretch.Y),
-                new Rectangle((currentFrame * sourceWidth), (rowReference * sourceHeight), sourceWidth, sourceHeight),
+                new Rectangle(((currentFrame + columnReference) * sourceWidth), (rowReference * sourceHeight), sourceWidth, sourceHeight),
                 color, 0, new Vector2(0, 0),
                 _stretch, new SpriteEffects(), 0);
         }
