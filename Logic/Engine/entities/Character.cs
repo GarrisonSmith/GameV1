@@ -15,9 +15,10 @@ namespace Fantasy.Logic.Engine.entities
 
         public Character() { }
 
-        public Character(string id, string spriteSheetName, int layer, Rectangle positionBox, int speed, Orientation orientation)
+        public Character(string id, string type, string spriteSheetName, int layer, Rectangle positionBox, int speed, Orientation orientation)
         {
             this.id = id;
+            this.type = type;
             this.spriteSheetName = spriteSheetName;
             this.layer = layer;
             this.positionBox = positionBox;

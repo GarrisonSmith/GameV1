@@ -6,6 +6,7 @@ namespace Fantasy.Logic.Engine.entities
     class Entity
     {
         public string id;
+        public string type;
         public string spriteSheetName;
         public int layer;
         public Rectangle positionBox;
@@ -14,9 +15,10 @@ namespace Fantasy.Logic.Engine.entities
 
         public Entity() { }
 
-        public Entity(string id, string spriteSheetName, int layer, Rectangle positionBox)
+        public Entity(string id, string type, string spriteSheetName, int layer, Rectangle positionBox)
         {
             this.id = id;
+            this.type = type;
             this.spriteSheetName = spriteSheetName;
             this.layer = layer;
             this.positionBox = positionBox;

@@ -20,7 +20,7 @@ namespace Fantasy.Logic.Engine.graphics.particles
             this.color = color;
             this.speed = speed;
             this.duration = duration;
-            spawnTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+            //spawnTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
         }
         public Particle(Point position, Color color, int speed, int duration, Point destination) : this(position, color, speed, duration)
         {
