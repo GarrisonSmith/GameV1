@@ -24,6 +24,7 @@ namespace Fantasy.Logic.Engine.screen
         public void LoadScene()
         {
             _tileMap.LoadTileTextures();
+            _tileMap.LoadTileHitboxes();
         }
         public void DrawScene()
         {

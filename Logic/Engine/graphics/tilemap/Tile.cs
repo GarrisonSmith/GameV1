@@ -29,6 +29,8 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// </summary>
         public int graphicsIndex;
 
+        public bool hasHitbox;
+
         public Tile() { }
         /// <summary>
         /// Constructs a tile with the given properties.
@@ -36,9 +38,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <param name="column">the column this tile occupies on its TileMapLayer.</param>
         /// <param name="row">the row this tile occupies on its TileMapLayer.</param>
         /// </summary>
-        public Tile(string tileID, int column, int row)
+        public Tile(string tileID, int column, int row, bool hasHitbox)
         {
             tileMapCoordinate = new Point(column, row);
+            this.hasHitbox = hasHitbox;
             if (tileID == "BLACK")
             {
                 this.tileSetName = tileID;

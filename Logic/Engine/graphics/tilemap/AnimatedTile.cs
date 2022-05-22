@@ -20,9 +20,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <param name="minFrameDuration">the minimum number of milliseconds a frame will be drawn for.</param>
         /// <param name="maxFrameDuration">the maximum number of milliseconds a frame will be drawn for.</param>
         /// </summary>
-        public AnimatedTile(string tileID, int column, int row, int frameAmount, int minFrameDuration, int maxFrameDuration)
+        public AnimatedTile(string tileID, int column, int row, int frameAmount, int minFrameDuration, int maxFrameDuration, bool hasHitbox)
         {
             tileMapCoordinate = new Point(column, row);
+            this.hasHitbox = hasHitbox;
             if (tileID == "BLACK")
             {
                 this.tileSetName = tileID;

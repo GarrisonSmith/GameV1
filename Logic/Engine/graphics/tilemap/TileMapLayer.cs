@@ -37,8 +37,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             this.map = new List<Tile>();
             this.layer = layer;
 
-            XmlDocument doc = new XmlDocument();
-            doc.Load(@"Content\tile-sets\animated_tiles_config.xml");
+            XmlDocument animatedList = new XmlDocument();
+            XmlDocument hitboxList = new XmlDocument();
+            animatedList.Load(@"Content\tile-sets\animated_tiles_config.xml");
+            hitboxList.Load(@"Content\tile-sets\tile_hitboxes_config.xml");
 
             string[] columnTemp;
             string[] rowTemp;
@@ -60,7 +62,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                             int frames = 1;
                             int minDuration = 0;
                             int maxDuration = 0;
-                            foreach (XmlElement foo in doc.GetElementsByTagName("tile"))
+                            foreach (XmlElement foo in animatedList.GetElementsByTagName("tile"))
                             {
                                 if (j == foo.GetAttribute("name"))
                                 {
@@ -72,16 +74,25 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                                 }
                             }
 
+                            bool hitbox = false;
+                            foreach (XmlElement foo in hitboxList.GetElementsByTagName("tile"))
+                            {
+                                if (j == foo.GetAttribute("name"))
+                                {
+                                    hitbox = true;
+                                }
+                            }
+
                             if (animated)
                             {
-                                map.Add(new AnimatedTile(j, column, row, frames, minDuration, maxDuration));
+                                map.Add(new AnimatedTile(j, column, row, frames, minDuration, maxDuration, hitbox));
                             }
                             else
                             {
-                                map.Add(new Tile(j, column, row));
+                                map.Add(new Tile(j, column, row, hitbox));
                             }
-                            
-                            
+
+
                             if (column > this.width)
                             {
                                 this.width = column;
@@ -93,7 +104,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                         }
                         column++;
                     }
-                    
+
                     row++;
                 }
             }

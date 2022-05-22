@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Content.Logic.utility;
+using Fantasy.Logic.Engine.hitboxes;
+using Microsoft.Xna.Framework;
+using System.Xml;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
@@ -20,6 +23,8 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// </summary>
         public List<Texture2D> tileTextures;
 
+        public List<Hitbox> tileHitboxes;
+
         /// <summary>
         /// Constructs a TileMapLayer from the provided string.
         /// </summary>
@@ -28,6 +33,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             this.map = new List<TileMapLayer>();
             this.tileTextures = new List<Texture2D>();
+            this.tileHitboxes = new List<Hitbox>();
             string[] layerTemp = initialize.Split("<");
             foreach (string i in layerTemp)
             {
@@ -99,7 +105,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             {
                 foreach (Tile j in i.map)
                 {
-                    Texture2D tileSet = Global._content.Load<Texture2D>("tile-sets/"+j.tileSetName);
+                    Texture2D tileSet = Global._content.Load<Texture2D>("tile-sets/" + j.tileSetName);
                     if (!tileTextures.Contains(tileSet))
                     {
                         tileTextures.Add(tileSet);
@@ -115,6 +121,45 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             tileTextures = null;
         }
+
+        public void LoadTileHitboxes()
+        {
+            XmlDocument hitboxList = new XmlDocument();
+            hitboxList.Load(@"Content\tile-sets\tile_hitboxes_config.xml");
+
+            foreach (TileMapLayer i in map)
+            {
+                foreach (Tile j in i.map)
+                {
+                    if (j.hasHitbox)
+                    {
+                        foreach (XmlElement foo in hitboxList.GetElementsByTagName("tile"))
+                        {
+                            if (foo.GetAttribute("name") == j.tileSetName + '(' + j.tileSetCoordinate.X.ToString() + ',' + j.tileSetCoordinate.Y.ToString() + ')')
+                            {
+                                Hitbox temp = new Hitbox(foo.GetAttribute("name"));
+                                //System.Diagnostics.Debug.WriteLine(foo.ChildNodes[0].InnerText);
+                                if (!tileHitboxes.Exists(x => x.reference == foo.GetAttribute("name")))
+                                {
+                                    System.Diagnostics.Debug.WriteLine(foo.ChildNodes[0].InnerText);
+
+                                    tileHitboxes.Add(temp);
+                                }
+
+
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (Hitbox foo in tileHitboxes)
+            {
+                System.Diagnostics.Debug.WriteLine(foo.reference);
+            }
+
+        }
+
         /// <summary>
         /// Draws the provided Texture2D onto the TileMap with the provided location and stretching.
         /// </summary>
