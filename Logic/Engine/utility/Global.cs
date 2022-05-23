@@ -10,5 +10,6 @@ namespace Fantasy.Logic.Engine
         public static ContentManager _content;
         public static GraphicsDeviceManager _graphics;
         public static SpriteBatch _spriteBatch;
+        public static Vector2 _baseStretch;
     }
 }

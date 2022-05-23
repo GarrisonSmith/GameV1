@@ -46,10 +46,9 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// Draws the current tile frame with the provided stretch.
         /// </summary>
         /// <param name="tileSet">the reference tileSet this tiles graphic references.</param>
-        /// <param name="_stretch">the stretching of the texture,</param>
-        new public void DrawTile(Texture2D tileSet, Vector2 _stretch)
+        new public void DrawTile(Texture2D tileSet)
         {
-            frames.DrawAnimation(new Point(tileMapCoordinate.X * 64, (tileMapCoordinate.Y + 1) * 64), tileSet, color, _stretch);
+            frames.DrawAnimation(new Point(tileMapCoordinate.X * 64, (tileMapCoordinate.Y + 1) * 64), tileSet, color);
         }
     }
 }

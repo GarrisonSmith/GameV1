@@ -26,10 +26,6 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         public Rectangle boundingBox;
         /// <summary>
-        /// The stretch level of the camera. Higher values result in a closer zoom. Is used as a stretch on tiles when drawing.
-        /// </summary>
-        public Vector2 _stretch = new Vector2(1f, 1f);
-        /// <summary>
         /// The max stretch for this camera.
         /// </summary>
         public Vector2 maxStretch = new Vector2(3f, 3f);
@@ -93,13 +89,13 @@ namespace Fantasy.Logic.Engine.screen
         {
             if (newStretch.X >= minStretch.X && newStretch.X <= maxStretch.X)
             {
-                cameraPosition.X += ((int)((cameraCenter.X * newStretch.X) / _stretch.X) - cameraCenter.X);
-                _stretch.X = newStretch.X;
+                cameraPosition.X += ((int)((cameraCenter.X * newStretch.X) / Global._baseStretch.X) - cameraCenter.X);
+                Global._baseStretch.X = newStretch.X;
             }
             if (newStretch.Y >= minStretch.Y && newStretch.Y <= maxStretch.Y)
             {
-                cameraPosition.Y += ((int)((cameraCenter.Y * newStretch.Y) / _stretch.Y) - cameraCenter.Y);
-                _stretch.Y = newStretch.Y;
+                cameraPosition.Y += ((int)((cameraCenter.Y * newStretch.Y) / Global._baseStretch.Y) - cameraCenter.Y);
+                Global._baseStretch.Y = newStretch.Y;
             }
             Reposition();
             SetBoundingBox(allowCentering);
@@ -117,9 +113,9 @@ namespace Fantasy.Logic.Engine.screen
         /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
         public void SetBoundingBox(bool allowCentering)
         {
-            Point mapCenter = _scene._tileMap.GetTileMapCenter(_stretch);
-            Rectangle mapBounding = _scene._tileMap.GetTileMapBounding(_stretch);
-            if (mapBounding.Width <= (cameraPosition.Width / _stretch.X) && allowCentering)
+            Point mapCenter = _scene._tileMap.GetTileMapCenter();
+            Rectangle mapBounding = _scene._tileMap.GetTileMapBounding();
+            if (mapBounding.Width <= (cameraPosition.Width / Global._baseStretch.X) && allowCentering)
             {
                 movementAllowedHorizontal = false;
                 cameraPosition.X = mapCenter.X - (int)(cameraPosition.Width / 2);
@@ -131,7 +127,7 @@ namespace Fantasy.Logic.Engine.screen
             boundingBox.X = mapBounding.X;
             boundingBox.Width = mapBounding.Width;
 
-            if (mapBounding.Height <= (cameraPosition.Height / _stretch.Y) && allowCentering)
+            if (mapBounding.Height <= (cameraPosition.Height / Global._baseStretch.Y) && allowCentering)
             {
                 movementAllowedVertical = false;
                 cameraPosition.Y = mapCenter.Y + (int)(cameraPosition.Height / 2);
@@ -183,8 +179,8 @@ namespace Fantasy.Logic.Engine.screen
         /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
         public void Pan(Point destination, int speed, bool centerDestination)
         {
-            destination.X = (int)(destination.X * _stretch.X);
-            destination.Y = (int)(destination.Y * _stretch.Y);
+            destination.X = (int)(destination.X * Global._baseStretch.X);
+            destination.Y = (int)(destination.Y * Global._baseStretch.Y);
 
             if (centerDestination)
             {
@@ -238,8 +234,8 @@ namespace Fantasy.Logic.Engine.screen
         /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
         public void ForcePan(Point destination, int speed, bool centerDestination)
         {
-            destination.X = (int)(destination.X * _stretch.X);
-            destination.Y = (int)(destination.Y * _stretch.Y);
+            destination.X = (int)(destination.X * Global._baseStretch.X);
+            destination.Y = (int)(destination.Y * Global._baseStretch.Y);
 
             if (centerDestination)
             {
@@ -294,23 +290,23 @@ namespace Fantasy.Logic.Engine.screen
             {
                 if (PointInBoundingBox(destination))
                 {
-                    Vector2 original = _stretch;
+                    Vector2 original = Global._baseStretch;
 
                     while (!Util.PointInsideRectangle(destination, cameraPosition))
                     {
-                        if ((_stretch.X - .01f <= minStretch.X + .0f || _stretch.X <= original.X - 1f) || (_stretch.Y - .01f <= minStretch.Y + .0f || _stretch.Y <= original.Y - 1f))
+                        if ((Global._baseStretch.X - .01f <= minStretch.X + .0f || Global._baseStretch.X <= original.X - 1f) || (Global._baseStretch.Y - .01f <= minStretch.Y + .0f || Global._baseStretch.Y <= original.Y - 1f))
                         {
                             break;
                         }
-                        Stretch(new Vector2(_stretch.X - .01f, _stretch.Y - .01f), false);
+                        Stretch(new Vector2(Global._baseStretch.X - .01f, Global._baseStretch.Y - .01f), false);
                         _scene.ClearAndRedraw();
                     }
 
                     Pan(destination, speed, centerDestination);
 
-                    while (original.X != _stretch.X)
+                    while (original.X != Global._baseStretch.X)
                     {
-                        Stretch(new Vector2(_stretch.X + .01f, _stretch.Y + .01f), false);
+                        Stretch(new Vector2(Global._baseStretch.X + .01f, Global._baseStretch.Y + .01f), false);
                         Pan(destination, speed, centerDestination);
                     }
 
@@ -332,23 +328,23 @@ namespace Fantasy.Logic.Engine.screen
         /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
         public void ForcePanWithStretch(Point destination, int speed, bool centerDestination)
         {
-            Vector2 original = _stretch;
+            Vector2 original = Global._baseStretch;
 
             while (!Util.PointInsideRectangle(destination, cameraPosition))
             {
-                if ((_stretch.X - .01f <= minStretch.X + .0f || _stretch.X <= original.X - 1f) || (_stretch.Y - .01f <= minStretch.Y + .0f || _stretch.Y <= original.Y - 1f))
+                if ((Global._baseStretch.X - .01f <= minStretch.X + .0f || Global._baseStretch.X <= original.X - 1f) || (Global._baseStretch.Y - .01f <= minStretch.Y + .0f || Global._baseStretch.Y <= original.Y - 1f))
                 {
                     break;
                 }
-                Stretch(new Vector2(_stretch.X - .01f, _stretch.Y - .01f), false);
+                Stretch(new Vector2(Global._baseStretch.X - .01f, Global._baseStretch.Y - .01f), false);
                 _scene.ClearAndRedraw();
             }
 
             ForcePan(destination, speed, centerDestination);
 
-            while (original.X != _stretch.X)
+            while (original.X != Global._baseStretch.X)
             {
-                Stretch(new Vector2(_stretch.X + .01f, _stretch.Y + .01f), false);
+                Stretch(new Vector2(Global._baseStretch.X + .01f, Global._baseStretch.Y + .01f), false);
                 ForcePan(destination, speed, centerDestination);
             }
 
@@ -368,7 +364,7 @@ namespace Fantasy.Logic.Engine.screen
             {
                 if (stretchAmount)
                 {
-                    amount = (int)(amount * _stretch.Y);
+                    amount = (int)(amount * Global._baseStretch.Y);
                 }
 
                 if (direction)
@@ -409,7 +405,7 @@ namespace Fantasy.Logic.Engine.screen
         {
             if (stretchY)
             {
-                Y = (int)(Y * _stretch.Y);
+                Y = (int)(Y * Global._baseStretch.Y);
             }
 
             if (centerDestination)
@@ -447,7 +443,7 @@ namespace Fantasy.Logic.Engine.screen
             {
                 if (stretchAmount)
                 {
-                    amount = (int)(amount * _stretch.X);
+                    amount = (int)(amount * Global._baseStretch.X);
                 }
 
                 if (direction)
@@ -488,7 +484,7 @@ namespace Fantasy.Logic.Engine.screen
         {
             if (stretchX)
             {
-                X = (int)(X * _stretch.X);
+                X = (int)(X * Global._baseStretch.X);
             }
 
             if (centerDestination)
@@ -536,7 +532,7 @@ namespace Fantasy.Logic.Engine.screen
         {
             if (stretchAmount)
             {
-                amount = (int)(amount * _stretch.Y);
+                amount = (int)(amount * Global._baseStretch.Y);
             }
 
             if (direction)
@@ -562,7 +558,7 @@ namespace Fantasy.Logic.Engine.screen
         {
             if (stretchY)
             {
-                Y = (int)(Y * _stretch.Y);
+                Y = (int)(Y * Global._baseStretch.Y);
             }
 
             if (centerDestination)
@@ -584,7 +580,7 @@ namespace Fantasy.Logic.Engine.screen
         {
             if (stretchAmount)
             {
-                amount = (int)(amount * _stretch.X);
+                amount = (int)(amount * Global._baseStretch.X);
             }
 
             if (direction)
@@ -610,7 +606,7 @@ namespace Fantasy.Logic.Engine.screen
         {
             if (stretchX)
             {
-                X = (int)(X * _stretch.X);
+                X = (int)(X * Global._baseStretch.X);
             }
 
             if (centerDestination)

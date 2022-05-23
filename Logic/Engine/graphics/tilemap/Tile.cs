@@ -28,7 +28,9 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// The index of the graphic in the TileMap for this tile.
         /// </summary>
         public int graphicsIndex;
-
+        /// <summary>
+        /// Determines if this Tile has a corresponding Hitbox or not.
+        /// </summary>
         public bool hasHitbox;
 
         public Tile() { }
@@ -63,12 +65,11 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// Draws the tile with the provided stretch.
         /// </summary>
         /// <param name="tileSet">the reference tileSet this tiles graphic references.</param>
-        /// <param name="_stretch">the stretching of the texture,</param>
-        public void DrawTile(Texture2D tileSet, Vector2 _stretch)
+        public void DrawTile(Texture2D tileSet)
         {
-            Global._spriteBatch.Draw(tileSet, new Vector2(tileMapCoordinate.X * 64 * _stretch.X, -(tileMapCoordinate.Y+1) * 64 * _stretch.Y),
+            Global._spriteBatch.Draw(tileSet, new Vector2(tileMapCoordinate.X * 64 * Global._baseStretch.X, -(tileMapCoordinate.Y+1) * 64 * Global._baseStretch.Y),
                 new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64),
-                color, 0f, new Vector2(0, 0), _stretch, new SpriteEffects(), 0);
+                color, 0f, new Vector2(0, 0), Global._baseStretch, new SpriteEffects(), 0);
         }
     }
 }

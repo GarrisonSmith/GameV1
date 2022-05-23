@@ -1,6 +1,5 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-using Fantasy.Content.Logic.utility;
+﻿using Microsoft.Xna.Framework;
+using Fantasy.Logic.Engine.graphics;
 
 namespace Fantasy.Logic.Engine.hitboxes
 {
@@ -9,6 +8,7 @@ namespace Fantasy.Logic.Engine.hitboxes
         public string reference;
         public Rectangle[] area;
 
+        public Hitbox() { }
         public Hitbox(string reference)
         {
             this.reference = reference;
@@ -18,11 +18,37 @@ namespace Fantasy.Logic.Engine.hitboxes
             this.reference = reference;
             this.area = area;
         }
-        public bool Collision(Rectangle foo)
+        public bool Collision(Point inRef, Point thisRef, Rectangle foo)
         {
+            foo = new Rectangle(
+                (int)((foo.X + inRef.X) * Global._baseStretch.X),
+                (int)((foo.Y + inRef.Y) * Global._baseStretch.Y), 
+                (int)(foo.Width* Global._baseStretch.X),
+                (int)(foo.Height * Global._baseStretch.Y));
+
+            Debug.DrawRectangle(foo);
+
             foreach (Rectangle bar in area)
             {
-                if (foo.Intersects(bar))
+                Rectangle baz = new Rectangle(
+                (int)((bar.X + thisRef.X) * Global._baseStretch.X),
+                (int)((bar.Y + thisRef.Y) * Global._baseStretch.Y),
+                (int)(bar.Width * Global._baseStretch.X),
+                (int)(bar.Height * Global._baseStretch.Y));
+                Debug.DrawRectangle(baz);
+                if (foo.Intersects(baz))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+     
+        public bool Collision(Point inRef, Point thisRef, Rectangle[] foofoo)
+        {
+            foreach (Rectangle foo in foofoo)
+            {
+                if (Collision(inRef, thisRef, foo))
                 {
                     return true;
                 }

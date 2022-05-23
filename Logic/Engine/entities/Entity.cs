@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using Fantasy.Logic.Engine.hitboxes;
 namespace Fantasy.Logic.Engine.entities
 {
     class Entity
@@ -10,7 +10,7 @@ namespace Fantasy.Logic.Engine.entities
         public string spriteSheetName;
         public int layer;
         public Rectangle positionBox;
-        public Rectangle hitBox;
+        public Hitbox hitBox;
         public Texture2D spriteSheet;
 
         public Entity() { }

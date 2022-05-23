@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Xml;
+using Fantasy.Logic.Engine.hitboxes;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
@@ -148,6 +149,25 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         public Point GetLayerDimensions()
         {
             return new Point(this.width, this.height);
+        }
+
+        public bool CheckLayerCollision(Point pos, Hitbox box, List<Hitbox> tileHitboxes)
+        {
+            foreach (Tile j in map)
+            {
+                string tileReference = j.tileSetName + '(' + j.tileSetCoordinate.X.ToString() + ',' + j.tileSetCoordinate.Y.ToString() + ')';
+                foreach (Hitbox k in tileHitboxes)
+                {
+                    if (tileReference == k.reference)
+                    {
+                        if (k.Collision(pos, new Point(j.tileMapCoordinate.X * 64, (j.tileMapCoordinate.Y+1) * 64), box.area))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
 }

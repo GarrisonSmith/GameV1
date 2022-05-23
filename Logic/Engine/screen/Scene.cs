@@ -36,9 +36,10 @@ namespace Fantasy.Logic.Engine.screen
                 null,
                 _camera.GetTransformation());
 
-            _tileMap.DrawArea(_camera._stretch, 1, _camera.cameraPosition);
+            _tileMap.DrawArea(1, _camera.cameraPosition);
             Debug.DebugOnScene(this);
-            _character.DrawCharacter(_camera._stretch, Global._spriteBatch);
+            _character.DrawCharacter();
+            System.Diagnostics.Debug.WriteLine(_tileMap.Collision(1, new Point(_character.positionBox.X, _character.positionBox.Y), _character.hitBox));
             particle.Draw();
 
             Global._spriteBatch.End();
@@ -61,6 +62,7 @@ namespace Fantasy.Logic.Engine.screen
             _tileMap.UnloadTileTextures();
             _tileMap = new TileMap(tileMapString);
             _tileMap.LoadTileTextures();
+            _tileMap.LoadTileHitboxes();
             _camera.SetBoundingBox(true);
             ClearAndRedraw();
         }

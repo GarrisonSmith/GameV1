@@ -37,7 +37,7 @@ namespace Fantasy.Logic.Engine.graphics
             this.animationState = animationState;
         }
 
-        public void DrawAnimation(Point position, Texture2D texture, Color color, Vector2 _stretch)
+        public void DrawAnimation(Point position, Texture2D texture, Color color)
         {
             if (!freezeAllAnimations && !freezeAnimation)
             {
@@ -89,9 +89,9 @@ namespace Fantasy.Logic.Engine.graphics
                 lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
             }
             Global._spriteBatch.Draw(
-                texture, new Vector2(position.X * _stretch.X, -position.Y * _stretch.Y),
+                texture, new Vector2(position.X * Global._baseStretch.X, -position.Y * Global._baseStretch.Y),
                 new Rectangle(((currentFrame + columnReference) * sourceWidth), (rowReference * sourceHeight), sourceWidth, sourceHeight),
-                color, 0, new Vector2(0, 0),_stretch, new SpriteEffects(), 0);
+                color, 0, new Vector2(0, 0),Global._baseStretch, new SpriteEffects(), 0);
 
         }
 

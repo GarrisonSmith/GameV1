@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.graphics;
+using Fantasy.Logic.Engine.hitboxes;
 using Fantasy.Logic.Engine.entities;
 
 
@@ -25,10 +26,13 @@ namespace Fantasy.Logic.Engine.entities
             this.speed = speed;
             this.orientation = orientation;
 
-            spriteSheet = Global._content.Load<Texture2D>("character-sets/"+spriteSheetName);
+            this.hitBox = new Hitbox("character");
+            this.hitBox.area = new Rectangle[] { new Rectangle(0, 0, 64, 128) };
+
+            spriteSheet = Global._content.Load<Texture2D>("character-sets/" + spriteSheetName);
         }
 
-        public void DrawCharacter(Vector2 _stretch, SpriteBatch _spriteBatch)
+        public void DrawCharacter()
         {
             if (frames == null)
             {
@@ -60,11 +64,11 @@ namespace Fantasy.Logic.Engine.entities
 
             if (characterIsMoving)
             {
-                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spriteSheet, Color.White, _stretch);
+                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spriteSheet, Color.White);
             }
             else
             {
-                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spriteSheet, Color.White, _stretch);
+                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spriteSheet, Color.White);
             }
         }
 
