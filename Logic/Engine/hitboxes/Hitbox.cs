@@ -20,30 +20,29 @@ namespace Fantasy.Logic.Engine.hitboxes
         }
         public bool Collision(Point inRef, Point thisRef, Rectangle foo)
         {
-            foo = new Rectangle(
-                (int)((foo.X + inRef.X) * Global._baseStretch.X),
-                (int)((foo.Y + inRef.Y) * Global._baseStretch.Y), 
-                (int)(foo.Width* Global._baseStretch.X),
+            Rectangle doo = new Rectangle(
+                (int)((inRef.X + foo.X) * Global._baseStretch.X),
+                (int)((inRef.Y - foo.Y - foo.Height) * Global._baseStretch.Y),
+                (int)(foo.Width * Global._baseStretch.X),
                 (int)(foo.Height * Global._baseStretch.Y));
-
-            Debug.DrawRectangle(foo);
+            Debug.DrawBottomLeftRectangle(doo);
 
             foreach (Rectangle bar in area)
             {
                 Rectangle baz = new Rectangle(
-                (int)((bar.X + thisRef.X) * Global._baseStretch.X),
-                (int)((bar.Y + thisRef.Y) * Global._baseStretch.Y),
+                (int)((thisRef.X + bar.X) * Global._baseStretch.X),
+                (int)((thisRef.Y - bar.Y - bar.Height) * Global._baseStretch.Y),
                 (int)(bar.Width * Global._baseStretch.X),
                 (int)(bar.Height * Global._baseStretch.Y));
-                Debug.DrawRectangle(baz);
-                if (foo.Intersects(baz))
+                if (baz.Intersects(doo))
                 {
+                    Debug.DrawBottomLeftRectangle(baz);
                     return true;
                 }
             }
             return false;
         }
-     
+
         public bool Collision(Point inRef, Point thisRef, Rectangle[] foofoo)
         {
             foreach (Rectangle foo in foofoo)

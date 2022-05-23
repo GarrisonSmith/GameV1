@@ -150,7 +150,13 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             return new Point(this.width, this.height);
         }
-
+        /// <summary>
+        /// Checks if the provided Hitbox with the provided position collide with any tiles that have hitboxes in this TileMapLayer.
+        /// </summary>
+        /// <param name="pos">The position of the Hitbox to be checked.</param>
+        /// <param name="box">The Hitbox to be checked.</param>
+        /// <param name="tileHitboxes">The reference Hitboxes for the tiles in this TileMapLayer.</param>
+        /// <returns></returns>
         public bool CheckLayerCollision(Point pos, Hitbox box, List<Hitbox> tileHitboxes)
         {
             foreach (Tile j in map)

@@ -71,6 +71,42 @@ namespace Fantasy.Logic.Engine.graphics
             }
         }
 
+        public static void DrawBottomLeftRectangle(Rectangle foo)
+        {
+            //draws bottom line
+            for (int i = foo.X; i < foo.X + foo.Width; i++)
+            {
+                Global._spriteBatch.Draw(debug,
+                        new Vector2(i, -(foo.Y + foo.Height)),
+                        new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
+                        new Vector2(1, 1), new SpriteEffects(), 1);
+            }
+            //draws left line
+            for (int i = foo.Y; i < foo.Y + foo.Height; i++)
+            {
+                Global._spriteBatch.Draw(debug,
+                        new Vector2(foo.X, -i),
+                        new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
+                        new Vector2(1, 1), new SpriteEffects(), 1);
+            }
+            //draws top line
+            for (int i = foo.X; i < foo.X + foo.Width; i++)
+            {
+                Global._spriteBatch.Draw(debug,
+                        new Vector2(i, -foo.Y),
+                        new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
+                        new Vector2(1, 1), new SpriteEffects(), 1);
+            }
+            //draws right line
+            for (int i = foo.Y; i < foo.Y + foo.Height; i++)
+            {
+                Global._spriteBatch.Draw(debug,
+                        new Vector2((foo.X + foo.Width), -i),
+                        new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
+                        new Vector2(1, 1), new SpriteEffects(), 1);
+            }
+        }
+
         public static void DrawPoint(Point foo, bool stretchPosition)
         {
             if (stretchPosition)
@@ -92,7 +128,7 @@ namespace Fantasy.Logic.Engine.graphics
         //For drawing things that stay static in the view.
         public static void DebugOverlay(Scene _scene)
         {
-            DrawCameraCenterAxis(_scene);
+            //DrawCameraCenterAxis(_scene);
         }
 
         public static void DrawCameraCenterAxis(Scene _scene)
