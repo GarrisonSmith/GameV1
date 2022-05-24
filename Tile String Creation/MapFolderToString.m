@@ -58,7 +58,7 @@ function get_tiles_from_set(tileSet, name) %adds all the unique tiles to uniqueT
     [rows, columns, ~] = size(tileSet);
     for i=1:64:rows
         for j=1:64:columns
-            add_unique_tile(tileSet(i:i+63,j:j+63,1:3), name(1:end-4), "("+string(j-1)+","+string(i-1)+")");
+            add_unique_tile(tileSet(i:i+63,j:j+63,1:3), name(1:end-4), "{X:"+string(j-1)+" Y:"+string(i-1)+"}");
         end
     end
 end
@@ -90,7 +90,7 @@ function foo = construct_map_string(tileMap) %generates the map string by intera
     [rows, columns, ~] = size(tileMap);
     for i=1:64:rows
         for j=1:64:columns
-            foo = foo+get_tile_string(tileMap(i:i+63,j:j+63,1:3))+":"; %splits columns
+            foo = foo+get_tile_string(tileMap(i:i+63,j:j+63,1:3))+"|"; %splits columns
         end
         foo = foo + ";"; %splits rows
     end
@@ -121,7 +121,7 @@ function foo = remove_empty_rows(mapString) %removes the max amount of rows from
             empty = true;
             if(layerString{1}(i) == ';')
                 for j = i:1:strlength(layerString)
-                    if(layerString{1}(j) ~= ':' && layerString{1}(j) ~= ';')
+                    if(layerString{1}(j) ~= '|' && layerString{1}(j) ~= ';')
                         empty = false;
                         break;
                     end
@@ -146,8 +146,8 @@ function foo = remove_empty_rows(mapString) %removes the max amount of rows from
 end
 
 function foo = remove_empty_columns(mapString)
-    foo = strrep(mapString,"::;",":;");
-    while foo ~= strrep(foo,"::;",":;")
-        foo = strrep(foo,"::;",":;");
+    foo = strrep(mapString,"||;","|;");
+    while foo ~= strrep(foo,"||;","|;")
+        foo = strrep(foo,"||;","|;");
     end
 end
