@@ -52,7 +52,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             for (int i = 0; i < rowTemp.Length; i++)
             {
                 int column = 1;
-                columnTemp = rowTemp[i].Split(":");
+                columnTemp = rowTemp[i].Split("|");
                 if (rowTemp[i] != "")
                 {
                     foreach (string j in columnTemp)
@@ -63,24 +63,30 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                             int frames = 1;
                             int minDuration = 0;
                             int maxDuration = 0;
-                            foreach (XmlElement foo in animatedList.GetElementsByTagName("tile"))
+                            foreach (XmlElement foo in animatedList.GetElementsByTagName("tileSet"))
                             {
-                                if (j == foo.GetAttribute("name"))
+                                foreach (XmlElement bar in foo)
                                 {
-                                    animated = true;
-                                    frames = int.Parse(foo.ChildNodes[0].InnerText);
-                                    minDuration = int.Parse(foo.ChildNodes[1].InnerText);
-                                    maxDuration = int.Parse(foo.ChildNodes[2].InnerText);
-                                    break;
+                                    if (j == foo.GetAttribute("name") + bar.GetAttribute("name"))
+                                    {
+                                        animated = true;
+                                        frames = int.Parse(bar.ChildNodes[0].InnerText);
+                                        minDuration = int.Parse(bar.ChildNodes[1].InnerText);
+                                        maxDuration = int.Parse(bar.ChildNodes[2].InnerText);
+                                        break;
+                                    }
                                 }
                             }
 
                             bool hitbox = false;
-                            foreach (XmlElement foo in hitboxList.GetElementsByTagName("tile"))
+                            foreach (XmlElement foo in hitboxList.GetElementsByTagName("tileSet"))
                             {
-                                if (j == foo.GetAttribute("name"))
+                                foreach (XmlElement bar in foo)
                                 {
-                                    hitbox = true;
+                                    if (j == foo.GetAttribute("name") + bar.GetAttribute("name"))
+                                    {
+                                        hitbox = true;
+                                    }
                                 }
                             }
 
@@ -161,12 +167,11 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             foreach (Tile j in map)
             {
-                string tileReference = j.tileSetName + '(' + j.tileSetCoordinate.X.ToString() + ',' + j.tileSetCoordinate.Y.ToString() + ')';
                 foreach (Hitbox k in tileHitboxes)
                 {
-                    if (tileReference == k.reference)
+                    if (j.tileSetName + j.tileSetCoordinate == k.reference)
                     {
-                        if (k.Collision(pos, new Point(j.tileMapCoordinate.X * 64, (j.tileMapCoordinate.Y+1) * 64), box.area))
+                        if (k.Collision(pos, new Point(j.tileMapCoordinate.X * 64, (j.tileMapCoordinate.Y + 1) * 64), box.area))
                         {
                             return true;
                         }
@@ -183,10 +188,9 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             foreach (Tile j in map)
             {
-                string tileReference = j.tileSetName + '(' + j.tileSetCoordinate.X.ToString() + ',' + j.tileSetCoordinate.Y.ToString() + ')';
                 foreach (Hitbox k in tileHitboxes)
                 {
-                    if (tileReference == k.reference)
+                    if (j.tileSetName + j.tileSetCoordinate == k.reference)
                     {
                         k.DrawHitbox(new Point(j.tileMapCoordinate.X * 64, (j.tileMapCoordinate.Y + 1) * 64));
                     }

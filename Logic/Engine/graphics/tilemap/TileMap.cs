@@ -137,31 +137,36 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                     //start iterating through tiles
                     if (j.hasHitbox)
                     {
-                        string tileReference = j.tileSetName + '(' + j.tileSetCoordinate.X.ToString() + ',' + j.tileSetCoordinate.Y.ToString() + ')';
-                        foreach (XmlElement foo in hitboxList.GetElementsByTagName("tile"))
+                        foreach (XmlElement foo in hitboxList.GetElementsByTagName("tileSet"))
                         {
-                            //only adds tile types that have a reference hitbox in hitboxList and havent been added to tileHitboxes already
-                            if (foo.GetAttribute("name") == tileReference && !tileHitboxes.Exists(x => x.reference == foo.GetAttribute("name")))
+                            if (foo.GetAttribute("name") == j.tileSetName/* && !tileHitboxes.Exists(x => x.reference == foo.GetAttribute("name"))*/)
                             {
-                                Hitbox temp = new Hitbox(foo.GetAttribute("name"));
-                                if (foo.ChildNodes[0].InnerText == "FULL")
+                                foreach (XmlElement bar in foo)
                                 {
-                                    temp.area = new Rectangle[] { new Rectangle(0, 0, 64, 64) };
-                                }
-                                else
-                                {
-                                    temp.area = new Rectangle[foo.ChildNodes.Count - 1];
-                                    for (int index = 1; index < foo.ChildNodes.Count; index++)
+                                    if (bar.GetAttribute("name") == j.tileSetCoordinate.ToString() && !tileHitboxes.Exists(x => x.reference == foo.GetAttribute("name") + bar.GetAttribute("name")))
                                     {
-                                        Rectangle hitArea = new Rectangle(
-                                            int.Parse(foo.ChildNodes[index].InnerText.Split(',')[0]),
-                                            int.Parse(foo.ChildNodes[index].InnerText.Split(',')[1]),
-                                            int.Parse(foo.ChildNodes[index].InnerText.Split(',')[2]),
-                                            int.Parse(foo.ChildNodes[index].InnerText.Split(',')[3]));
-                                        temp.area[index-1] = hitArea;
+
+                                        Hitbox temp = new Hitbox(foo.GetAttribute("name") + bar.GetAttribute("name"));
+                                        if (foo.ChildNodes[0].InnerText == "FULL")
+                                        {
+                                            temp.area = new Rectangle[] { new Rectangle(0, 0, 64, 64) };
+                                        }
+                                        else
+                                        {
+                                            temp.area = new Rectangle[foo.ChildNodes.Count - 1];
+                                            for (int index = 1; index < bar.ChildNodes.Count; index++)
+                                            {
+                                                Rectangle hitArea = new Rectangle(
+                                                    int.Parse(bar.ChildNodes[index].InnerText.Split(',')[0]),
+                                                    int.Parse(bar.ChildNodes[index].InnerText.Split(',')[1]),
+                                                    int.Parse(bar.ChildNodes[index].InnerText.Split(',')[2]),
+                                                    int.Parse(bar.ChildNodes[index].InnerText.Split(',')[3]));
+                                                temp.area[index - 1] = hitArea;
+                                            }
+                                        }
+                                        tileHitboxes.Add(temp);
                                     }
                                 }
-                                tileHitboxes.Add(temp);
                             }
                         }
                     }
@@ -305,16 +310,13 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                     {
                         if (j.tileMapCoordinate.X == r)
                         {
-                            foreach (Texture2D k in tileTextures)
+                            if (j is AnimatedTile)
                             {
-                                if (j is AnimatedTile)
-                                {
-                                    ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex]);
-                                }
-                                else
-                                {
-                                    j.DrawTile(tileTextures[j.graphicsIndex]);
-                                }
+                                ((AnimatedTile)j).DrawTile(tileTextures[j.graphicsIndex]);
+                            }
+                            else
+                            {
+                                j.DrawTile(tileTextures[j.graphicsIndex]);
                             }
                         }
                     }

@@ -52,11 +52,12 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             }
             else
             {
-                this.tileSetName = tileID.Substring(0, tileID.IndexOf('('));
+                
+                this.tileSetName = tileID.Substring(0, tileID.IndexOf('{'));
                 tileSetCoordinate = new Point
                     (
-                    int.Parse(tileID.Substring(tileID.IndexOf('(') + 1, tileID.IndexOf(',') - (tileID.IndexOf('(') + 1))),
-                    int.Parse(tileID.Substring(tileID.IndexOf(',') + 1, tileID.IndexOf(')') - (tileID.IndexOf(',') + 1)))
+                    int.Parse(tileID.Substring(tileID.IndexOf('X') + 2, tileID.IndexOf(' ') - (tileID.IndexOf('X') + 2))),
+                    int.Parse(tileID.Substring(tileID.IndexOf('Y') + 2, tileID.IndexOf('}') - (tileID.IndexOf('Y') + 2)))
                     );
                 color = Color.White;
             }

@@ -82,7 +82,7 @@ namespace Fantasy.Logic.Engine.graphics
                         new Vector2(1, 1), new SpriteEffects(), 1);
             }
             //draws left line
-            for (int i = foo.Y; i < foo.Y + foo.Height; i++)
+            for (int i = foo.Y + 1; i < foo.Y + foo.Height; i++)
             {
                 Global._spriteBatch.Draw(debug,
                         new Vector2(foo.X, -i),
@@ -93,15 +93,15 @@ namespace Fantasy.Logic.Engine.graphics
             for (int i = foo.X; i < foo.X + foo.Width; i++)
             {
                 Global._spriteBatch.Draw(debug,
-                        new Vector2(i, -foo.Y),
+                        new Vector2(i, -(foo.Y + 1)),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
                         new Vector2(1, 1), new SpriteEffects(), 1);
             }
             //draws right line
-            for (int i = foo.Y; i < foo.Y + foo.Height; i++)
+            for (int i = foo.Y + 1; i <= foo.Y + foo.Height; i++)
             {
                 Global._spriteBatch.Draw(debug,
-                        new Vector2((foo.X + foo.Width), -i),
+                        new Vector2((foo.X + foo.Width - 1), -i),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
                         new Vector2(1, 1), new SpriteEffects(), 1);
             }
