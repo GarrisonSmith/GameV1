@@ -38,9 +38,11 @@ namespace Fantasy.Logic.Engine.screen
 
             _tileMap.DrawArea(1, _camera.cameraPosition);
             Debug.DebugOnScene(this);
+            _tileMap.DrawHitboxes(1);
+            _character.DrawHitbox();
             _character.DrawCharacter();
-            _tileMap.Collision(1, new Point(_character.positionBox.X, _character.positionBox.Y), _character.hitBox);
             particle.Draw();
+            //System.Diagnostics.Debug.WriteLine(_tileMap.Collision(1, _character.positionBox.Location, _character.hitBox));
 
             Global._spriteBatch.End();
 

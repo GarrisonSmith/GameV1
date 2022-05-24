@@ -2,8 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.graphics;
 using Fantasy.Logic.Engine.hitboxes;
-using Fantasy.Logic.Engine.entities;
-
+using Fantasy.Logic.Engine.graphics.tilemap;
 
 namespace Fantasy.Logic.Engine.entities
 {
@@ -27,7 +26,7 @@ namespace Fantasy.Logic.Engine.entities
             this.orientation = orientation;
 
             this.hitBox = new Hitbox("character");
-            this.hitBox.area = new Rectangle[] { new Rectangle(0, 0, 64, 128) };
+            this.hitBox.area = new Rectangle[] { new Rectangle(8, 116, 48, 16) };
 
             spriteSheet = Global._content.Load<Texture2D>("character-sets/" + spriteSheetName);
         }
@@ -72,7 +71,101 @@ namespace Fantasy.Logic.Engine.entities
             }
         }
 
-        public void MoveCharacter(Orientation direction)
+        public void MoveCharacter(Orientation direction, TileMap _tileMap)
+        {
+            characterIsMoving = true;
+            Point temp = positionBox.Location;
+            switch (direction)
+            {
+                case Orientation.up:
+                    temp.Y += speed;
+                    if (_tileMap.Collision(layer, temp, hitBox))
+                    {
+                        temp.Y = positionBox.Y;
+                        for (int i = 1; speed - i > 0; i++)
+                        {
+                            temp.Y = positionBox.Y + (speed - i);
+                            if (!_tileMap.Collision(layer, temp, hitBox))
+                            {
+                                positionBox.Y += speed - i;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        positionBox.Y += speed;
+                    }
+                    break;
+                case Orientation.right:
+                    temp.X += speed;
+                    if (_tileMap.Collision(layer, temp, hitBox))
+                    {
+                        temp.X = positionBox.X;
+                        for (int i = 1; speed - i > 0; i++)
+                        {
+                            temp.X = positionBox.X + (speed - i);
+                            if (!_tileMap.Collision(layer, temp, hitBox))
+                            {
+                                positionBox.X += speed - i;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        positionBox.X += speed;
+                    }
+                    break;
+                case Orientation.left:
+                    temp.X -= speed;
+                    if (_tileMap.Collision(layer, temp, hitBox))
+                    {
+                        temp.X = positionBox.X;
+                        for (int i = 1; speed - i > 0; i++)
+                        {
+                            temp.X = positionBox.X - (speed - i);
+                            if (!_tileMap.Collision(layer, temp, hitBox))
+                            {
+                                positionBox.X -= speed - i;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        positionBox.X -= speed;
+                    }
+                    break;
+                case Orientation.down:
+                    temp.Y -= speed;
+                    if (_tileMap.Collision(layer, temp, hitBox))
+                    {
+                        temp.Y = positionBox.Y;
+                        for (int i = 1; speed - i > 0; i++)
+                        {
+                            temp.Y = positionBox.Y - (speed - i);
+                            if (!_tileMap.Collision(layer, temp, hitBox))
+                            {
+                                positionBox.Y -= speed - i;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        positionBox.Y -= speed;
+                    }
+                    break;
+            }
+            if (direction != orientation)
+            {
+                frames.ChangeOrientation(direction);
+                orientation = direction;
+            }
+        }
+
+        public void ForceMoveCharacter(Orientation direction)
         {
             characterIsMoving = true;
             switch (direction)

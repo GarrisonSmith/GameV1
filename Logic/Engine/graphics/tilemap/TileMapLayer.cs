@@ -156,7 +156,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <param name="pos">The position of the Hitbox to be checked.</param>
         /// <param name="box">The Hitbox to be checked.</param>
         /// <param name="tileHitboxes">The reference Hitboxes for the tiles in this TileMapLayer.</param>
-        /// <returns></returns>
+        /// <returns>True if a collision exists between the TileMapLayer and provided Hitbox and position, False if not.</returns>
         public bool CheckLayerCollision(Point pos, Hitbox box, List<Hitbox> tileHitboxes)
         {
             foreach (Tile j in map)
@@ -174,6 +174,24 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 }
             }
             return false;
+        }
+        /// <summary>
+        /// Draws all the Hitboxes in the TileMapLayer.
+        /// </summary>
+        /// <param name="tileHitboxes">The reference Hitboxes for the tiles in this TileMapLayer.</param>
+        public void DrawLayerHitboxes(List<Hitbox> tileHitboxes)
+        {
+            foreach (Tile j in map)
+            {
+                string tileReference = j.tileSetName + '(' + j.tileSetCoordinate.X.ToString() + ',' + j.tileSetCoordinate.Y.ToString() + ')';
+                foreach (Hitbox k in tileHitboxes)
+                {
+                    if (tileReference == k.reference)
+                    {
+                        k.DrawHitbox(new Point(j.tileMapCoordinate.X * 64, (j.tileMapCoordinate.Y + 1) * 64));
+                    }
+                }
+            }
         }
     }
 }

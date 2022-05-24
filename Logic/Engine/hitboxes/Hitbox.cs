@@ -25,7 +25,6 @@ namespace Fantasy.Logic.Engine.hitboxes
                 (int)((inRef.Y - foo.Y - foo.Height) * Global._baseStretch.Y),
                 (int)(foo.Width * Global._baseStretch.X),
                 (int)(foo.Height * Global._baseStretch.Y));
-            Debug.DrawBottomLeftRectangle(doo);
 
             foreach (Rectangle bar in area)
             {
@@ -36,7 +35,6 @@ namespace Fantasy.Logic.Engine.hitboxes
                 (int)(bar.Height * Global._baseStretch.Y));
                 if (baz.Intersects(doo))
                 {
-                    Debug.DrawBottomLeftRectangle(baz);
                     return true;
                 }
             }
@@ -53,6 +51,20 @@ namespace Fantasy.Logic.Engine.hitboxes
                 }
             }
             return false;
+        }
+
+        public void DrawHitbox(Point thisRef)
+        {
+            foreach (Rectangle foo in area)
+            {
+                Rectangle bar = new Rectangle(
+                 (int)((thisRef.X + foo.X) * Global._baseStretch.X),
+                 (int)((thisRef.Y - foo.Y - foo.Height) * Global._baseStretch.Y),
+                 (int)(foo.Width * Global._baseStretch.X),
+                 (int)(foo.Height * Global._baseStretch.Y));
+
+                Debug.DrawBottomLeftRectangle(bar);
+            }
         }
     }
 }

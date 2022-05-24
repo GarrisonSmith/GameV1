@@ -169,6 +169,13 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 }
             }
         }
+        /// <summary>
+        /// Checks if the provided Hitbox with the provided position collide with any tiles in the provided layer that have hitboxes in this TileMap.
+        /// </summary>
+        /// <param name="layer">The layer of the tiles to be checked.</param>
+        /// <param name="pos">The position of the Hitbox to be checked.</param>
+        /// <param name="box">The Hitbox to be checked.</param>
+        /// <returns>True if a collision exists between the TileMapLayer and provided Hitbox and position, False if not.</returns>
         public bool Collision(int layer, Point pos, Hitbox box)
         {
             foreach (TileMapLayer i in map)
@@ -182,6 +189,20 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 }
             }
             return false;
+        }
+        /// <summary>
+        /// Draws all the Hitboxes in the provide layer of the TileMap.
+        /// </summary>
+        /// <param name="layer">The layer of the tiles to be drawn.</param>
+        public void DrawHitboxes(int layer)
+        {
+            foreach (TileMapLayer i in map)
+            {
+                if (i.layer == layer)
+                {
+                    i.DrawLayerHitboxes(tileHitboxes);
+                }
+            }
         }
         /// <summary>
         /// Draws the provided Texture2D onto the TileMap with the provided location and stretching.

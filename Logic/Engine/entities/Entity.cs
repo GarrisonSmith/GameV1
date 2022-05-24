@@ -25,5 +25,10 @@ namespace Fantasy.Logic.Engine.entities
 
             spriteSheet = Global._content.Load<Texture2D>(spriteSheetName);
         }
+
+        public void DrawHitbox()
+        {
+            hitBox.DrawHitbox(positionBox.Location);
+        }
     }
 }
