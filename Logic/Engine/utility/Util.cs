@@ -17,9 +17,5 @@ namespace Fantasy.Content.Logic.utility
                 return false;
             }
         }
-        public static Point GetRectangleCenter(Rectangle bar)
-        {
-            return new Point((bar.X + (int)(bar.Width / 2)), ((bar.Y - (int)(bar.Height / 2))));
-        }
     }
 }

@@ -59,11 +59,11 @@ namespace Fantasy.Logic.Engine.hitboxes
             {
                 Rectangle bar = new Rectangle(
                  (int)((thisRef.X + foo.X) * Global._baseStretch.X),
-                 (int)((thisRef.Y - foo.Y - foo.Height) * Global._baseStretch.Y),
+                 (int)((thisRef.Y - foo.Y) * Global._baseStretch.Y),
                  (int)(foo.Width * Global._baseStretch.X),
                  (int)(foo.Height * Global._baseStretch.Y));
 
-                Debug.DrawBottomLeftRectangle(bar);
+                Debug.DrawRectangle(bar);
             }
         }
     }

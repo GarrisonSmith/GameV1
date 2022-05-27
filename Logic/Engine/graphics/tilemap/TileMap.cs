@@ -196,7 +196,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             return false;
         }
         /// <summary>
-        /// Draws all the Hitboxes in the provide layer of the TileMap.
+        /// Draws a highlight around all the Hitboxes in the provide layer of the TileMap.
         /// </summary>
         /// <param name="layer">The layer of the tiles to be drawn.</param>
         public void DrawHitboxes(int layer)
@@ -800,10 +800,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             }
 
             return new Rectangle(
-                (int)Math.Round((widthSmallest * 64 * Global._baseStretch.X)),
-                (int)Math.Round(((heightLargest + 1) * 64 * Global._baseStretch.Y)),
-                (int)Math.Round(((widthLargest - widthSmallest + 1) * 64 * Global._baseStretch.X)),
-                (int)Math.Round(((heightLargest - heightSmallest + 1) * 64 * Global._baseStretch.Y)));
+                (int)Math.Ceiling((widthSmallest * 64 * Global._baseStretch.X)),
+                (int)Math.Ceiling(((heightLargest + 1) * 64 * Global._baseStretch.Y)),
+                (int)Math.Ceiling(((widthLargest - widthSmallest + 1) * 64 * Global._baseStretch.X)),
+                (int)Math.Ceiling(((heightLargest - heightSmallest + 1) * 64 * Global._baseStretch.Y)));
         }
         /// <summary>
         /// Returns a rectangle that is the size and location of the provided layers in the TileMap with the provided stretching.
@@ -894,7 +894,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <returns>Point containing the center of the TileMap drawing area.</returns>
         public Point GetTileMapCenter()
         {
-            return Util.GetRectangleCenter(GetTileMapBounding());
+            return GetTileMapBounding().Center;
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap of the provided layers in the TileMap with the provided stretching.
@@ -903,7 +903,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <returns>Point containing the center of the corrasponding layers of theTileMap drawing area.</returns>
         public Point GetTileMapCenter(int[] layers)
         {
-            return Util.GetRectangleCenter(GetTileMapBounding(layers));
+            return GetTileMapBounding(layers).Center;
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap of the provided layer in the TileMap with the provided Global._baseStretch.
@@ -912,7 +912,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <returns>Point containing the center of the corrasponding layer of theTileMap drawing area.</returns>
         public Point GetTileMapCenter(int layer)
         {
-            return Util.GetRectangleCenter(GetTileMapBounding(layer));
+            return GetTileMapBounding(layer).Center;
         }
     }
 }

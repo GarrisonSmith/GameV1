@@ -68,12 +68,19 @@ namespace Fantasy.Logic.Engine.screen
             _camera.SetBoundingBox(true);
             ClearAndRedraw();
         }
-        public void BufferTest()
+        public void DoEffects(Effect effect, String details)
         {
-            Global._graphics.PreferredBackBufferWidth = 500;
-            Global._graphics.PreferredBackBufferHeight = 500;
-            Global._graphics.ApplyChanges();
-            this._camera = new Camera(this, this._camera.cameraCenter, true, true);
+            switch (effect)
+            {
+                case Effect.transition:
+                        
+                    break;
+                
+            }
         }
+    }
+    public enum Effect
+    { 
+        transition
     }
 }

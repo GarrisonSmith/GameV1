@@ -14,7 +14,7 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         public Scene _scene;
         /// <summary>
-        /// The center pixel of whats on screen.
+        /// The center of whats on screen.
         /// </summary>
         public Point cameraCenter;
         /// <summary>
@@ -105,7 +105,7 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         public void Reposition()
         {
-            cameraCenter = Util.GetRectangleCenter(cameraPosition);
+            cameraCenter = cameraPosition.Center;
         }
         /// <summary>
         /// Sets this Cameras boundingBox to conform to the boundingBox of the Cameras Scenes TileMap.
