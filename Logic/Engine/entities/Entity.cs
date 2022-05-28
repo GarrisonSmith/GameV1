@@ -10,7 +10,7 @@ namespace Fantasy.Logic.Engine.entities
         public string spriteSheetName;
         public int layer;
         public Rectangle positionBox;
-        public Hitbox hitBox;
+        public Entitybox hitBox;
         public Texture2D spriteSheet;
 
         public Entity() { }

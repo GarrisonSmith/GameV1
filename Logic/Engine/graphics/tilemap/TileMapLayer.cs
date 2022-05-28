@@ -15,6 +15,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// List containing this layers tiles.
         /// </summary>
         public List<Tile> map;
+        public List<Eventbox> layerEventboxes;
         /// <summary>
         /// The layer this TileMapLayer will be drawn on.
         /// </summary>
@@ -116,6 +117,13 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 }
             }
         }
+        public void LoadEventboxes(XmlElement layerTag)
+        {
+            foreach (XmlElement foo in layerTag.GetElementsByTagName("eventBox"))
+            {
+                System.Diagnostics.Debug.WriteLine(foo.GetAttribute("name"));
+            }
+        }
         /// <summary>
         /// Returns the tile with the given index from the TileMaplayer. If the index is invalid returns null.
         /// </summary>
@@ -163,11 +171,11 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <param name="box">The Hitbox to be checked.</param>
         /// <param name="tileHitboxes">The reference Hitboxes for the tiles in this TileMapLayer.</param>
         /// <returns>True if a collision exists between the TileMapLayer and provided Hitbox and position, False if not.</returns>
-        public bool CheckLayerCollision(Point pos, Hitbox box, List<Hitbox> tileHitboxes)
+        public bool CheckLayerCollision(Point pos, Tilebox box, List<Tilebox> tileHitboxes)
         {
             foreach (Tile j in map)
             {
-                foreach (Hitbox k in tileHitboxes)
+                foreach (Tilebox k in tileHitboxes)
                 {
                     if (j.tileSetName + j.tileSetCoordinate == k.reference)
                     {
@@ -184,11 +192,11 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// Draws all the Hitboxes in the TileMapLayer.
         /// </summary>
         /// <param name="tileHitboxes">The reference Hitboxes for the tiles in this TileMapLayer.</param>
-        public void DrawLayerHitboxes(List<Hitbox> tileHitboxes)
+        public void DrawLayerHitboxes(List<Tilebox> tileHitboxes)
         {
             foreach (Tile j in map)
             {
-                foreach (Hitbox k in tileHitboxes)
+                foreach (Tilebox k in tileHitboxes)
                 {
                     if (j.tileSetName + j.tileSetCoordinate == k.reference)
                     {

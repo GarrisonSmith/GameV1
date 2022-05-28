@@ -25,7 +25,7 @@ namespace Fantasy.Logic.Engine.entities
             this.speed = speed;
             this.orientation = orientation;
 
-            this.hitBox = new Hitbox("character");
+            this.hitBox = new Entitybox("character");
             this.hitBox.area = new Rectangle[] { new Rectangle(8, 116, 48, 16) };
 
             spriteSheet = Global._content.Load<Texture2D>("character-sets/" + spriteSheetName);

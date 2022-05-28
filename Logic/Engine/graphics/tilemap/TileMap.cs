@@ -24,23 +24,37 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <summary>
         /// List containing the Hitboxes of the tiles in this TileMap.
         /// </summary>
-        public List<Hitbox> tileHitboxes;
+        public List<Tilebox> tileHitboxes;
 
         /// <summary>
-        /// Constructs a TileMapLayer from the provided string.
+        /// Constructs the TileMap from the provided tileMap files name.
         /// </summary>
-        /// <param name="initialized">string to be parsed to describe the Tiles in the TileMap.</param>
-        public TileMap(string initialize)
+        /// <param name="tileMapName">The file name containing the string that desribes the tileMap.</param>
+        public TileMap(string tileMapName)
         {
+            string initialize = System.IO.File.ReadAllText(@"Content\tile-maps\" + tileMapName + ".txt");
             this.map = new List<TileMapLayer>();
             this.tileTextures = new List<Texture2D>();
-            this.tileHitboxes = new List<Hitbox>();
-            string[] layerTemp = initialize.Split("<");
+            this.tileHitboxes = new List<Tilebox>();
+            string[] layerTemp = initialize.Split('<');
             foreach (string i in layerTemp)
             {
                 if (i != "")
                 {
                     AddLayer(new TileMapLayer(int.Parse(i.Substring(0, i.IndexOf('>'))), i.Substring(i.IndexOf('>') + 1)));
+                }
+            }
+
+            XmlDocument tileMapConfig = new XmlDocument();
+            tileMapConfig.Load(@"Content\tile-maps\tile_map_config.xml");
+            foreach (XmlElement foo in tileMapConfig.GetElementsByTagName("tileMap"))
+            {
+                if (foo.GetAttribute("name") == tileMapName)
+                {
+                    foreach (XmlElement bar in foo)
+                    {
+                        GetLayer(int.Parse(bar.GetAttribute("name").ToString())).LoadEventboxes(bar);
+                    }
                 }
             }
         }
@@ -146,7 +160,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                                     if (bar.GetAttribute("name") == j.tileSetCoordinate.ToString() && !tileHitboxes.Exists(x => x.reference == foo.GetAttribute("name") + bar.GetAttribute("name")))
                                     {
 
-                                        Hitbox temp = new Hitbox(foo.GetAttribute("name") + bar.GetAttribute("name"));
+                                        Tilebox temp = new Tilebox(foo.GetAttribute("name") + bar.GetAttribute("name"));
                                         if (foo.ChildNodes[0].InnerText == "FULL")
                                         {
                                             temp.area = new Rectangle[] { new Rectangle(0, 0, 64, 64) };
@@ -181,7 +195,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <param name="pos">The position of the Hitbox to be checked.</param>
         /// <param name="box">The Hitbox to be checked.</param>
         /// <returns>True if a collision exists between the TileMapLayer and provided Hitbox and position, False if not.</returns>
-        public bool Collision(int layer, Point pos, Hitbox box)
+        public bool Collision(int layer, Point pos, Tilebox box)
         {
             foreach (TileMapLayer i in map)
             {

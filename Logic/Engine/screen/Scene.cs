@@ -59,7 +59,7 @@ namespace Fantasy.Logic.Engine.screen
             DrawScene();
             Global._graphics.EndDraw();
         }
-        public void TransitionScene(String tileMapString)
+        public void TransitionScene(string tileMapString)
         {
             _tileMap.UnloadTileTextures();
             _tileMap = new TileMap(tileMapString);
@@ -68,19 +68,9 @@ namespace Fantasy.Logic.Engine.screen
             _camera.SetBoundingBox(true);
             ClearAndRedraw();
         }
-        public void DoEffects(Effect effect, String details)
+        public void DoEffects(SceneEvent sceneEvent)
         {
-            switch (effect)
-            {
-                case Effect.transition:
-                        
-                    break;
-                
-            }
+            
         }
-    }
-    public enum Effect
-    { 
-        transition
     }
 }
