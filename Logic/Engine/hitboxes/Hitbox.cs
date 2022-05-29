@@ -5,13 +5,13 @@ namespace Fantasy.Logic.Engine.hitboxes
 {
     class Hitbox
     {
-        public Rectangle[] area;
+        public Rectangle[] collisionArea;
 
         public Hitbox() { }
 
         public void DrawHitbox()
         {
-            foreach (Rectangle foo in area)
+            foreach (Rectangle foo in collisionArea)
             {
                 Rectangle bar = new Rectangle(
                  (int)(foo.X * Global._baseStretch.X),

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.graphics;
 using Fantasy.Logic.Engine.graphics.tilemap;
 using Fantasy.Logic.Engine.entities;
+using Fantasy.Logic.Engine.hitboxes;
 using Fantasy.Logic.Engine.graphics.particles;
 
 namespace Fantasy.Logic.Engine.screen
@@ -17,7 +18,7 @@ namespace Fantasy.Logic.Engine.screen
         public Scene(TileMap _tileMap)
         {
             this._tileMap = _tileMap;
-            this._character = new Character("character_two", "character", "character_two_spritesheet", 1, new Rectangle(0, 0, 64, 128), 3, Orientation.up);
+            this._character = new Character("character_two", "character", "character_two_spritesheet", 1, new Entitybox("character", new Rectangle(0, 0, 64, 128)), 3, Orientation.up);
 
             _camera = new Camera(this, new Point(640, 640), true, false);
         }

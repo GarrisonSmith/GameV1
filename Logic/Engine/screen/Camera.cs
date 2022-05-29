@@ -22,7 +22,7 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         public Rectangle cameraPosition;
         /// <summary>
-        /// The bounding area that the cameras center which can restricts the cameras movement.
+        /// The bounding collisionArea that the cameras center which can restricts the cameras movement.
         /// </summary>
         public Rectangle boundingBox;
         /// <summary>

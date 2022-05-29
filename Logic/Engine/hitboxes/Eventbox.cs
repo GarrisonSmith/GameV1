@@ -5,16 +5,16 @@ namespace Fantasy.Logic.Engine.hitboxes
 {
     class Eventbox : Hitbox
     {
-        Point location;
         SceneEvent sceneEvent;
-        public Eventbox(Point location, SceneEvent sceneEvent)
+        Point location;
+        public Eventbox(SceneEvent sceneEvent, Point location)
         {
-            this.location = location;
             this.sceneEvent = sceneEvent;
+            this.location = location;
         }
-        public Eventbox(Rectangle[] area, Point location, SceneEvent sceneEvent) : this(location, sceneEvent)
+        public Eventbox(SceneEvent sceneEvent, Point location, Rectangle[] collisionArea) : this(sceneEvent, location)
         {
-            this.area = area;
+            this.collisionArea = collisionArea;
         }
     }
 }

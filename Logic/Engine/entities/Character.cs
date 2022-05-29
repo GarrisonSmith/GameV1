@@ -15,18 +15,16 @@ namespace Fantasy.Logic.Engine.entities
 
         public Character() { }
 
-        public Character(string id, string type, string spriteSheetName, int layer, Rectangle positionBox, int speed, Orientation orientation)
+        public Character(string id, string type, string spriteSheetName, int layer, Entitybox hitbox, int speed, Orientation orientation)
         {
             this.id = id;
             this.type = type;
             this.spriteSheetName = spriteSheetName;
             this.layer = layer;
-            this.positionBox = positionBox;
             this.speed = speed;
             this.orientation = orientation;
-
-            this.hitBox = new Entitybox("character");
-            this.hitBox.area = new Rectangle[] { new Rectangle(8, 116, 48, 16) };
+            this.hitbox = hitbox;
+            this.hitbox.collisionArea = new Rectangle[] { new Rectangle(8, 116, 48, 16) };
 
             spriteSheet = Global._content.Load<Texture2D>("character-sets/" + spriteSheetName);
         }
@@ -63,101 +61,40 @@ namespace Fantasy.Logic.Engine.entities
 
             if (characterIsMoving)
             {
-                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spriteSheet, Color.White);
+                frames.DrawAnimation(hitbox.characterArea.Location, spriteSheet, Color.White);
             }
             else
             {
-                frames.DrawAnimation(new Point(positionBox.X, positionBox.Y), spriteSheet, Color.White);
+                frames.DrawAnimation(hitbox.characterArea.Location, spriteSheet, Color.White);
             }
         }
 
-        public void MoveCharacter(Orientation direction, TileMap _tileMap)
+        public void MoveCharacter(Orientation direction)
         {
             characterIsMoving = true;
-            Point temp = positionBox.Location;
-            switch (direction)
+            int tempSpeed = speed;
+            Rectangle newCharacterArea;
+            do
             {
-                case Orientation.up:
-                    temp.Y += speed;
-                    if (_tileMap.Collision(layer, temp, hitBox))
-                    {
-                        temp.Y = positionBox.Y;
-                        for (int i = 1; speed - i > 0; i++)
-                        {
-                            temp.Y = positionBox.Y + (speed - i);
-                            if (!_tileMap.Collision(layer, temp, hitBox))
-                            {
-                                positionBox.Y += speed - i;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        positionBox.Y += speed;
-                    }
-                    break;
-                case Orientation.right:
-                    temp.X += speed;
-                    if (_tileMap.Collision(layer, temp, hitBox))
-                    {
-                        temp.X = positionBox.X;
-                        for (int i = 1; speed - i > 0; i++)
-                        {
-                            temp.X = positionBox.X + (speed - i);
-                            if (!_tileMap.Collision(layer, temp, hitBox))
-                            {
-                                positionBox.X += speed - i;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        positionBox.X += speed;
-                    }
-                    break;
-                case Orientation.left:
-                    temp.X -= speed;
-                    if (_tileMap.Collision(layer, temp, hitBox))
-                    {
-                        temp.X = positionBox.X;
-                        for (int i = 1; speed - i > 0; i++)
-                        {
-                            temp.X = positionBox.X - (speed - i);
-                            if (!_tileMap.Collision(layer, temp, hitBox))
-                            {
-                                positionBox.X -= speed - i;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        positionBox.X -= speed;
-                    }
-                    break;
-                case Orientation.down:
-                    temp.Y -= speed;
-                    if (_tileMap.Collision(layer, temp, hitBox))
-                    {
-                        temp.Y = positionBox.Y;
-                        for (int i = 1; speed - i > 0; i++)
-                        {
-                            temp.Y = positionBox.Y - (speed - i);
-                            if (!_tileMap.Collision(layer, temp, hitBox))
-                            {
-                                positionBox.Y -= speed - i;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        positionBox.Y -= speed;
-                    }
-                    break;
-            }
+                newCharacterArea = hitbox.characterArea;
+                switch (direction)
+                {
+                    case Orientation.up:
+                        newCharacterArea.Y += tempSpeed;
+                        break;
+                    case Orientation.right:
+                        newCharacterArea.X += tempSpeed;
+                        break;
+                    case Orientation.left:
+                        newCharacterArea.X -= tempSpeed;
+                        break;
+                    case Orientation.down:
+                        newCharacterArea.Y -= tempSpeed;
+                        break;
+                }
+                tempSpeed--;
+            } while (!hitbox.AttemptMovement(layer, newCharacterArea) && tempSpeed != 0);
+
             if (direction != orientation)
             {
                 frames.ChangeOrientation(direction);
@@ -171,16 +108,16 @@ namespace Fantasy.Logic.Engine.entities
             switch (direction)
             {
                 case Orientation.up:
-                    positionBox.Y += speed;
+                    hitbox.characterArea.Y += speed;
                     break;
                 case Orientation.right:
-                    positionBox.X += speed;
+                    hitbox.characterArea.X += speed;
                     break;
                 case Orientation.left:
-                    positionBox.X -= speed;
+                    hitbox.characterArea.X -= speed;
                     break;
                 case Orientation.down:
-                    positionBox.Y -= speed;
+                    hitbox.characterArea.Y -= speed;
                     break;
             }
             if (direction != orientation)

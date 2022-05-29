@@ -12,9 +12,9 @@ namespace Fantasy.Logic.Engine.hitboxes
         {
             this.reference = reference;
         }
-        public Tilebox(string reference, Rectangle[] area) : this(reference)
+        public Tilebox(string reference, Rectangle[] collisionArea) : this(reference)
         {
-            this.area = area;
+            this.collisionArea = collisionArea;
         }
         public bool Collision(Point inRef, Point thisRef, Rectangle foo)
         {
@@ -24,7 +24,7 @@ namespace Fantasy.Logic.Engine.hitboxes
                 (int)(foo.Width * Global._baseStretch.X),
                 (int)(foo.Height * Global._baseStretch.Y));
 
-            foreach (Rectangle bar in area)
+            foreach (Rectangle bar in collisionArea)
             {
                 Rectangle baz = new Rectangle(
                 (int)((thisRef.X + bar.X) * Global._baseStretch.X),
@@ -39,11 +39,13 @@ namespace Fantasy.Logic.Engine.hitboxes
             return false;
         }
 
-        public bool Collision(Point inRef, Point thisRef, Rectangle[] foofoo)
+        public bool Collision(Point thisRef, Entitybox entityBox)
         {
+            Rectangle[] foofoo = entityBox.collisionArea;
+            
             foreach (Rectangle foo in foofoo)
             {
-                if (Collision(inRef, thisRef, foo))
+                if (Collision(entityBox.characterArea.Location, thisRef, foo))
                 {
                     return true;
                 }
@@ -53,7 +55,7 @@ namespace Fantasy.Logic.Engine.hitboxes
 
         public void DrawHitbox(Point thisRef)
         {
-            foreach (Rectangle foo in area)
+            foreach (Rectangle foo in collisionArea)
             {
                 Rectangle bar = new Rectangle(
                  (int)((thisRef.X + foo.X) * Global._baseStretch.X),

@@ -13,7 +13,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// </summary>
         public string tileSetName;
         /// <summary>
-        /// Top left coordinate of the tile area this tile describes inside of the given tile set.
+        /// Top left coordinate of the tile collisionArea this tile describes inside of the given tile set.
         /// </summary>
         public Point tileSetCoordinate;
         /// <summary>
