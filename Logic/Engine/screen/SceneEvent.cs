@@ -1,21 +1,39 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Fantasy.Logic.Engine.graphics;
-using Fantasy.Logic.Engine.graphics.tilemap;
-using Fantasy.Logic.Engine.entities;
-using Fantasy.Logic.Engine.graphics.particles;
+﻿using Microsoft.Xna.Framework;
+using System.Xml;
+using Fantasy.Logic.Engine.utility;
 
 
 namespace Fantasy.Logic.Engine.screen
 {
     class SceneEvent
     {
-        bool transitionScene;
-        string newSceneTileMapName;
-        Point transitionNewLocation;
+        public bool transitionScene = false;
+        public string transitionTileMapName;
+        public Point transitionStartLocation;
 
+        public SceneEvent(XmlElement sceneEventInfo)
+        {
+            foreach (XmlElement foo in sceneEventInfo)
+            {
+                if (foo.Name == "transitionScene")
+                {
+                    createSceneTransition(foo);
+                }
+            }
+        }
 
-        public SceneEvent() { }
+        public void createSceneTransition(XmlElement sceneTransitionInfo)
+        {
+            transitionScene = true;
+            transitionTileMapName = sceneTransitionInfo.GetAttribute("name");
+            foreach (XmlElement foo in sceneTransitionInfo)
+            {
+                if (foo.Name == "startLocation")
+                {
+                    transitionStartLocation = Util.PointFromString(foo.InnerText);
+                }
+            }
+        }
+
     }
 }

@@ -69,9 +69,14 @@ namespace Fantasy.Logic.Engine.screen
             _camera.SetBoundingBox(true);
             ClearAndRedraw();
         }
-        public void DoEffects(SceneEvent sceneEvent)
+        public void DoEvent(SceneEvent sceneEvent)
         {
-            
+            System.Diagnostics.Debug.WriteLine("Event Recieved"+Global._gameTime.TotalGameTime.TotalMilliseconds);
+            if (sceneEvent.transitionScene)
+            {
+                TransitionScene(sceneEvent.transitionTileMapName);
+                _character.SetCharacterPosition(sceneEvent.transitionStartLocation);
+            }
         }
     }
 }

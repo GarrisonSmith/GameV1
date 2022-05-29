@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Fantasy.Content.Logic.utility;
+using Fantasy.Logic.Engine.utility;
 
 namespace Fantasy.Logic.Engine.screen
 {

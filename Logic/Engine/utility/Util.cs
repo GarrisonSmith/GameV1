@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Fantasy.Content.Logic.utility
+namespace Fantasy.Logic.Engine.utility
 {
     static class Util
     {
@@ -16,6 +16,14 @@ namespace Fantasy.Content.Logic.utility
             {
                 return false;
             }
+        }
+
+        public static Point PointFromString(string foo)
+        {
+            return new Point(
+                int.Parse(foo.Substring(foo.IndexOf('X') + 2, foo.IndexOf(' ') - (foo.IndexOf('X') + 2))),
+                int.Parse(foo.Substring(foo.IndexOf('Y') + 2, foo.IndexOf('}') - (foo.IndexOf('Y') + 2)))
+                );
         }
     }
 }

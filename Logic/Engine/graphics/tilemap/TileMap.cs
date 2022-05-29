@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Fantasy.Content.Logic.utility;
+using Fantasy.Logic.Engine.utility;
 using Fantasy.Logic.Engine.hitboxes;
 using System.Xml;
 

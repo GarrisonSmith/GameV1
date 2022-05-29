@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Xml;
 using Fantasy.Logic.Engine.hitboxes;
+using Fantasy.Logic.Engine.utility;
+using Fantasy.Logic.Engine.screen;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
@@ -37,6 +39,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         public TileMapLayer(int layer, string initialize)
         {
             this.map = new List<Tile>();
+            this.layerEventboxes = new List<Eventbox>();
             this.layer = layer;
 
             XmlDocument animatedList = new XmlDocument();
@@ -121,7 +124,35 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             foreach (XmlElement foo in layerTag.GetElementsByTagName("eventBox"))
             {
-                System.Diagnostics.Debug.WriteLine(foo.GetAttribute("name"));
+                Eventbox temp = new Eventbox(Util.PointFromString(foo.GetAttribute("name")));
+
+                foreach (XmlElement bar in foo)
+                {
+
+                    if (foo.ChildNodes[0].InnerText == "FULL")
+                    {
+                        temp.collisionArea = new Rectangle[] { new Rectangle(0, 0, 64, 64) };
+                        break;
+                    }
+                    else
+                    {
+                        temp.collisionArea = new Rectangle[foo.ChildNodes.Count - 1];
+                        for (int index = 1; index < bar.ChildNodes.Count; index++)
+                        {
+                            Rectangle hitArea = new Rectangle(
+                                int.Parse(bar.ChildNodes[index].InnerText.Split(',')[0]),
+                                int.Parse(bar.ChildNodes[index].InnerText.Split(',')[1]),
+                                int.Parse(bar.ChildNodes[index].InnerText.Split(',')[2]),
+                                int.Parse(bar.ChildNodes[index].InnerText.Split(',')[3]));
+                            temp.collisionArea[index - 1] = hitArea;
+                        }
+                        break;
+                    }
+                }
+
+                temp.sceneEvent = new SceneEvent(foo);
+                layerEventboxes.Add(temp);
+
             }
         }
         /// <summary>
@@ -185,6 +216,12 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                     }
                 }
             }
+
+            foreach (Eventbox foo in layerEventboxes)
+            {
+                foo.Collision(box);
+            }
+
             return false;
         }
         /// <summary>
@@ -202,6 +239,11 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                         k.DrawHitbox(new Point(j.tileMapCoordinate.X * 64, (j.tileMapCoordinate.Y + 1) * 64));
                     }
                 }
+            }
+
+            foreach (Eventbox foo in layerEventboxes)
+            {
+                foo.DrawHitbox();
             }
         }
     }

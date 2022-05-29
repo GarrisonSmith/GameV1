@@ -126,6 +126,11 @@ namespace Fantasy.Logic.Engine.entities
                 orientation = direction;
             }
         }
+        public void SetCharacterPosition(Point posistion)
+        {
+            hitbox.characterArea.X = posistion.X;
+            hitbox.characterArea.Y = posistion.Y;
+        }
 
         public void StopCharacter()
         {

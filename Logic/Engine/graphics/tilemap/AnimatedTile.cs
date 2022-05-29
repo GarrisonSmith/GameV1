@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Fantasy.Logic.Engine.utility;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
@@ -33,11 +34,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             else
             {
                 this.tileSetName = tileID.Substring(0, tileID.IndexOf('{'));
-                tileSetCoordinate = new Point
-                    (
-                    int.Parse(tileID.Substring(tileID.IndexOf('X') + 2, tileID.IndexOf(' ') - (tileID.IndexOf('X') + 2))),
-                    int.Parse(tileID.Substring(tileID.IndexOf('Y') + 2, tileID.IndexOf('}') - (tileID.IndexOf('Y') + 2)))
-                    );
+                tileSetCoordinate = Util.PointFromString(tileID);
                 color = Color.White;
             }
             frames = new Animation(minFrameDuration, maxFrameDuration, 0, frameAmount - 1, tileSetCoordinate.Y / 64, tileSetCoordinate.X / 64, 64, 64, AnimationState.cycling);
