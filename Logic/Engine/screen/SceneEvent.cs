@@ -5,24 +5,43 @@ using Fantasy.Logic.Engine.utility;
 
 namespace Fantasy.Logic.Engine.screen
 {
+    /// <summary>
+    /// Describes a scene event to be processed by a Scene.
+    /// </summary>
     class SceneEvent
     {
+        /// <summary>
+        /// Determines if this SceneEvent describes a scene transition. 
+        /// </summary>
         public bool transitionScene = false;
+        /// <summary>
+        /// The name of the TileMap the scene will transition to if this SceneEvent causes a scene transition.
+        /// </summary>
         public string transitionTileMapName;
+        /// <summary>
+        /// The starting location of the character if this SceneEvent causes a scene transition.
+        /// </summary>
         public Point transitionStartLocation;
 
+        /// <summary>
+        /// Proccess and creates the SceneEvent described in the XmlElement sceneEventInfo.
+        /// </summary>
+        /// <param name="sceneEventInfo">Described the SceneEvents parameters.</param>
         public SceneEvent(XmlElement sceneEventInfo)
         {
             foreach (XmlElement foo in sceneEventInfo)
             {
                 if (foo.Name == "transitionScene")
                 {
-                    createSceneTransition(foo);
+                    CreateSceneTransition(foo);
                 }
             }
         }
-
-        public void createSceneTransition(XmlElement sceneTransitionInfo)
+        /// <summary>
+        /// Creates a scene transition for this SceneEvent.
+        /// </summary>
+        /// <param name="sceneTransitionInfo"></param>
+        public void CreateSceneTransition(XmlElement sceneTransitionInfo)
         {
             transitionScene = true;
             transitionTileMapName = sceneTransitionInfo.GetAttribute("name");

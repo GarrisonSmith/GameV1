@@ -62,7 +62,6 @@ namespace Fantasy.Logic.Engine.screen
         }
         public void TransitionScene(string tileMapString)
         {
-            _tileMap.UnloadTileTextures();
             _tileMap = new TileMap(tileMapString);
             _tileMap.LoadTileTextures();
             _tileMap.LoadTileHitboxes();

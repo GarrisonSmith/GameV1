@@ -130,13 +130,6 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             }
         }
         /// <summary>
-        /// Unloads all textures being being used by this TileMap from all layers.
-        /// </summary>
-        public void UnloadTileTextures()
-        {
-            tileTextures = null;
-        }
-        /// <summary>
         /// Loads all Hitboxes being used by ths TileMap from all layers into tileHitboxes.
         /// </summary>
         public void LoadTileHitboxes()

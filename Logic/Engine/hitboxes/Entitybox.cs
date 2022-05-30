@@ -38,6 +38,52 @@ namespace Fantasy.Logic.Engine.hitboxes
             this.collisionArea = collisionArea;
         }
         /// <summary>
+        /// Checks if the provided rectangle intersects with this boxes area.
+        /// </summary>
+        /// <param name="inRef">Point used as offset on the rectangle foos position.</param>
+        /// <param name="foo">The rectangle to be checked.</param>
+        /// <returns>True if the rectangle foo intersects any rectangle in collisionArea, False if not.</returns>
+        public bool Collision(Point inRef, Rectangle foo)
+        {
+            Rectangle doo = new Rectangle(
+                (int)((inRef.X + foo.X) * Global._baseStretch.X),
+                (int)((inRef.Y - foo.Y - foo.Height) * Global._baseStretch.Y),
+                (int)(foo.Width * Global._baseStretch.X),
+                (int)(foo.Height * Global._baseStretch.Y));
+
+            foreach (Rectangle bar in collisionArea)
+            {
+                Rectangle baz = new Rectangle(
+                (int)((characterArea.X + bar.X) * Global._baseStretch.X),
+                (int)((characterArea.Y - bar.Y - bar.Height) * Global._baseStretch.Y),
+                (int)(bar.Width * Global._baseStretch.X),
+                (int)(bar.Height * Global._baseStretch.Y));
+                if (baz.Intersects(doo))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// Checks if the provided entityBox is colliding with this boxes area.
+        /// </summary>
+        /// <param name="entityBox">The entityBox to be checked.</param>
+        /// <returns>True if entityBoxs collisionArea intersects this Eventboxes collisionArea, False if not.</returns>
+        public bool Collision(Entitybox entityBox)
+        {
+            Rectangle[] foofoo = entityBox.collisionArea;
+
+            foreach (Rectangle foo in foofoo)
+            {
+                if (Collision(entityBox.characterArea.Location, foo))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
         /// Checks if the provided newCharacterArea collides with any Tileboxes or Eventboxes in the Global current scenes Tilemap.
         /// If newCharacterArea is valid (does not result in collision), then newCharacterArea will become this Entityboxes CharacterArea.
         /// </summary>

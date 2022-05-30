@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.graphics;
 using Fantasy.Logic.Engine.hitboxes;
-using Fantasy.Logic.Engine.graphics.tilemap;
 
 namespace Fantasy.Logic.Engine.entities
 {
@@ -19,7 +18,6 @@ namespace Fantasy.Logic.Engine.entities
         {
             this.id = id;
             this.type = type;
-            this.spriteSheetName = spriteSheetName;
             this.layer = layer;
             this.speed = speed;
             this.orientation = orientation;
@@ -126,6 +124,7 @@ namespace Fantasy.Logic.Engine.entities
                 orientation = direction;
             }
         }
+
         public void SetCharacterPosition(Point posistion)
         {
             hitbox.characterArea.X = posistion.X;
