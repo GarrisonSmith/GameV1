@@ -153,7 +153,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                     {
                         foreach (XmlElement foo in hitboxList.GetElementsByTagName("tileSet"))
                         {
-                            if (foo.GetAttribute("name") == j.tileSetName/* && !tileHitboxes.Exists(x => x.reference == foo.GetAttribute("name"))*/)
+                            if (foo.GetAttribute("name") == j.tileSetName)
                             {
                                 foreach (XmlElement bar in foo)
                                 {
@@ -170,11 +170,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                                             temp.collisionArea = new Rectangle[foo.ChildNodes.Count - 1];
                                             for (int index = 1; index < bar.ChildNodes.Count; index++)
                                             {
-                                                Rectangle hitArea = new Rectangle(
-                                                    int.Parse(bar.ChildNodes[index].InnerText.Split(',')[0]),
-                                                    int.Parse(bar.ChildNodes[index].InnerText.Split(',')[1]),
-                                                    int.Parse(bar.ChildNodes[index].InnerText.Split(',')[2]),
-                                                    int.Parse(bar.ChildNodes[index].InnerText.Split(',')[3]));
+                                                Rectangle hitArea = Util.RectangleFromString(bar.ChildNodes[index].InnerText);
                                                 temp.collisionArea[index - 1] = hitArea;
                                             }
                                         }

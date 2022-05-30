@@ -17,6 +17,9 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// List containing this layers tiles.
         /// </summary>
         public List<Tile> map;
+        /// <summary>
+        /// List containing the Eventboxes used by this TileMapLayer.
+        /// </summary>
         public List<Eventbox> layerEventboxes;
         /// <summary>
         /// The layer this TileMapLayer will be drawn on.
@@ -120,11 +123,15 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 }
             }
         }
+        /// <summary>
+        /// Loads all Eventboxes being used by ths TileMapLayer into layerEventboxes.
+        /// </summary>
         public void LoadEventboxes(XmlElement layerTag)
         {
             foreach (XmlElement foo in layerTag.GetElementsByTagName("eventBox"))
             {
-                Eventbox temp = new Eventbox(Util.PointFromString(foo.GetAttribute("name")));
+                Point tempPoint = Util.PointFromString(foo.GetAttribute("name"));
+                Eventbox temp = new Eventbox(new Point(tempPoint.X * 64, tempPoint.Y * 64));
 
                 foreach (XmlElement bar in foo)
                 {
@@ -139,11 +146,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                         temp.collisionArea = new Rectangle[foo.ChildNodes.Count - 1];
                         for (int index = 1; index < bar.ChildNodes.Count; index++)
                         {
-                            Rectangle hitArea = new Rectangle(
-                                int.Parse(bar.ChildNodes[index].InnerText.Split(',')[0]),
-                                int.Parse(bar.ChildNodes[index].InnerText.Split(',')[1]),
-                                int.Parse(bar.ChildNodes[index].InnerText.Split(',')[2]),
-                                int.Parse(bar.ChildNodes[index].InnerText.Split(',')[3]));
+                            Rectangle hitArea = Util.RectangleFromString(bar.ChildNodes[index].InnerText);
                             temp.collisionArea[index - 1] = hitArea;
                         }
                         break;

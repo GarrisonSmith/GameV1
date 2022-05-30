@@ -21,9 +21,19 @@ namespace Fantasy.Logic.Engine.utility
         public static Point PointFromString(string foo)
         {
             return new Point(
-                int.Parse(foo.Substring(foo.IndexOf('X') + 2, foo.IndexOf(' ') - (foo.IndexOf('X') + 2))),
-                int.Parse(foo.Substring(foo.IndexOf('Y') + 2, foo.IndexOf('}') - (foo.IndexOf('Y') + 2)))
+                int.Parse(foo.Substring(foo.IndexOf("X:") + 2, foo.IndexOf('Y') - (foo.IndexOf("X:") + 3))),
+                int.Parse(foo.Substring(foo.IndexOf("Y:") + 2, foo.IndexOf('}') - (foo.IndexOf("Y:") + 2)))
                 );
+        }
+
+        public static Rectangle RectangleFromString(string foo)
+        {
+            return new Rectangle(
+                    int.Parse(foo.Substring(foo.IndexOf("X:") + 2, foo.IndexOf('Y') - (foo.IndexOf("X:") + 3))),
+                    int.Parse(foo.Substring(foo.IndexOf("Y:") + 2, foo.IndexOf('W') - (foo.IndexOf("Y:") + 3))),
+                    int.Parse(foo.Substring(foo.IndexOf("Width:") + 6, foo.IndexOf('H') - (foo.IndexOf("Width:") + 7))),
+                    int.Parse(foo.Substring(foo.IndexOf("Height:") + 7, foo.IndexOf('}') - (foo.IndexOf("Height:") + 7)))
+                    );
         }
     }
 }
