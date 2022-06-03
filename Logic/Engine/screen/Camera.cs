@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.utility;
+using Fantasy.Logic.Controls;
 
 namespace Fantasy.Logic.Engine.screen
 {
@@ -350,6 +351,11 @@ namespace Fantasy.Logic.Engine.screen
 
             Stretch(original, false);
             ForcePan(destination, speed, centerDestination);
+        }
+
+        public void DoAction(Actions action)
+        { 
+            
         }
         /// <summary>
         /// Moves the Camera vertically by the provided amount.
