@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using System;
 using System.Xml;
+using Fantasy.Logic.Engine;
 
 namespace Fantasy.Logic.Controls
 {
@@ -40,9 +41,23 @@ namespace Fantasy.Logic.Controls
                 temp.key = (Keys)Enum.Parse(typeof(Keys), foo.GetAttribute("keys"));
             }
         }
+        public static void ProcessInput(KeyboardState keyboardState)
+        {
+            foreach (Keys foo in keyboardState.GetPressedKeys())
+            {
+                Global._currentScene.ProcessInput(GetAction(foo));
+            }
+        }
         public static Actions GetAction(Keys key)
         {
-            return ActionControl.ControlActions.Find(x => x.key == key).action;
+            ActionControl foo = ActionControl.ControlActions.Find(x => x.key.Equals(key));
+            if (foo != null)
+            {
+                return foo.action;
+            }
+            else {
+                return Actions.inaction;
+            }
         }
         public static Keys GetKey(Actions action)
         {

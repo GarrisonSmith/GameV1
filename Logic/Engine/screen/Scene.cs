@@ -15,6 +15,7 @@ namespace Fantasy.Logic.Engine.screen
         public Camera _camera;
         public TileMap _tileMap;
         public Character _character;
+        public ControlContexts _controlContexts = ControlContexts.camera;
         public Particle particle = new Particle(new Point(0,0), Color.CornflowerBlue, 1, 10000);
         public Scene(TileMap _tileMap)
         {
@@ -79,13 +80,24 @@ namespace Fantasy.Logic.Engine.screen
                 _character.SetCharacterPosition(sceneEvent.transitionStartLocation);
             }
         }
-        public void ProccessInput(Actions action)
-        { 
-            
+        public void ProcessInput(Actions action)
+        {
+            switch (_controlContexts)
+            {
+                case ControlContexts.camera:
+                    _camera.DoAction(action);
+                    break;
+                case ControlContexts.character:
+
+                    break;
+                case ControlContexts.menu:
+
+                    break;
+            }
         }
     }
 
-    enum Context
+    enum ControlContexts
     {
         camera,
         character,

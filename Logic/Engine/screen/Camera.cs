@@ -92,7 +92,27 @@ namespace Fantasy.Logic.Engine.screen
         
         public void DoAction(Actions action)
         {
-
+            switch (action)
+            {
+                case Actions.up:
+                    MoveVertical(true, 10);
+                    break;
+                case Actions.down:
+                    MoveVertical(false, 10);
+                    break;
+                case Actions.left:
+                    MoveHorizontal(false, 10);
+                    break;
+                case Actions.right:
+                    MoveHorizontal(true, 10);
+                    break;
+                case Actions.zoomIn:
+                    ZoomIn(true);
+                    break;
+                case Actions.zoomOut:
+                    ZoomOut(true);
+                    break;
+            }
         }
         /// <summary>
         /// Sets this cameras zoom level to the default of 64.

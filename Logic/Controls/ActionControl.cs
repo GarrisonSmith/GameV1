@@ -23,6 +23,7 @@ namespace Fantasy.Logic.Controls
     
     public enum Actions
     {
+        inaction,
         up,
         down,
         left,
