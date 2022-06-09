@@ -26,10 +26,10 @@ namespace Fantasy.Logic.Engine.hitboxes
             foreach (Rectangle foo in collisionArea)
             {
                 Rectangle bar = new Rectangle(
-                 (int)(foo.X * Global._baseStretch.X),
-                 (int)(-(foo.Y) * Global._baseStretch.Y),
-                 (int)(foo.Width * Global._baseStretch.X),
-                 (int)(foo.Height * Global._baseStretch.Y));
+                 foo.X,
+                 -foo.Y,
+                 foo.Width,
+                 foo.Height);
 
                 Debug.DrawRectangle(bar);
             }

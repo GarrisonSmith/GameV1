@@ -224,8 +224,8 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         public void DrawToMap(Texture2D texture, Rectangle drawArea, Color color, int column, int row, int horizontalOffSet, int verticalalOffSet)
         {
             Global._spriteBatch.Draw(texture,
-                new Vector2(((column * 64) + horizontalOffSet) * Global._baseStretch.X, ((-(row + 1) * 64) - verticalalOffSet) * Global._baseStretch.Y),
-                drawArea, color, 0, new Vector2(0, 0), Global._baseStretch, new SpriteEffects(), 0);
+                new Vector2((column * 64) + horizontalOffSet, (-(row + 1) * 64) - verticalalOffSet),
+                drawArea, color, 0, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), 0);
         }
         /// <summary>
         /// Draws all TileMapLayers in the TileMap.
@@ -661,10 +661,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 foreach (Tile j in i.map)
                 {
                     Rectangle tileArea = new Rectangle(
-                        (int)(j.tileMapCoordinate.X * 64 * Global._baseStretch.X),
-                        (int)(-(j.tileMapCoordinate.Y + 1) * 64 * Global._baseStretch.Y),
-                        (int)(64 * Global._baseStretch.X),
-                        (int)(64 * Global._baseStretch.Y));
+                        j.tileMapCoordinate.X * 64,
+                        -(j.tileMapCoordinate.Y + 1) * 64,
+                        64,
+                        64);
 
                     if (tileArea.Intersects(drawArea))
                     {
@@ -698,10 +698,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                         foreach (Tile j in i.map)
                         {
                             Rectangle tileArea = new Rectangle(
-                                (int)(j.tileMapCoordinate.X * 64 * Global._baseStretch.X),
-                                (int)(-(j.tileMapCoordinate.Y + 1) * 64 * Global._baseStretch.Y),
-                                (int)(64 * Global._baseStretch.X),
-                                (int)(64 * Global._baseStretch.Y));
+                                j.tileMapCoordinate.X * 64,
+                                -(j.tileMapCoordinate.Y + 1) * 64,
+                                64,
+                                64);
 
                             if (tileArea.Intersects(drawArea))
                             {
@@ -735,10 +735,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                     foreach (Tile j in i.map)
                     {
                         Rectangle tileArea = new Rectangle(
-                            (int)(j.tileMapCoordinate.X * 64 * Global._baseStretch.X),
-                            (int)(-(j.tileMapCoordinate.Y + 1) * 64 * Global._baseStretch.Y),
-                            (int)(64 * Global._baseStretch.X),
-                            (int)(64 * Global._baseStretch.Y));
+                            j.tileMapCoordinate.X * 64,
+                            -(j.tileMapCoordinate.Y + 1) * 64,
+                            64,
+                            64);
 
                         if (tileArea.Intersects(drawArea))
                         {
@@ -802,10 +802,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             }
 
             return new Rectangle(
-                (int)Math.Ceiling((widthSmallest * 64 * Global._baseStretch.X)),
-                (int)Math.Ceiling(((heightLargest + 1) * 64 * Global._baseStretch.Y)),
-                (int)Math.Ceiling(((widthLargest - widthSmallest + 1) * 64 * Global._baseStretch.X)),
-                (int)Math.Ceiling(((heightLargest - heightSmallest + 1) * 64 * Global._baseStretch.Y)));
+                widthSmallest * 64,
+                (heightLargest + 1) * 64,
+                (widthLargest - widthSmallest + 1) * 64,
+                (heightLargest - heightSmallest + 1) * 64);
         }
         /// <summary>
         /// Returns a rectangle that is the size and location of the provided layers in the TileMap with the provided stretching.
@@ -845,10 +845,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             }
 
             return new Rectangle(
-                 (int)Math.Round((widthSmallest * 64 * Global._baseStretch.X)),
-                 (int)Math.Round(((heightLargest + 1) * 64 * Global._baseStretch.Y)),
-                 (int)Math.Round(((widthLargest - widthSmallest + 1) * 64 * Global._baseStretch.X)),
-                 (int)Math.Round(((heightLargest - heightSmallest + 1) * 64 * Global._baseStretch.Y)));
+                widthSmallest * 64,
+                (heightLargest + 1) * 64,
+                (widthLargest - widthSmallest + 1) * 64,
+                (heightLargest - heightSmallest + 1) * 64);
         }
         /// <summary>
         /// Returns a rectangle that is the size and location of the provided layer in the TileMap with the provided Global._baseStretch.
@@ -885,10 +885,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             }
 
             return new Rectangle(
-                 (int)Math.Round((widthSmallest * 64 * Global._baseStretch.X)),
-                 (int)Math.Round(((heightLargest + 1) * 64 * Global._baseStretch.Y)),
-                 (int)Math.Round(((widthLargest - widthSmallest + 1) * 64 * Global._baseStretch.X)),
-                 (int)Math.Round(((heightLargest - heightSmallest + 1) * 64 * Global._baseStretch.Y)));
+                widthSmallest * 64,
+                (heightLargest + 1) * 64,
+                (widthLargest - widthSmallest + 1) * 64,
+                (heightLargest - heightSmallest + 1) * 64);
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap with the provided stretching.
@@ -896,7 +896,9 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <returns>Point containing the center of the TileMap drawing collisionArea.</returns>
         public Point GetTileMapCenter()
         {
-            return GetTileMapBounding().Center;
+            Rectangle foo = GetTileMapBounding();
+            return new Point(foo.X + (foo.Width / 2), foo.Y - (foo.Height / 2));
+
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap of the provided layers in the TileMap with the provided stretching.
@@ -905,7 +907,8 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <returns>Point containing the center of the corrasponding layers of theTileMap drawing collisionArea.</returns>
         public Point GetTileMapCenter(int[] layers)
         {
-            return GetTileMapBounding(layers).Center;
+            Rectangle foo = GetTileMapBounding(layers);
+            return new Point(foo.X + (foo.Width / 2), foo.Y - (foo.Height / 2));
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap of the provided layer in the TileMap with the provided Global._baseStretch.
@@ -914,7 +917,8 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <returns>Point containing the center of the corrasponding layer of theTileMap drawing collisionArea.</returns>
         public Point GetTileMapCenter(int layer)
         {
-            return GetTileMapBounding(layer).Center;
+            Rectangle foo = GetTileMapBounding(layer);
+            return new Point(foo.X + (foo.Width / 2), foo.Y - (foo.Height / 2));
         }
     }
 }

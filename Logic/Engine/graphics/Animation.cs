@@ -151,9 +151,9 @@ namespace Fantasy.Logic.Engine.graphics
                 lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
             }
             Global._spriteBatch.Draw(
-                texture, new Vector2(position.X * Global._baseStretch.X, -position.Y * Global._baseStretch.Y),
+                texture, new Vector2(position.X, -position.Y),
                 new Rectangle(((currentFrame + columnReference) * sourceWidth), (rowReference * sourceHeight), sourceWidth, sourceHeight),
-                color, 0, new Vector2(0, 0),Global._baseStretch, new SpriteEffects(), 0);
+                color, 0, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), 0);
 
         }
         /// <summary>

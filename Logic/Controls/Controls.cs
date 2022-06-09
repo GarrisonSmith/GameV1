@@ -6,12 +6,12 @@ namespace Fantasy.Logic.Controls
 {
     static class Controls
     {
-        //basic movement keys
+        //basic movement
         public static ActionControl up;
         public static ActionControl down;
         public static ActionControl right;
         public static ActionControl left;
-        //camera keys
+        //camera
         public static ActionControl zoomIn;
         public static ActionControl zoomOut;
 

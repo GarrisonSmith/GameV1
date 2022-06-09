@@ -45,20 +45,20 @@ namespace Fantasy.Logic.Engine.hitboxes
         /// <returns>True if the rectangle foo intersects any rectangle in collisionArea, False if not.</returns>
         public bool Collision(Point inRef, Rectangle foo)
         {
-            Rectangle doo = new Rectangle(
-                (int)((inRef.X + foo.X) * Global._baseStretch.X),
-                (int)((inRef.Y - foo.Y - foo.Height) * Global._baseStretch.Y),
-                (int)(foo.Width * Global._baseStretch.X),
-                (int)(foo.Height * Global._baseStretch.Y));
+            Rectangle temp = new Rectangle(
+                inRef.X + foo.X,
+                inRef.Y - foo.Y - foo.Height,
+                foo.Width,
+                foo.Height);
 
             foreach (Rectangle bar in collisionArea)
             {
                 Rectangle baz = new Rectangle(
-                (int)((characterArea.X + bar.X) * Global._baseStretch.X),
-                (int)((characterArea.Y - bar.Y - bar.Height) * Global._baseStretch.Y),
-                (int)(bar.Width * Global._baseStretch.X),
-                (int)(bar.Height * Global._baseStretch.Y));
-                if (baz.Intersects(doo))
+                characterArea.X + bar.X,
+                characterArea.Y - bar.Y - bar.Height,
+                bar.Width,
+                bar.Height);
+                if (baz.Intersects(temp))
                 {
                     return true;
                 }
@@ -111,10 +111,10 @@ namespace Fantasy.Logic.Engine.hitboxes
             foreach (Rectangle foo in collisionArea)
             {
                 Rectangle bar = new Rectangle(
-                 (int)((characterArea.X + foo.X) * Global._baseStretch.X),
-                 (int)((characterArea.Y - foo.Y) * Global._baseStretch.Y),
-                 (int)(foo.Width * Global._baseStretch.X),
-                 (int)(foo.Height * Global._baseStretch.Y));
+                 characterArea.X + foo.X,
+                 characterArea.Y - foo.Y,
+                 foo.Width,
+                 foo.Height);
 
                 Debug.DrawRectangle(bar);
             }

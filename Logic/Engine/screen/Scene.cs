@@ -6,6 +6,7 @@ using Fantasy.Logic.Engine.graphics.tilemap;
 using Fantasy.Logic.Engine.entities;
 using Fantasy.Logic.Engine.hitboxes;
 using Fantasy.Logic.Engine.graphics.particles;
+using Fantasy.Logic.Controls;
 
 namespace Fantasy.Logic.Engine.screen
 {
@@ -30,22 +31,23 @@ namespace Fantasy.Logic.Engine.screen
         public void DrawScene()
         {
             Global._spriteBatch.Begin(SpriteSortMode.Deferred, //first things drawn on bottom, last things on top
-                BlendState.AlphaBlend,
+                BlendState.NonPremultiplied,
                 SamplerState.PointClamp,
                 null,
                 null,
                 null,
                 _camera.GetTransformation());
 
-            _tileMap.DrawArea(1, _camera.cameraPosition);
+            _tileMap.DrawLayers();
             Debug.DebugOnScene(this);
             _tileMap.DrawHitboxes(1);
             _character.DrawHitbox();
             _character.DrawCharacter();
             particle.Draw();
-            //System.Diagnostics.Debug.WriteLine(_tileMap.Collision(1, _character.positionBox.Location, _character.hitBox));
 
             Global._spriteBatch.End();
+
+
 
             Global._spriteBatch.Begin();
 
@@ -77,5 +79,17 @@ namespace Fantasy.Logic.Engine.screen
                 _character.SetCharacterPosition(sceneEvent.transitionStartLocation);
             }
         }
+        public void ProccessInput(Actions action)
+        { 
+            
+        }
     }
+
+    enum Context
+    {
+        camera,
+        character,
+        menu
+    }
+
 }

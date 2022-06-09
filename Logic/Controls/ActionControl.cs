@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Fantasy.Logic.Controls
 {
-    public class ActionControl
+    class ActionControl
     {
         public static List<ActionControl> ControlActions = new List<ActionControl>();
         

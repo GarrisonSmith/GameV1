@@ -14,24 +14,27 @@ namespace Fantasy.Logic.Engine.graphics
             DrawAxis(_scene);
             DrawRectangle(_scene._tileMap.GetTileMapBounding());
             DrawPoint(_scene._tileMap.GetTileMapCenter(), false);
-            DrawPoint(new Point(640, 640), true);
+            DrawPoint(_scene._camera.cameraPosition.Location, false);
+            DrawPoint(_scene._camera.cameraCenter, false);
         }
 
         public static void DrawAxis(Scene _scene)
         {
-            for (int i = 0; i <= _scene._tileMap.GetTileMapBounding().Width + (64 * Global._baseStretch.X); i++)
+            //draws x axis
+            for (int i = 0; i <= _scene._tileMap.GetTileMapBounding().Width + (64); i++)
             {
                 Global._spriteBatch.Draw(debug,
                         new Vector2(i, 0),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
-                        new Vector2(1, 1), new SpriteEffects(), 1);
+                        new Vector2(1, 1 / Global._currentStretch), new SpriteEffects(), 0);
             }
-            for (int i = 0; i <= _scene._tileMap.GetTileMapBounding().Height + +(64 * Global._baseStretch.Y); i++)
+            //draws y axis
+            for (int i = 0; i <= _scene._tileMap.GetTileMapBounding().Height + +(64); i++)
             {
                 Global._spriteBatch.Draw(debug,
                         new Vector2(0, -i),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
-                        new Vector2(1, 1), new SpriteEffects(), 1);
+                        new Vector2(1 / Global._currentStretch, 1), new SpriteEffects(), 0);
             }
         }
 
@@ -41,9 +44,9 @@ namespace Fantasy.Logic.Engine.graphics
             for (int i = foo.X; i <= foo.X + foo.Width - 1; i++)
             {
                 Global._spriteBatch.Draw(debug,
-                        new Vector2(i, -(foo.Y - foo.Height + 1)),
+                        new Vector2(i, -(foo.Y - foo.Height  + (1 / Global._currentStretch))),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
-                        new Vector2(1, 1), new SpriteEffects(), 1);
+                        new Vector2(1, 1 / Global._currentStretch), new SpriteEffects(), 0);
             }
             //draws left line
             for (int i = foo.Y - foo.Height + 1; i <= foo.Y; i++)
@@ -51,7 +54,7 @@ namespace Fantasy.Logic.Engine.graphics
                 Global._spriteBatch.Draw(debug,
                         new Vector2(foo.X, -i),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
-                        new Vector2(1, 1), new SpriteEffects(), 1);
+                        new Vector2(1 / Global._currentStretch, 1), new SpriteEffects(), 0);
             }
             //draws top line
             for (int i = foo.X; i <= foo.X + foo.Width - 1; i++)
@@ -59,15 +62,15 @@ namespace Fantasy.Logic.Engine.graphics
                 Global._spriteBatch.Draw(debug,
                         new Vector2(i, -foo.Y),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
-                        new Vector2(1, 1), new SpriteEffects(), 1);
+                        new Vector2(1, 1 / Global._currentStretch), new SpriteEffects(), 0);
             }
             //draws right line
             for (int i = foo.Y - foo.Height + 1; i <= foo.Y; i++)
             {
                 Global._spriteBatch.Draw(debug,
-                        new Vector2((foo.X + foo.Width - 1), -i),
+                        new Vector2((foo.X + foo.Width - (1 / Global._currentStretch)), -i),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
-                        new Vector2(1, 1), new SpriteEffects(), 1);
+                        new Vector2(1 / Global._currentStretch, 1), new SpriteEffects(), 0);
             }
         }
 
@@ -76,43 +79,43 @@ namespace Fantasy.Logic.Engine.graphics
             if (stretchPosition)
             {
                 Global._spriteBatch.Draw(debug,
-                            new Vector2(foo.X * Global._baseStretch.X, -foo.Y * Global._baseStretch.Y),
-                            new Rectangle(0, 0, 2, 2), Color.White, 0, new Vector2(0, 0),
-                           new Vector2(1, 1), new SpriteEffects(), 1);
+                    new Vector2(foo.X, -foo.Y),
+                    new Rectangle(0, 0, 2 + Global._currentScene._camera.zoom, 2 + Global._currentScene._camera.zoom), Color.White, 0, new Vector2(0, 0),
+                    new Vector2(1 / Global._currentStretch, 1 / Global._currentStretch), new SpriteEffects(), 0);
             }
             else
             {
                 Global._spriteBatch.Draw(debug,
-                            new Vector2(foo.X, -foo.Y),
-                            new Rectangle(0, 0, 2, 2), Color.White, 0, new Vector2(0, 0),
-                            new Vector2(1, 1), new SpriteEffects(), 1);
+                    new Vector2(foo.X , -foo.Y),
+                    new Rectangle(0, 0, 3, 3), Color.White, 0, new Vector2(0, 0),
+                    new Vector2(1 / Global._currentStretch, 1 / Global._currentStretch), new SpriteEffects(), 0);
             }
         }
 
         //For drawing things that stay static in the view.
         public static void DebugOverlay(Scene _scene)
         {
-            //DrawCameraCenterAxis(_scene);
+            DrawCameraCenterAxis(_scene);
         }
 
         public static void DrawCameraCenterAxis(Scene _scene)
         {
             //draws horizontal line
-            for (int i = 64; i <= _scene._camera.cameraPosition.Width - 64; i++)
+            for (int i = 64; i <= Global._graphics.PreferredBackBufferWidth - 64; i++)
             {
                 Global._spriteBatch.Draw(debug,
-                        new Vector2(i, (_scene._camera.cameraPosition.Height / 2)),
+                        new Vector2(i, (Global._graphics.PreferredBackBufferHeight / 2)),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
-                        new Vector2(1, 1), new SpriteEffects(), 1);
+                        new Vector2(1, 1), new SpriteEffects(), 0);
             }
 
             //draws vertical line
-            for (int i = 64; i <= _scene._camera.cameraPosition.Height - 64; i++)
+            for (int i = 64; i <= Global._graphics.PreferredBackBufferHeight - 64; i++)
             {
                 Global._spriteBatch.Draw(debug,
-                        new Vector2((_scene._camera.cameraPosition.Width / 2), i),
+                        new Vector2((Global._graphics.PreferredBackBufferWidth / 2), i),
                         new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
-                        new Vector2(1, 1), new SpriteEffects(), 1);
+                        new Vector2(1, 1), new SpriteEffects(), 0);
             }
         }
     }

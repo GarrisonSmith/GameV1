@@ -40,18 +40,18 @@ namespace Fantasy.Logic.Engine.hitboxes
         public bool Collision(Point inRef, Point thisRef, Rectangle foo)
         {
             Rectangle doo = new Rectangle(
-                (int)((inRef.X + foo.X) * Global._baseStretch.X),
-                (int)((inRef.Y - foo.Y - foo.Height) * Global._baseStretch.Y),
-                (int)(foo.Width * Global._baseStretch.X),
-                (int)(foo.Height * Global._baseStretch.Y));
+                inRef.X + foo.X,
+                inRef.Y - foo.Y - foo.Height,
+                foo.Width,
+                foo.Height);
 
             foreach (Rectangle bar in collisionArea)
             {
                 Rectangle baz = new Rectangle(
-                (int)((thisRef.X + bar.X) * Global._baseStretch.X),
-                (int)((thisRef.Y - bar.Y - bar.Height) * Global._baseStretch.Y),
-                (int)(bar.Width * Global._baseStretch.X),
-                (int)(bar.Height * Global._baseStretch.Y));
+                thisRef.X + bar.X,
+                thisRef.Y - bar.Y - bar.Height,
+                bar.Width,
+                bar.Height);
                 if (baz.Intersects(doo))
                 {
                     return true;
@@ -88,10 +88,10 @@ namespace Fantasy.Logic.Engine.hitboxes
             foreach (Rectangle foo in collisionArea)
             {
                 Rectangle bar = new Rectangle(
-                 (int)((thisRef.X + foo.X) * Global._baseStretch.X),
-                 (int)((thisRef.Y - foo.Y) * Global._baseStretch.Y),
-                 (int)(foo.Width * Global._baseStretch.X),
-                 (int)(foo.Height * Global._baseStretch.Y));
+                 thisRef.X + foo.X,
+                 thisRef.Y - foo.Y,
+                 foo.Width,
+                 foo.Height);
 
                 Debug.DrawRectangle(bar);
             }

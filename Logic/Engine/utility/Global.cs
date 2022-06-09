@@ -31,9 +31,9 @@ namespace Fantasy.Logic.Engine
         public static SpriteBatch _spriteBatch;
 
         /// <summary>
-        /// The stretch being applied to all drawing.
+        /// The stretch being applied to the final spritebatch.begin draw.
         /// </summary>
-        public static Vector2 _baseStretch;
+        public static float _currentStretch;
 
         /// <summary>
         /// The current scene of the game. Manages the loaded TileMap, Camera, and Entites.

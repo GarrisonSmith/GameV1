@@ -65,9 +65,9 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <param name="tileSet">the reference tileSet this tiles graphic references.</param>
         public void DrawTile(Texture2D tileSet)
         {
-            Global._spriteBatch.Draw(tileSet, new Vector2(tileMapCoordinate.X * 64 * Global._baseStretch.X, -(tileMapCoordinate.Y+1) * 64 * Global._baseStretch.Y),
+            Global._spriteBatch.Draw(tileSet, new Vector2(tileMapCoordinate.X * 64, -(tileMapCoordinate.Y+1) * 64),
                 new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64),
-                color, 0f, new Vector2(0, 0), Global._baseStretch, new SpriteEffects(), 0);
+                color, 0f, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), 0);
         }
     }
 }

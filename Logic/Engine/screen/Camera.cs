@@ -27,13 +27,21 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         public Rectangle boundingBox;
         /// <summary>
-        /// The max stretch for this camera.
+        /// The current zoom level for this camera. Describes the pixel dimensions of a tile.
         /// </summary>
-        public Vector2 maxStretch = new Vector2(3f, 3f);
+        public byte zoom = 64;
         /// <summary>
-        /// The minimum stretch for this camera.
+        /// The max zoom for this camera.
         /// </summary>
-        public Vector2 minStretch = new Vector2(.5f, .5f);
+        public byte maxZoom = 192;
+        /// <summary>
+        /// The minimum zoom for this camera.
+        /// </summary>
+        public byte minZoom = 24;
+        /// <summary>
+        /// The stretching applied to this cameras transformation matrix.
+        /// </summary>
+        public float stretch = 1f;
         /// <summary>
         /// Determines how much the final drawing of the spritebatch is rotated around the origin.
         /// TODO Not implemented fully.
@@ -77,28 +85,64 @@ namespace Fantasy.Logic.Engine.screen
         /// <param name="centerStartingCoordinate">If true, centers the Camera on the starting coordinate.</param>
         /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
         /// <param name="stretch">Stretch value this Camera will begin with.</param>
-        public Camera(Scene _scene, Point startingCoordinate, bool centerStartingCoordinate, bool allowCentering, Vector2 stretch) : this(_scene, startingCoordinate, centerStartingCoordinate, allowCentering)
+        public Camera(Scene _scene, Point startingCoordinate, bool centerStartingCoordinate, bool allowCentering, float stretch) : this(_scene, startingCoordinate, centerStartingCoordinate, allowCentering)
         {
             Stretch(stretch, allowCentering);
+        }
+        
+        public void DoAction(Actions action)
+        {
+
+        }
+        /// <summary>
+        /// Sets this cameras zoom level to the default of 64.
+        /// </summary>
+        /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
+        public void ZoomDefault(bool allowCentering)
+        {
+            Stretch(1f, allowCentering);
+            zoom = 64;
+        }
+        /// <summary>
+        /// Increases this cameras zoom level by one.
+        /// </summary>
+        /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
+        public void ZoomIn(bool allowCentering)
+        {
+            if (zoom + 1 <= maxZoom)
+            {
+                Stretch(((zoom + 1f) / 64f), allowCentering);
+                zoom = (byte)(zoom + 1);
+            }
+        }
+        /// <summary>
+        /// Decreases this cameras zoom level by one.
+        /// </summary>
+        /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
+        public void ZoomOut(bool allowCentering)
+        {
+            if (zoom - 1 >= minZoom)
+            {
+                Stretch(((zoom - 1f) / 64f), allowCentering);
+                zoom = (byte)(zoom - 1);
+            }
         }
         /// <summary>
         /// Sets the Camera stretch to the provided amount.
         /// </summary>
         /// <param name="newStretch">The stretch the Camera is being set to.</param>
         /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
-        public void Stretch(Vector2 newStretch, bool allowCentering)
+        private void Stretch(float newStretch, bool allowCentering)
         {
-            if (newStretch.X >= minStretch.X && newStretch.X <= maxStretch.X)
-            {
-                cameraPosition.X += ((int)((cameraCenter.X * newStretch.X) / Global._baseStretch.X) - cameraCenter.X);
-                Global._baseStretch.X = newStretch.X;
-            }
-            if (newStretch.Y >= minStretch.Y && newStretch.Y <= maxStretch.Y)
-            {
-                cameraPosition.Y += ((int)((cameraCenter.Y * newStretch.Y) / Global._baseStretch.Y) - cameraCenter.Y);
-                Global._baseStretch.Y = newStretch.Y;
-            }
-            Reposition();
+            cameraPosition.Width = (int)Math.Ceiling((Global._graphics.PreferredBackBufferWidth / newStretch));
+            cameraPosition.Height = (int)Math.Ceiling((Global._graphics.PreferredBackBufferHeight / newStretch));
+
+            cameraPosition.X = cameraCenter.X - cameraPosition.Width / 2;
+            cameraPosition.Y = cameraCenter.Y + cameraPosition.Height / 2;
+
+            stretch = newStretch;
+            Global._currentStretch = newStretch;
+
             SetBoundingBox(allowCentering);
         }
         /// <summary>
@@ -106,7 +150,8 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         public void Reposition()
         {
-            cameraCenter = cameraPosition.Center;
+            cameraCenter.X = cameraPosition.X + (cameraPosition.Width / 2);
+            cameraCenter.Y = cameraPosition.Y - (cameraPosition.Height / 2);
         }
         /// <summary>
         /// Sets this Cameras boundingBox to conform to the boundingBox of the Cameras Scenes TileMap.
@@ -116,10 +161,10 @@ namespace Fantasy.Logic.Engine.screen
         {
             Point mapCenter = _scene._tileMap.GetTileMapCenter();
             Rectangle mapBounding = _scene._tileMap.GetTileMapBounding();
-            if (mapBounding.Width <= (cameraPosition.Width / Global._baseStretch.X) && allowCentering)
+            if (mapBounding.Width <= cameraPosition.Width && allowCentering)
             {
                 movementAllowedHorizontal = false;
-                cameraPosition.X = mapCenter.X - (int)(cameraPosition.Width / 2);
+                cameraPosition.X = mapCenter.X - (cameraPosition.Width / 2);
             }
             else
             {
@@ -128,10 +173,10 @@ namespace Fantasy.Logic.Engine.screen
             boundingBox.X = mapBounding.X;
             boundingBox.Width = mapBounding.Width;
 
-            if (mapBounding.Height <= (cameraPosition.Height / Global._baseStretch.Y) && allowCentering)
+            if (mapBounding.Height <= cameraPosition.Height && allowCentering)
             {
                 movementAllowedVertical = false;
-                cameraPosition.Y = mapCenter.Y + (int)(cameraPosition.Height / 2);
+                cameraPosition.Y = mapCenter.Y + (cameraPosition.Height / 2);
             }
             else
             {
@@ -153,7 +198,7 @@ namespace Fantasy.Logic.Engine.screen
             {
                 return true;
             }
-            else 
+            else
             {
                 return false;
             }
@@ -166,7 +211,8 @@ namespace Fantasy.Logic.Engine.screen
         {
             Matrix _transform =
                 Matrix.CreateTranslation(new Vector3(-cameraPosition.X, cameraPosition.Y, 0)) *
-                Matrix.CreateRotationZ(rotation);
+                Matrix.CreateRotationZ(rotation) *
+                Matrix.CreateScale(stretch);
             return _transform;
         }
         /// <summary>
@@ -174,19 +220,15 @@ namespace Fantasy.Logic.Engine.screen
         /// Follows camera movement constrictions.
         /// Causes Scene clears and redraws.
         /// </summary>
-        /// TODO add stretching on camera pan speed.
         /// <param name="destination">Point for the camera to pan to.  By default this is the top right position of the Camera.</param>
         /// <param name="speed">Speed the camera moves by when panning.</param>
         /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
         public void Pan(Point destination, int speed, bool centerDestination)
         {
-            destination.X = (int)(destination.X * Global._baseStretch.X);
-            destination.Y = (int)(destination.Y * Global._baseStretch.Y);
-
             if (centerDestination)
             {
-                destination.X -= (int)(cameraPosition.Width / 2);
-                destination.Y += (int)(cameraPosition.Height / 2);
+                destination.X -= (cameraPosition.Width / 2);
+                destination.Y += (cameraPosition.Height / 2);
             }
 
             if (PointInBoundingBox(destination))
@@ -195,29 +237,29 @@ namespace Fantasy.Logic.Engine.screen
                 {
                     if (Math.Abs(destination.X - cameraCenter.X) <= speed)
                     {
-                        SetHorizontal(destination.X, false, false);
+                        SetHorizontal(destination.X, false);
 
                     }
                     else if (cameraCenter.X < destination.X)
                     {
-                        MoveHorizontal(true, speed, false);
+                        MoveHorizontal(true, speed);
                     }
                     else if (cameraCenter.X > destination.X)
                     {
-                        MoveHorizontal(false, speed, false);
+                        MoveHorizontal(false, speed);
                     }
 
                     if (Math.Abs(destination.Y - cameraPosition.Y) <= speed)
                     {
-                        SetVertical(destination.Y, false, false);
+                        SetVertical(destination.Y, false);
                     }
                     else if (cameraPosition.Y < destination.Y)
                     {
-                        MoveVertical(true, speed, false);
+                        MoveVertical(true, speed);
                     }
                     else if (cameraPosition.Y > destination.Y)
                     {
-                        MoveVertical(false, speed, false);
+                        MoveVertical(false, speed);
                     }
                     Reposition();
                     _scene.ClearAndRedraw();
@@ -229,47 +271,43 @@ namespace Fantasy.Logic.Engine.screen
         /// Overrides Camera movement constrictions.
         /// Causes Scene clears and redraws.
         /// </summary>
-        /// TODO add stretching on camera pan speed.
         /// <param name="destination">Point for the Camera to pan to.  By default this is the top right position of the Camera.</param>
         /// <param name="speed">Speed the Camera moves by when panning.</param>
         /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
         public void ForcePan(Point destination, int speed, bool centerDestination)
         {
-            destination.X = (int)(destination.X * Global._baseStretch.X);
-            destination.Y = (int)(destination.Y * Global._baseStretch.Y);
-
             if (centerDestination)
             {
-                destination.X -= (int)(cameraPosition.Width / 2);
-                destination.Y += (int)(cameraPosition.Height / 2);
+                destination.X -= (cameraPosition.Width / 2);
+                destination.Y += (cameraPosition.Height / 2);
             }
 
             while (cameraPosition.X != destination.X || cameraPosition.Y != destination.Y)
             {
                 if (Math.Abs(destination.X - cameraPosition.X) <= speed)
                 {
-                    ForceSetHorizontal(destination.X, false, false);
+                    ForceSetHorizontal(destination.X, false);
                 }
                 else if (cameraPosition.X < destination.X)
                 {
-                    ForceMoveHorizontal(true, speed, false);
+                    ForceMoveHorizontal(true, speed);
                 }
                 else if (cameraPosition.X > destination.X)
                 {
-                    ForceMoveHorizontal(false, speed, false);
+                    ForceMoveHorizontal(false, speed);
                 }
 
                 if (Math.Abs(destination.Y - cameraPosition.Y) <= speed)
                 {
-                    ForceSetVertical(destination.Y, false, false);
+                    ForceSetVertical(destination.Y, false);
                 }
                 else if (cameraPosition.Y < destination.Y)
                 {
-                    ForceMoveVertical(true, speed, false);
+                    ForceMoveVertical(true, speed);
                 }
                 else if (cameraPosition.Y > destination.Y)
                 {
-                    ForceMoveVertical(false, speed, false);
+                    ForceMoveVertical(false, speed);
                 }
                 Reposition();
                 _scene.ClearAndRedraw();
@@ -291,31 +329,30 @@ namespace Fantasy.Logic.Engine.screen
             {
                 if (PointInBoundingBox(destination))
                 {
-                    Vector2 original = Global._baseStretch;
+                    byte original = zoom;
 
                     while (!Util.PointInsideRectangle(destination, cameraPosition))
                     {
-                        if ((Global._baseStretch.X - .01f <= minStretch.X + .0f || Global._baseStretch.X <= original.X - 1f) || (Global._baseStretch.Y - .01f <= minStretch.Y + .0f || Global._baseStretch.Y <= original.Y - 1f))
+                        if (zoom == maxZoom)
                         {
                             break;
                         }
-                        Stretch(new Vector2(Global._baseStretch.X - .01f, Global._baseStretch.Y - .01f), false);
+                        ZoomOut(false);
                         _scene.ClearAndRedraw();
                     }
 
-                    Pan(destination, speed, centerDestination);
+                    ForcePan(destination, speed, centerDestination);
 
-                    while (original.X != Global._baseStretch.X)
+                    while (original != zoom)
                     {
-                        Stretch(new Vector2(Global._baseStretch.X + .01f, Global._baseStretch.Y + .01f), false);
-                        Pan(destination, speed, centerDestination);
+                        ZoomIn(false);
+                        _scene.ClearAndRedraw();
+                        ForcePan(destination, speed, centerDestination);
                     }
 
-                    Stretch(original, true);
-                    Pan(destination, speed, centerDestination);
+                    ForcePan(destination, speed, centerDestination);
                 }
             }
-
         }
         /// <summary>
         /// Pans the Camera to a point with the provided speed by first stretching textures until the point is in the cameres views (or until reaching Camera max stretch)
@@ -329,33 +366,28 @@ namespace Fantasy.Logic.Engine.screen
         /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
         public void ForcePanWithStretch(Point destination, int speed, bool centerDestination)
         {
-            Vector2 original = Global._baseStretch;
+            byte original = zoom;
 
             while (!Util.PointInsideRectangle(destination, cameraPosition))
             {
-                if ((Global._baseStretch.X - .01f <= minStretch.X + .0f || Global._baseStretch.X <= original.X - 1f) || (Global._baseStretch.Y - .01f <= minStretch.Y + .0f || Global._baseStretch.Y <= original.Y - 1f))
+                if (zoom == maxZoom)
                 {
                     break;
                 }
-                Stretch(new Vector2(Global._baseStretch.X - .01f, Global._baseStretch.Y - .01f), false);
+                ZoomOut(false);
                 _scene.ClearAndRedraw();
             }
 
             ForcePan(destination, speed, centerDestination);
 
-            while (original.X != Global._baseStretch.X)
+            while (original != zoom)
             {
-                Stretch(new Vector2(Global._baseStretch.X + .01f, Global._baseStretch.Y + .01f), false);
+                ZoomIn(false);
+                _scene.ClearAndRedraw();
                 ForcePan(destination, speed, centerDestination);
             }
 
-            Stretch(original, false);
             ForcePan(destination, speed, centerDestination);
-        }
-
-        public void DoAction(Actions action)
-        { 
-            
         }
         /// <summary>
         /// Moves the Camera vertically by the provided amount.
@@ -363,16 +395,10 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         /// <param name="direction">True results in the Camera moving up, False results in the Camera moving down.</param>
         /// <param name="amount">The amount the Camera will move in the provided direction.</param>
-        /// <param name="stretchAmount">True results in the amount the Camera is moved being multiplied by the Camera stretching, False leaves the amount as is.</param>
-        public void MoveVertical(bool direction, int amount, bool stretchAmount)
+        public void MoveVertical(bool direction, int amount)
         {
             if (movementAllowedVertical)
             {
-                if (stretchAmount)
-                {
-                    amount = (int)(amount * Global._baseStretch.Y);
-                }
-
                 if (direction)
                 {
                     //moves up
@@ -382,7 +408,7 @@ namespace Fantasy.Logic.Engine.screen
                     }
                     else
                     {
-                        cameraPosition.Y = boundingBox.Y + (int)(cameraPosition.Height / 2);
+                        cameraPosition.Y = boundingBox.Y + (cameraPosition.Height / 2);
                     }
                 }
                 else
@@ -394,7 +420,7 @@ namespace Fantasy.Logic.Engine.screen
                     }
                     else
                     {
-                        cameraPosition.Y = (boundingBox.Y - boundingBox.Height) + (int)(cameraPosition.Height / 2);
+                        cameraPosition.Y = boundingBox.Y - boundingBox.Height + (cameraPosition.Height / 2);
                     }
                 }
                 Reposition();
@@ -406,32 +432,26 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         /// <param name="Y">New Y coordinate for this Camera. By default this is the top right position of the Camera.</param>
         /// <param name="centerDestination">If true, the Camera set the Y as the center.</param>
-        /// <param name="stretchY">True results in the Y being multiplied by the Camera stretching. False leaves the Y as is.</param>
-        public void SetVertical(int Y, bool centerDestination, bool stretchY)
+        public void SetVertical(int Y, bool centerDestination)
         {
-            if (stretchY)
-            {
-                Y = (int)(Y * Global._baseStretch.Y);
-            }
-
             if (centerDestination)
             {
-                Y += (int)(cameraPosition.Height / 2);
+                Y += cameraPosition.Height / 2;
             }
 
             if (movementAllowedVertical)
             {
-                if (PointInBoundingBox(new Point(cameraCenter.X, Y - (int)(cameraPosition.Height / 2))))
+                if (PointInBoundingBox(new Point(cameraCenter.X, Y - (cameraPosition.Height / 2))))
                 {
                     cameraPosition.Y = Y;
                 }
                 else if (Y >= boundingBox.Y)
                 {
-                    cameraPosition.Y = boundingBox.Y + (int)(cameraPosition.Height / 2);
+                    cameraPosition.Y = boundingBox.Y + (cameraPosition.Height / 2);
                 }
                 else
                 {
-                    cameraPosition.Y = (boundingBox.Y - boundingBox.Height) + (int)(cameraPosition.Height / 2);
+                    cameraPosition.Y = boundingBox.Y - boundingBox.Height + (cameraPosition.Height / 2);
                 }
                 Reposition();
             }
@@ -442,16 +462,10 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         /// <param name="direction">True results in the Camera moving right, False results in the Camera moving left.</param>
         /// <param name="amount">The amount the camera will move in the provided direction.</param>
-        /// <param name="stretchAmount">True results in the amount the camera is moved being multiplied by the camera stretching, False leaves the amount as is.</param>
-        public void MoveHorizontal(bool direction, int amount, bool stretchAmount)
+        public void MoveHorizontal(bool direction, int amount)
         {
             if (movementAllowedHorizontal)
             {
-                if (stretchAmount)
-                {
-                    amount = (int)(amount * Global._baseStretch.X);
-                }
-
                 if (direction)
                 {
                     //moves right
@@ -461,7 +475,7 @@ namespace Fantasy.Logic.Engine.screen
                     }
                     else
                     {
-                        cameraPosition.X = (boundingBox.X + boundingBox.Width) - (int)(cameraPosition.Width / 2);
+                        cameraPosition.X = boundingBox.X + boundingBox.Width - (cameraPosition.Width / 2);
                     }
                 }
                 else
@@ -473,7 +487,7 @@ namespace Fantasy.Logic.Engine.screen
                     }
                     else
                     {
-                        cameraPosition.X = boundingBox.X - (int)(cameraPosition.Width / 2);
+                        cameraPosition.X = boundingBox.X - (cameraPosition.Width / 2);
                     }
                 }
                 Reposition();
@@ -485,32 +499,26 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         /// <param name="X">New X coordinate for this Camera. By default this is the top right position of the Camera.</param>
         /// <param name="centerDestination">If true, the Camera set the X as the center.</param>
-        /// <param name="stretchX">True results in the X being multiplied by the Camera stretching. False leaves the X as is.</param>
-        public void SetHorizontal(int X, bool centerDestination, bool stretchX)
+        public void SetHorizontal(int X, bool centerDestination)
         {
-            if (stretchX)
-            {
-                X = (int)(X * Global._baseStretch.X);
-            }
-
             if (centerDestination)
             {
-                X -= (int)(cameraPosition.Width / 2);
+                X -= cameraPosition.Width;
             }
 
             if (movementAllowedHorizontal)
             {
-                if (PointInBoundingBox(new Point(X + (int)(cameraPosition.Width / 2), cameraCenter.Y)))
+                if (PointInBoundingBox(new Point(X + (cameraPosition.Width / 2), cameraCenter.Y)))
                 {
                     cameraPosition.X = X;
                 }
                 else if (X <= boundingBox.X)
                 {
-                    cameraPosition.X = boundingBox.X - (int)(cameraPosition.Width / 2);
+                    cameraPosition.X = boundingBox.X - (cameraPosition.Width / 2);
                 }
                 else
                 {
-                    cameraPosition.X = (boundingBox.X + boundingBox.Width) - (int)(cameraPosition.Width / 2);
+                    cameraPosition.X = (boundingBox.X + boundingBox.Width) - (cameraPosition.Width / 2);
                 }
                 Reposition();
             }
@@ -520,12 +528,11 @@ namespace Fantasy.Logic.Engine.screen
         /// Follows camerea movement constrictions.
         /// </summary>
         /// <param name="coordinate">New coordinate for this Camera. By default this is the top right position of the Camera.</param>
-        /// <param name="stretchCoordinate">True results in the coordinate being multiplied by the camera stretching, False leaves the amount as is.</param>
         /// <param name="centerDestination">If true, the coordinate is set as the Camera center.</param>
-        public void SetCoordinate(Point coordinate, bool centerDestination, bool stretchCoordinate)
+        public void SetCoordinate(Point coordinate, bool centerDestination)
         {
-            SetHorizontal(coordinate.X, centerDestination, stretchCoordinate);
-            SetVertical(coordinate.Y, centerDestination, stretchCoordinate);
+            SetHorizontal(coordinate.X, centerDestination);
+            SetVertical(coordinate.Y, centerDestination);
         }
         /// <summary>
         /// Moves the camera vertically by the provided amount.
@@ -533,14 +540,8 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         /// <param name="direction">True results in the camera moving up, False results in the camera moving down.</param>
         /// <param name="amount">The amount the camera will move in the provided direction.</param>
-        /// <param name="stretchAmount">True results in the amount the camera is moved being multiplied by the camera stretching, False leaves the amount as is.</param>
-        public void ForceMoveVertical(bool direction, int amount, bool stretchAmount)
+        public void ForceMoveVertical(bool direction, int amount)
         {
-            if (stretchAmount)
-            {
-                amount = (int)(amount * Global._baseStretch.Y);
-            }
-
             if (direction)
             {
                 //moves up
@@ -559,17 +560,11 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         /// <param name="Y">New Y coordinate for this Camera. By default this is the top right position of the Camera.</param>
         /// <param name="centerDestination">If true, the Camera set the Y as the center.</param>
-        /// <param name="stretchY">True results in the Y being multiplied by the Camera stretching. False leaves the Y as is.</param>
-        public void ForceSetVertical(int Y, bool centerDestination, bool stretchY)
+        public void ForceSetVertical(int Y, bool centerDestination)
         {
-            if (stretchY)
-            {
-                Y = (int)(Y * Global._baseStretch.Y);
-            }
-
             if (centerDestination)
             {
-                Y += (int)(cameraPosition.Height / 2);
+                Y += cameraPosition.Height / 2;
             }
 
             cameraPosition.Y = Y;
@@ -581,14 +576,8 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         /// <param name="direction">True results in the Camera moving right, False results in the Camera moving left.</param>
         /// <param name="amount">The amount the camera will move in the provided direction.</param>
-        /// <param name="stretchAmount">True results in the amount the camera is moved being multiplied by the camera stretching, False leaves the amount as is.</param>
-        public void ForceMoveHorizontal(bool direction, int amount, bool stretchAmount)
+        public void ForceMoveHorizontal(bool direction, int amount)
         {
-            if (stretchAmount)
-            {
-                amount = (int)(amount * Global._baseStretch.X);
-            }
-
             if (direction)
             {
                 //moves right
@@ -607,17 +596,11 @@ namespace Fantasy.Logic.Engine.screen
         /// </summary>
         /// <param name="X">New X coordinate for this Camera. By default this is the top right position of the Camera.</param>
         /// <param name="centerDestination">If true, the Camera set the X as the center.</param>
-        /// <param name="stretchX">True results in the X being multiplied by the Camera stretching. False leaves the X as is.</param>
-        public void ForceSetHorizontal(int X, bool centerDestination, bool stretchX)
+        public void ForceSetHorizontal(int X, bool centerDestination)
         {
-            if (stretchX)
-            {
-                X = (int)(X * Global._baseStretch.X);
-            }
-
             if (centerDestination)
             {
-                X -= (int)(cameraPosition.Width / 2);
+                X -= cameraPosition.Width / 2;
             }
 
             cameraPosition.X = X;
@@ -628,12 +611,11 @@ namespace Fantasy.Logic.Engine.screen
         /// Overrides camerea movement constrictions.
         /// </summary>
         /// <param name="coordinate">New coordinate for this Camera. By default this is the top right position of the Camera.</param>
-        /// <param name="stretchCoordinate">True results in the coordinate being multiplied by the camera stretching, False leaves the amount as is.</param>
         /// <param name="centerDestination">If true, the coordinate is set as the Camera center.</param> 
-        public void ForceSetCoordinate(Point coordinate, bool centerDestination, bool stretchCoordinate)
+        public void ForceSetCoordinate(Point coordinate, bool centerDestination)
         {
-            ForceSetHorizontal(coordinate.X, centerDestination, stretchCoordinate);
-            ForceSetVertical(coordinate.Y, centerDestination, stretchCoordinate);
+            ForceSetHorizontal(coordinate.X, centerDestination);
+            ForceSetVertical(coordinate.Y, centerDestination);
         }
     }
 }
