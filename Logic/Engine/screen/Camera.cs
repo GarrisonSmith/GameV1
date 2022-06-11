@@ -89,7 +89,10 @@ namespace Fantasy.Logic.Engine.screen
         {
             Stretch(stretch, allowCentering);
         }
-        
+        /// <summary>
+        /// Camera will do the provided action.
+        /// </summary>
+        /// <param name="action">The action for them camera to do.</param>
         public void DoAction(Actions action)
         {
             switch (action)
