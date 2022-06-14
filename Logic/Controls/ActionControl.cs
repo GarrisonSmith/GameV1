@@ -18,13 +18,17 @@ namespace Fantasy.Logic.Controls
         /// </summary>
         public Actions action;
         /// <summary>
-        /// The key this ActionControl describes.
+        /// The input that controls this ActionControl.
         /// </summary>
-        public Keys key;
+        public Inputs input;
+        /// <summary>
+        /// The GameTime that this ActionControl began being held.
+        /// </summary>
+        public double heldStartTime;
         /// <summary>
         /// True if this ActionControl just triggered, False if not.
         /// </summary>
-        public bool justPressed;
+        public bool held;
 
         /// <summary>
         /// Creates a ActionConrol with the provided parameters.
@@ -40,9 +44,9 @@ namespace Fantasy.Logic.Controls
         /// </summary>
         /// <param name="action">The action this ActionControl describes.</param>
         /// <param name="key">The key this ActionControl describes.</param>
-        public ActionControl(Actions action, Keys key) : this(action)
+        public ActionControl(Actions action, Inputs input) : this(action)
         {
-            this.key = key;
+            this.input = input;
         }
     }
     

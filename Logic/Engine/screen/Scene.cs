@@ -58,10 +58,11 @@ namespace Fantasy.Logic.Engine.screen
         }
         public void ClearAndRedraw()
         {
-            Global._graphics.GraphicsDevice.Clear(Color.Gray);
-            Global._graphics.BeginDraw();
-            DrawScene();
-            Global._graphics.EndDraw();
+            //Global._graphics.GraphicsDevice.Clear(Color.Gray);
+            //Global._graphics.BeginDraw();
+            //DrawScene();
+            //Global._game1.Tick();
+            //Global._graphics.EndDraw();
         }
         public void TransitionScene(string tileMapString)
         {
@@ -80,12 +81,12 @@ namespace Fantasy.Logic.Engine.screen
                 _character.SetCharacterPosition(sceneEvent.transitionStartLocation);
             }
         }
-        public void ProcessInput(Actions action)
+        public void ProcessInput(ActionControl actionControl)
         {
             switch (_controlContexts)
             {
                 case ControlContexts.camera:
-                    _camera.DoAction(action);
+                    _camera.DoAction(actionControl.action);
                     break;
                 case ControlContexts.character:
 

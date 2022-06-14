@@ -69,7 +69,7 @@ namespace Fantasy.Logic.Controls
             foreach (XmlElement foo in controlsConfig.DocumentElement)
             {
                 ActionControl temp = ActionControl.ControlActions.Find(x => x.action == (Actions)Enum.Parse(typeof(Actions), foo.Name));
-                temp.key = (Keys)Enum.Parse(typeof(Keys), foo.GetAttribute("keys"));
+                temp.input = (Inputs)Enum.Parse(typeof(Keys), foo.GetAttribute("keys"));
             }
         }
         /// <summary>
@@ -78,10 +78,7 @@ namespace Fantasy.Logic.Controls
         /// <param name="keyboardState">The KeyboardState to be processed.</param>
         public static void ProcessKeyboard(KeyboardState keyboardState)
         {
-            foreach (Keys foo in keyboardState.GetPressedKeys())
-            {
-                Global._currentScene.ProcessInput(GetAction(foo));
-            }
+            KeyboardHandler.ProcessKeyboardState(keyboardState);
         }
         /// <summary>
         /// /Process the provided MouseState.
@@ -89,35 +86,16 @@ namespace Fantasy.Logic.Controls
         /// <param name="mouseState">The MouseState to be processed.</param>
         public static void ProcessMouse(MouseState mouseState)
         {
-            if (ButtonState.Pressed == mouseState.LeftButton)
-            {
-                System.Diagnostics.Debug.WriteLine("left");
-            }
-            if (ButtonState.Pressed == mouseState.RightButton)
-            {
-                System.Diagnostics.Debug.WriteLine("right");
-            }
-            if (ButtonState.Pressed == mouseState.MiddleButton)
-            {
-                System.Diagnostics.Debug.WriteLine("middle");
-            }
-            if (ButtonState.Pressed == mouseState.XButton1)
-            {
-                System.Diagnostics.Debug.WriteLine("x1");
-            }
-            if (ButtonState.Pressed == mouseState.XButton2)
-            {
-                System.Diagnostics.Debug.WriteLine("x2");
-            }
+            MouseHandler.ProcessMouseState(mouseState);
         }
         /// <summary>
         /// Gets the corrasponding Action that the provided Key is bound to.
         /// </summary>
         /// <param name="key">The Key to find the matching Action to.</param>
         /// <returns></returns>
-        public static Actions GetAction(Keys key)
+        public static Actions GetAction(Inputs input)
         {
-            ActionControl foo = ActionControl.ControlActions.Find(x => x.key.Equals(key));
+            ActionControl foo = ActionControl.ControlActions.Find(x => x.input.Equals(input));
             if (foo != null)
             {
                 return foo.action;
@@ -131,16 +109,16 @@ namespace Fantasy.Logic.Controls
         /// </summary>
         /// <param name="action">The Action to find the matching Key to.</param>
         /// <returns></returns>
-        public static Keys GetKey(Actions action)
+        public static Inputs GetKey(Actions action)
         {
             ActionControl foo = ActionControl.ControlActions.Find(x => x.action.Equals(action));
             if (foo != null)
             {
-                return foo.key;
+                return foo.input;
             }
             else
             {
-                return Keys.None;
+                return Inputs.None;
             }
         }
     }

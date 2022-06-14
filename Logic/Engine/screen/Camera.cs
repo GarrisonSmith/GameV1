@@ -151,6 +151,50 @@ namespace Fantasy.Logic.Engine.screen
             }
         }
         /// <summary>
+        /// Sets the cameras zoom level to the provided amount.
+        /// </summary>
+        /// <param name="zoom">The new zoom level for this camera.</param>
+        /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
+        public void SetZoom(byte zoom, bool allowCentering)
+        {
+            if (zoom > maxZoom)
+            {
+                zoom = maxZoom;
+            }
+            if (zoom < minZoom)
+            {
+                zoom = minZoom;
+            }
+
+            while (this.zoom != zoom)
+            {
+                if (this.zoom > zoom)
+                {
+                    ZoomOut(allowCentering);
+                }
+                else
+                {
+                    ZoomIn(allowCentering);
+                }
+            }
+        }
+        /// <summary>
+        /// Increases this camera zoom amount by a consistant 10%.
+        /// </summary>
+        /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
+        public void SmoothZoomIn(float percentIncrease,bool allowCentering)
+        {
+            SetZoom((byte)(zoom + percentIncrease * (zoom)), allowCentering);
+        }
+        /// <summary>
+        /// Decreases this camera zoom amount by a consistant 10%.
+        /// </summary>
+        /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
+        public void SmoothZoomOut(float percentDecrease, bool allowCentering)
+        {
+            SetZoom((byte)(zoom - percentDecrease * (zoom)), allowCentering);
+        }
+        /// <summary>
         /// Sets the Camera stretch to the provided amount.
         /// </summary>
         /// <param name="newStretch">The stretch the Camera is being set to.</param>
@@ -333,7 +377,6 @@ namespace Fantasy.Logic.Engine.screen
                     ForceMoveVertical(false, speed);
                 }
                 Reposition();
-                _scene.ClearAndRedraw();
             }
         }
         /// <summary>
@@ -356,23 +399,23 @@ namespace Fantasy.Logic.Engine.screen
 
                     while (!Util.PointInsideRectangle(destination, cameraPosition))
                     {
-                        if (zoom == maxZoom)
+                        if (zoom == minZoom)
                         {
                             break;
                         }
-                        ZoomOut(false);
+                        SmoothZoomOut(.05f, false);
                         _scene.ClearAndRedraw();
                     }
 
                     ForcePan(destination, speed, centerDestination);
 
-                    while (original != zoom)
+                    while (original > (byte)(zoom + .10 * (zoom)))
                     {
-                        ZoomIn(false);
+                        SmoothZoomIn(05f, false);
                         _scene.ClearAndRedraw();
                         ForcePan(destination, speed, centerDestination);
                     }
-
+                    SetZoom(original, true);
                     ForcePan(destination, speed, centerDestination);
                 }
             }
@@ -390,26 +433,25 @@ namespace Fantasy.Logic.Engine.screen
         public void ForcePanWithStretch(Point destination, int speed, bool centerDestination)
         {
             byte original = zoom;
-
             while (!Util.PointInsideRectangle(destination, cameraPosition))
             {
-                if (zoom == maxZoom)
+                if (zoom == minZoom)
                 {
                     break;
                 }
-                ZoomOut(false);
-                _scene.ClearAndRedraw();
+                SmoothZoomOut(.05f, false);
+                Global._game1.RunOneFrame();
             }
 
             ForcePan(destination, speed, centerDestination);
 
-            while (original != zoom)
+            while (original > (byte)(zoom + .10 * (zoom)))
             {
-                ZoomIn(false);
-                _scene.ClearAndRedraw();
+                SmoothZoomIn(.05f, false);
+                //Global._game1.RunOneFrame();
                 ForcePan(destination, speed, centerDestination);
             }
-
+            SetZoom(original, true);
             ForcePan(destination, speed, centerDestination);
         }
         /// <summary>

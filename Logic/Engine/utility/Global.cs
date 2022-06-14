@@ -39,5 +39,7 @@ namespace Fantasy.Logic.Engine
         /// The current scene of the game. Manages the loaded TileMap, Camera, and Entites.
         /// </summary>
         public static Scene _currentScene;
+
+        public static Game1 _game1;
     }
 }
