@@ -8,7 +8,7 @@ namespace Fantasy.Logic.Engine.utility
     static class Util
     {
         /// <summary>
-        /// Determines if the provided point foo is inside of the provided rectange bar.
+        /// Determines if the provided point foo is inside of the provided rectangle bar.
         /// </summary>
         /// <param name="foo">The point to be investigated.</param>
         /// <param name="bar">The rectangle to be investigated</param>
@@ -24,7 +24,15 @@ namespace Fantasy.Logic.Engine.utility
                 return false;
             }
         }
-
+        /// <summary>
+        /// Gets the top left point of the provided rectangle foo.
+        /// </summary>
+        /// <param name="foo">The rectangle to be used.</param>
+        /// <returns>A point containing the top left point of the provided rectangle foo.</returns>
+        public static Point GetTopLeft(Rectangle foo)
+        {
+            return new Point(foo.X , foo.Y);
+        }
         /// <summary>
         /// Constructs a Xna Point object from the provided string foo, foo must be of the form "{X:0 Y:0}".
         /// Will return the first point in a string if other characters exist or if another point exits, example: 
@@ -39,7 +47,6 @@ namespace Fantasy.Logic.Engine.utility
                 int.Parse(foo.Substring(foo.IndexOf("Y:") + 2, foo.IndexOf('}') - (foo.IndexOf("Y:") + 2)))
                 );
         }
-
         /// <summary>
         /// Constructs a Xna Rectangle object from the provided string foo, foo must be of the form "{X:0 Y:0 Width:0 Height:0}".
         /// Will return the first rectangle in a string if other characters exist or if another rectangle exits, example:

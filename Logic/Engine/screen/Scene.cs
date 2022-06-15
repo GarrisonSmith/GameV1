@@ -7,6 +7,7 @@ using Fantasy.Logic.Engine.entities;
 using Fantasy.Logic.Engine.hitboxes;
 using Fantasy.Logic.Engine.graphics.particles;
 using Fantasy.Logic.Controls;
+using Fantasy.Logic.Engine.screen.camera;
 
 namespace Fantasy.Logic.Engine.screen
 {
@@ -21,11 +22,10 @@ namespace Fantasy.Logic.Engine.screen
         {
             this._tileMap = _tileMap;
             this._character = new Character("character_two", "character", "character_two_spritesheet", 1, new Entitybox("character", new Rectangle(0, 0, 64, 128)), 3, Orientation.up);
-
-            _camera = new Camera(this, new Point(640, 640), true, false);
         }
         public void LoadScene()
         {
+            _camera = new Camera(new Point(640, 640), true, false);
             _tileMap.LoadTileTextures();
             _tileMap.LoadTileHitboxes();
         }
@@ -58,10 +58,11 @@ namespace Fantasy.Logic.Engine.screen
         }
         public void ClearAndRedraw()
         {
-            //Global._graphics.GraphicsDevice.Clear(Color.Gray);
+            Global._graphics.GraphicsDevice.Clear(Color.Gray);
+            DrawScene();
+            Global._game1.RunOneFrame();
             //Global._graphics.BeginDraw();
             //DrawScene();
-            //Global._game1.Tick();
             //Global._graphics.EndDraw();
         }
         public void TransitionScene(string tileMapString)

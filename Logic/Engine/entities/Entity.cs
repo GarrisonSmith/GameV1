@@ -33,7 +33,6 @@ namespace Fantasy.Logic.Engine.entities
         /// Generic inheriated constructor.
         /// </summary>
         public Entity() { }
-
         /// <summary>
         /// Creates a Entity with the provided parameters.
         /// </summary>
@@ -51,7 +50,6 @@ namespace Fantasy.Logic.Engine.entities
 
             spriteSheet = Global._content.Load<Texture2D>(spriteSheetName);
         }
-
         /// <summary>
         /// Draws the collision area of the hitbox of this entity, 
         /// </summary>
