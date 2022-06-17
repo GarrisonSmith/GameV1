@@ -3,7 +3,7 @@
 namespace Fantasy.Logic.Engine.screen.camera
 {
     public class PanArgs
-    {   
+    {
         //pan properties
 
         public bool forced;
@@ -18,34 +18,36 @@ namespace Fantasy.Logic.Engine.screen.camera
 
         public byte originalZoom;
 
-        public int speed = 10;
+        public int speed = 4;
 
         public double startWaitTime;
 
         public double waitTime;
 
-        public Point destination;
-
         public Point origin;
+
+        public Point destination;
 
         //pan progress
         public bool panToDone = false;
-
-        public bool panBackDone = false;
 
         public bool zoomInDone = false;
 
         public bool zoomOutDone = false;
 
-        public bool waitDone = false;
+        public bool panBackDone;
 
-        public PanArgs(bool forced, bool useZoom, bool panBack, bool centerDestination,bool waitAfterPan, byte originalZoom, Point destination, Point origin)
+        public bool waitDone;
+
+        public PanArgs(bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime, byte originalZoom, Point origin, Point destination)
         {
             this.forced = forced;
             this.useZoom = useZoom;
             this.panBack = panBack;
             this.originalZoom = originalZoom;
             this.centerDestination = centerDestination;
+            this.waitTime = waitTime;
+            this.origin = origin;
             if (centerDestination && !useZoom)
             {
                 this.destination = Global._currentScene._camera.CenterPoint(destination);
@@ -54,7 +56,9 @@ namespace Fantasy.Logic.Engine.screen.camera
             {
                 this.destination = destination;
             }
-            this.origin = origin;
+
+            this.panBackDone = !panBack;
+            this.waitDone = !waitAfterPan;
         }
     }
 }

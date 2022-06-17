@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Fantasy.Logic.Engine.entities;
+using Fantasy.Logic.Engine.utility;
 
 namespace Fantasy.Logic.Engine.graphics
 {

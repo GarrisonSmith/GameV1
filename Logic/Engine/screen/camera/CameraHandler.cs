@@ -52,41 +52,47 @@ namespace Fantasy.Logic.Engine.screen.camera
 
                     break;
                 case CameraTasks.panning:
-                    if (camera.Pan(panArgs))
+                    if (!panArgs.zoomOutDone) 
                     {
-                        panArgs.panToDone = true;
-                        panArgs.destination = panArgs.origin;
+                        if (camera.Pan_ZoomOut(panArgs))
+                        {
+                            panArgs.zoomOutDone = true;
+                        }
                     }
-                    else if (panArgs.waitAfterPan && panArgs.panToDone && !panArgs.waitDone)
-                    { 
-                        
-                    }
-                    else if (panArgs.panBack && panArgs.panToDone && !panArgs.panBackDone)
+                    else if (!panArgs.panToDone)
                     {
-                        if (camera.ForcePan(panArgs))
+                        byte tempZoom = camera.zoom;
+                        camera.SetZoom(panArgs.originalZoom, false);
+                        if (camera.Pan(panArgs))
+                        {
+                            panArgs.panToDone = true;
+                            panArgs.destination = panArgs.origin;
+                            panArgs.startWaitTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+                        }
+                        camera.SetZoom(tempZoom, false);
+                    }
+                    else if (!panArgs.zoomInDone)
+                    {
+                        if (camera.Pan_ZoomIn(panArgs))
+                        {
+                            panArgs.zoomInDone = true;
+                        }
+                    }
+                    else if (!panArgs.waitDone)
+                    {
+                        if (panArgs.startWaitTime + panArgs.waitTime <= Global._gameTime.TotalGameTime.TotalMilliseconds)
+                        {
+                            panArgs.waitDone = true;
+                        }
+                    }
+                    else if (!panArgs.panBackDone)
+                    {
+                        if (camera.Pan(panArgs))
                         {
                             panArgs.panBackDone = true;
                         }
                     }
-                    else if ((panArgs.panToDone && panArgs.panBackDone) || (panArgs.panToDone && !panArgs.panBack))
-                    {
-                        sideTask = CameraTasks.none;
-                    }
-                    break;
-                case CameraTasks.forcedPanning:
-                    if (camera.ForcePan(panArgs))
-                    {
-                        sideTask = CameraTasks.none;
-                    }
-                    break;
-                case CameraTasks.zoomPanning:
-                    if (camera.PanWithZoom(panArgs))
-                    {
-                        sideTask = CameraTasks.none;
-                    }
-                    break;
-                case CameraTasks.forcedZoomPanning:
-                    if (camera.ForcePanWithZoom(panArgs))
+                    else
                     {
                         sideTask = CameraTasks.none;
                     }
@@ -124,33 +130,12 @@ namespace Fantasy.Logic.Engine.screen.camera
             followEntity = entity;
         }
 
-        public static void AssignPanningTask(Point point, bool forced, bool useZoom, bool panBack, bool centerDestination, bool waitAfterPan)
+        public static void AssignPanningTask(Point point, bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime)
         {
             if (sideTask == CameraTasks.none)
             {
-                if (forced)
-                {
-                    if (useZoom)
-                    {
-                        sideTask = CameraTasks.forcedZoomPanning;
-                    }
-                    else
-                    {
-                        sideTask = CameraTasks.forcedPanning;
-                    }
-                }
-                else
-                {
-                    if (useZoom)
-                    {
-                        sideTask = CameraTasks.zoomPanning;
-                    }
-                    else
-                    {
-                        sideTask = CameraTasks.panning;
-                    }
-                }
-                panArgs = new PanArgs(forced, useZoom, panBack, centerDestination, waitAfterPan, Global._currentScene._camera.zoom, point, Util.GetTopLeft(Global._currentScene._camera.cameraPosition));
+                sideTask = CameraTasks.panning;
+                panArgs = new PanArgs(forced, useZoom, centerDestination, panBack, waitAfterPan, waitTime, Global._currentScene._camera.zoom, Util.GetTopLeft(Global._currentScene._camera.cameraPosition), point);
             }
         }
     }
