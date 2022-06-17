@@ -83,6 +83,18 @@ namespace Fantasy.Logic.Engine.screen.camera
             Stretch(stretch, allowCentering);
         }
         /// <summary>
+        /// Creates the transfromation matrix used to apply camera effects when drawing.
+        /// </summary>
+        /// <returns>Matrix used to apply camera effects (Camera movement, Camera rotation) when drawing in Scene.</returns>
+        public Matrix GetTransformation()
+        {
+            Matrix _transform =
+                Matrix.CreateTranslation(new Vector3(-cameraPosition.X, cameraPosition.Y, 0)) *
+                Matrix.CreateRotationZ(rotation) *
+                Matrix.CreateScale(stretch);
+            return _transform;
+        }
+        /// <summary>
         /// Repositions cameraCenter to be consistant with cameraPosition.
         /// </summary>
         public void Reposition()
@@ -167,7 +179,7 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// </summary>
         /// <param name="zoom">The new zoom level for this camera.</param>
         /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
-        public void SetZoom(byte zoom, bool allowCentering)
+        public void SetZoom(int zoom, bool allowCentering)
         {
             if (zoom > maxZoom)
             {
@@ -196,7 +208,7 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
         public void SmoothZoomIn(float percentIncrease, bool allowCentering)
         {
-            SetZoom((byte)(zoom + percentIncrease * (zoom)), allowCentering);
+            SetZoom((int)(zoom + percentIncrease * (zoom)), allowCentering);
         }
         /// <summary>
         /// Decreases this camera zoom amount by a consistant 10%.
@@ -204,7 +216,7 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
         public void SmoothZoomOut(float percentDecrease, bool allowCentering)
         {
-            SetZoom((byte)(zoom - percentDecrease * (zoom)), allowCentering);
+            SetZoom((int)(zoom - percentDecrease * (zoom)), allowCentering);
         }
         /// <summary>
         /// Sets the Camera stretch to the provided amount.
@@ -259,43 +271,61 @@ namespace Fantasy.Logic.Engine.screen.camera
             Reposition();
         }
         /// <summary>
+        /// Determines if the provide coordiante value is on this cameras bounding boxes perimeter.
+        /// </summary>
+        /// <param name="coordinateValue">The coordinate value to be investigated.</param>
+        /// <param name="axis">True if the coordinate value is on the x axis, False if the coordinate value is on the y axis.</param>
+        /// <returns>True if the provided coordinate is on the cameras bounding boxes perimeter, False if not.</returns>
+        public bool CoordinateValueOnBoundingBox(int coordinateValue, bool axis)
+        {
+            if (axis) //x axis
+            {
+                if (boundingBox.X == coordinateValue || boundingBox.X + boundingBox.Width == coordinateValue)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else //y axis
+            {
+                if (boundingBox.Y == coordinateValue || boundingBox.Y - boundingBox.Height == coordinateValue)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        /// <summary>
         /// Determines if a point is inside of the camera boundingBox.
         /// </summary>
         /// <param name="point">The point to be assessed</param>
         /// <returns>True if the point is inside or on the boundingBox, False if it not.</returns>
         public bool PointInBoundingBox(Point point)
         {
-            if (Util.PointInsideRectangle(point, boundingBox))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return Util.PointInsideRectangle(point, boundingBox);
         }
         /// <summary>
-        /// Creates the transfromation matrix used to apply camera effects when drawing.
-        /// </summary>
-        /// <returns>Matrix used to apply camera effects (Camera movement, Camera rotation) when drawing in Scene.</returns>
-        public Matrix GetTransformation()
-        {
-            Matrix _transform =
-                Matrix.CreateTranslation(new Vector3(-cameraPosition.X, cameraPosition.Y, 0)) *
-                Matrix.CreateRotationZ(rotation) *
-                Matrix.CreateScale(stretch);
-            return _transform;
-        }
-        /// <summary>
-        /// Pans the camera with the provided specification in panArgs.
+        /// Pans the camera with the provided specification in panArgs. If the destination is out of the cameras bounding box then the camera will pan as close as possible.
         /// Follows camera movement constrictions.
         /// </summary>
         /// <param name="panArgs">Specifies how and where the camera will pan.</param>
         /// <returns>True if the camera has finished its panning operation, False if not.</returns>
-        public bool Pan(CameraPan panArgs)
+        public bool Pan(PanArgs panArgs)
         {
-            panArgs.lastPosition = Util.GetTopLeft(cameraPosition);
-            if (PointInBoundingBox(panArgs.destination))
+            if (panArgs.destination == Util.GetTopLeft(cameraPosition) || (panArgs.destination.X == cameraPosition.X && CoordinateValueOnBoundingBox(cameraCenter.Y, false)) ||
+                (panArgs.destination.Y == cameraPosition.Y && CoordinateValueOnBoundingBox(cameraCenter.X, true)) ||
+                (CoordinateValueOnBoundingBox(cameraCenter.Y, false) && CoordinateValueOnBoundingBox(cameraCenter.X, true)))
+            {
+                return true;
+            }
+
+            if (movementAllowedVertical && movementAllowedHorizontal)
             {
                 if (Math.Abs(panArgs.destination.X - cameraPosition.X) <= panArgs.speed)
                 {
@@ -324,28 +354,27 @@ namespace Fantasy.Logic.Engine.screen.camera
                     MoveVertical(false, panArgs.speed);
                 }
                 Reposition();
-            }
-
-            if (panArgs.destination == Util.GetTopLeft(cameraPosition) || panArgs.lastPosition == Util.GetTopLeft(cameraPosition))
-            {
-                return true;
+                return false;
             }
             else
             {
-                return false;
+                return true;
             }
         }
         /// <summary>
-        /// Pans the Camera to a point with the provided speed. 
-        /// Overrides Camera movement constrictions.
-        /// Causes Scene clears and redraws.
+        /// Pans the camera with the provided specification in panArgs. If the destination is out of the cameras bounding box then the camera will pan as close as possible.
+        /// Overrides camera movement constrictions.
         /// </summary>
-        /// <param name="destination">Point for the Camera to pan to.  By default this is the top right position of the Camera.</param>
-        /// <param name="speed">Speed the Camera moves by when panning.</param>
-        /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
-        public bool ForcePan(CameraPan panArgs)
+        /// <param name="panArgs">Specifies how and where the camera will pan.</param>
+        /// <returns>True if the camera has finished its panning operation, False if not.</returns>
+        public bool ForcePan(PanArgs panArgs)
         {
-            panArgs.lastPosition = Util.GetTopLeft(cameraPosition);
+            if (panArgs.destination == Util.GetTopLeft(cameraPosition) || (panArgs.destination.X == cameraPosition.X && CoordinateValueOnBoundingBox(cameraCenter.Y, false)) ||
+                (panArgs.destination.Y == cameraPosition.Y && CoordinateValueOnBoundingBox(cameraCenter.X, true)) ||
+                (CoordinateValueOnBoundingBox(cameraCenter.Y, false) && CoordinateValueOnBoundingBox(cameraCenter.X, true)))
+            {
+                return true;
+            }
 
             if (Math.Abs(panArgs.destination.X - cameraPosition.X) <= panArgs.speed)
             {
@@ -374,85 +403,85 @@ namespace Fantasy.Logic.Engine.screen.camera
                 ForceMoveVertical(false, panArgs.speed);
             }
             Reposition();
-
-            if (panArgs.destination == Util.GetTopLeft(cameraPosition) || panArgs.lastPosition == Util.GetTopLeft(cameraPosition))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return false;
         }
         /// <summary>
-        /// Pans the Camera to a point with the provided speed by first stretching textures until the point is in the cameres views (or until reaching Camera max stretch)
-        /// then returning back to the starting stretching after panning. Provides a zoom out --> Pan to Point --> zoom back in effect.
-        /// Follows Camera movement constrictions.
-        /// Causes Scene clears and redraws.
+        /// Pans the camera with the provided specification in panArgs. Provides a zoom out --> Pan to Point --> zoom back in effect.
+        /// Follows camera movement constrictions.
         /// </summary>
-        /// TODO add stretching on camera pan speed.
-        /// <param name="destination">Point for the Camera to pan to.  By default this is the top right position of the Camera.</param>
-        /// <param name="speed">Speed the Camera moves by when panning.</param>
-        /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
-        public void PanWithZoom(Point destination, int speed, bool centerDestination)
+        /// <param name="panArgs">Specifies how and where the camera will pan.</param>
+        /// <returns>True if the camera has finished its zooming panning operation, False if not.</returns>
+        public bool PanWithZoom(PanArgs panArgs)
         {
             if (movementAllowedVertical && movementAllowedHorizontal)
             {
-                if (PointInBoundingBox(destination))
+                if (!panArgs.zoomOutDone && (!Util.PointInsideRectangle(panArgs.destination, cameraPosition) || zoom == minZoom))
                 {
-                    byte original = zoom;
-
-                    while (!Util.PointInsideRectangle(destination, cameraPosition))
-                    {
-                        if (zoom == minZoom)
-                        {
-                            break;
-                        }
-                        SmoothZoomOut(.05f, false);
-                        Global._currentScene.ClearAndRedraw();
-                    }
-
-                    //ForcePan(destination, speed, centerDestination);
-
-                    while (original > (byte)(zoom + .10 * (zoom)))
-                    {
-                        SmoothZoomIn(05f, false);
-                        Global._currentScene.ClearAndRedraw();
-                        //ForcePan(destination, speed, centerDestination);
-                    }
-                    SetZoom(original, true);
-                    //ForcePan(destination, speed, centerDestination);
+                    SmoothZoomOut(.05f, false);
+                    return false;
                 }
+                else if (!panArgs.panToDone && (!(panArgs.destination == Util.GetTopLeft(cameraPosition) ||
+                    (panArgs.destination.X == cameraPosition.X && CoordinateValueOnBoundingBox(cameraCenter.Y, false)) ||
+                    (panArgs.destination.Y == cameraPosition.Y && CoordinateValueOnBoundingBox(cameraCenter.X, true)) ||
+                    (CoordinateValueOnBoundingBox(cameraCenter.Y, false) && CoordinateValueOnBoundingBox(cameraCenter.X, true)))))
+                {
+                    panArgs.zoomOutDone = true;
+                    if (Pan(new PanArgs(false, false, false, panArgs.centerDestination, zoom, panArgs.destination, panArgs.origin)))
+                    {
+                        panArgs.panToDone = true;
+                    }
+                    return false;
+                }
+                else if (!panArgs.zoomInDone && (panArgs.originalZoom > (byte)(zoom + .05 * (zoom))))
+                {
+                    SmoothZoomIn(.05f, false);
+                    return false;
+                }
+                else
+                {
+                    panArgs.zoomInDone = true;
+                    SetZoom(panArgs.originalZoom, true);
+                    return true;
+                }
+            }
+            else
+            {
+                return true;
             }
         }
         /// <summary>
-        /// Pans the Camera to a point with the provided speed by first stretching textures until the point is in the cameres views (or until reaching Camera max stretch)
-        /// then returning back to the starting stretching after panning. Provides a zoom out --> Pan to Point --> zoom back in effect.
-        /// Overrides Camera movement constrictions.
-        /// Causes Scene clears and redraws.
+        /// Pans the camera with the provided specification in panArgs. Provides a zoom out --> Pan to Point --> zoom back in effect.
+        /// Overrides camera movement constrictions.
         /// </summary>
-        /// TODO add stretching on camera pan speed.
-        /// <param name="destination">Point for the Camera to pan to.  By default this is the top right position of the Camera.</param>
-        /// <param name="speed">Speed the Camera moves by when panning.</param>
-        /// <param name="centerDestination">If true, the Camera pans to the destination as the center.</param>
-        public bool ForcePanWithZoom(CameraPan panArgs)
+        /// <param name="panArgs">Specifies how and where the camera will pan.</param>
+        /// <returns>True if the camera has finished its zooming panning operation, False if not.</returns>
+        public bool ForcePanWithZoom(PanArgs panArgs)
         {
-            if (!Util.PointInsideRectangle(panArgs.destination, cameraPosition) || zoom == minZoom)
+            if (!panArgs.zoomOutDone && (!Util.PointInsideRectangle(panArgs.destination, cameraPosition) || zoom == minZoom))
             {
                 SmoothZoomOut(.05f, false);
                 return false;
             }
-            else if (!ForcePan(panArgs))
+            else if (!panArgs.panToDone && (!(panArgs.destination == Util.GetTopLeft(cameraPosition) ||
+                (panArgs.destination.X == cameraPosition.X && CoordinateValueOnBoundingBox(cameraCenter.Y, false)) ||
+                (panArgs.destination.Y == cameraPosition.Y && CoordinateValueOnBoundingBox(cameraCenter.X, true)) ||
+                (CoordinateValueOnBoundingBox(cameraCenter.Y, false) && CoordinateValueOnBoundingBox(cameraCenter.X, true)))))
             {
+                panArgs.zoomOutDone = true;
+                if (ForcePan(new PanArgs(false, false, false, panArgs.centerDestination, zoom, panArgs.destination, panArgs.origin)))
+                {
+                    panArgs.panToDone = true;
+                }
                 return false;
             }
-            else if (panArgs.originalZoom > (byte)(zoom + .10 * (zoom)))
+            else if (!panArgs.zoomInDone && (panArgs.originalZoom > (byte)(zoom + .05 * (zoom))))
             {
                 SmoothZoomIn(.05f, false);
                 return false;
             }
             else
             {
+                panArgs.zoomInDone = true;
                 SetZoom(panArgs.originalZoom, true);
                 return true;
             }
