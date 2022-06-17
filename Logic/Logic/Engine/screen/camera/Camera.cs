@@ -122,16 +122,16 @@ namespace Fantasy.Logic.Engine.screen.camera
             switch (action)
             {
                 case Actions.up:
-                    MoveVertical(true, 10);
+                    MoveVertical(false, true, 10);
                     break;
                 case Actions.down:
-                    MoveVertical(false, 10);
+                    MoveVertical(false, false, 10);
                     break;
                 case Actions.left:
-                    MoveHorizontal(false, 10);
+                    MoveHorizontal(false, false, 10);
                     break;
                 case Actions.right:
-                    MoveHorizontal(true, 10);
+                    MoveHorizontal(false, true, 10);
                     break;
                 case Actions.zoomIn:
                     ZoomIn(true);
@@ -203,16 +203,18 @@ namespace Fantasy.Logic.Engine.screen.camera
             }
         }
         /// <summary>
-        /// Increases this camera zoom amount by a consistant 10%.
+        /// Increases this camera zoom amount by the provided percent.
         /// </summary>
+        /// <param name="percentIncrease">The percent the zoom will be increased by.</param>
         /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
         public void SmoothZoomIn(float percentIncrease, bool allowCentering)
         {
             SetZoom((int)(zoom + percentIncrease * (zoom)), allowCentering);
         }
         /// <summary>
-        /// Decreases this camera zoom amount by a consistant 10%.
+        /// Decreases this camera zoom amount by the provided percent.
         /// </summary>
+        /// <param name="percentDecrease">The percent the zoom will be decreased by.</param>
         /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
         public void SmoothZoomOut(float percentDecrease, bool allowCentering)
         {
@@ -271,196 +273,153 @@ namespace Fantasy.Logic.Engine.screen.camera
             Reposition();
         }
         /// <summary>
+        /// Determines if the provide coordiante value is on this cameras bounding boxes perimeter.
+        /// </summary>
+        /// <param name="coordinateValue">The coordinate value to be investigated.</param>
+        /// <param name="axis">True if the coordinate value is on the x axis, False if the coordinate value is on the y axis.</param>
+        /// <returns>True if the provided coordinate is on the cameras bounding boxes perimeter, False if not.</returns>
+        public bool CoordinateValueOnBoundingBox(int coordinateValue, bool axis)
+        {
+            if (axis) //x axis
+            {
+                if (boundingBox.X == coordinateValue || boundingBox.X + boundingBox.Width == coordinateValue)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else //y axis
+            {
+                if (boundingBox.Y == coordinateValue || boundingBox.Y - boundingBox.Height == coordinateValue)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        /// <summary>
         /// Determines if a point is inside of the camera boundingBox.
         /// </summary>
         /// <param name="point">The point to be assessed</param>
         /// <returns>True if the point is inside or on the boundingBox, False if it not.</returns>
         public bool PointInBoundingBox(Point point)
         {
-            if (Util.PointInsideRectangle(point, boundingBox))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return Util.PointInsideRectangle(point, boundingBox);
         }
         /// <summary>
-        /// Pans the camera with the provided specification in panArgs.
-        /// Follows camera movement constrictions.
+        /// Pans the camera with the provided specification in panArgs. If the destination is out of the cameras bounding box then the camera will pan as close as possible.
         /// </summary>
         /// <param name="panArgs">Specifies how and where the camera will pan.</param>
         /// <returns>True if the camera has finished its panning operation, False if not.</returns>
-        public bool Pan(CameraPan panArgs)
+        public bool Pan(PanArgs panArgs)
         {
-            panArgs.lastPosition = Util.GetTopLeft(cameraPosition);
-            if (PointInBoundingBox(panArgs.destination))
+            if (panArgs.destination == Util.GetTopLeft(cameraPosition) || (panArgs.destination.X == cameraPosition.X && CoordinateValueOnBoundingBox(cameraCenter.Y, false)) ||
+                (panArgs.destination.Y == cameraPosition.Y && CoordinateValueOnBoundingBox(cameraCenter.X, true)) ||
+                (CoordinateValueOnBoundingBox(cameraCenter.Y, false) && CoordinateValueOnBoundingBox(cameraCenter.X, true)))
+            {
+                return true;
+            }
+
+            if ((movementAllowedVertical && movementAllowedHorizontal) || panArgs.forced)
             {
                 if (Math.Abs(panArgs.destination.X - cameraPosition.X) <= panArgs.speed)
                 {
-                    SetHorizontal(panArgs.destination.X, false);
+                    SetHorizontal(panArgs.forced, panArgs.destination.X, false);
 
                 }
                 else if (cameraPosition.X < panArgs.destination.X)
                 {
-                    MoveHorizontal(true, panArgs.speed);
+                    MoveHorizontal(panArgs.forced, true, panArgs.speed);
                 }
                 else if (cameraPosition.X > panArgs.destination.X)
                 {
-                    MoveHorizontal(false, panArgs.speed);
+                    MoveHorizontal(panArgs.forced, false, panArgs.speed);
                 }
 
                 if (Math.Abs(panArgs.destination.Y - cameraPosition.Y) <= panArgs.speed)
                 {
-                    SetVertical(panArgs.destination.Y, false);
+                    SetVertical(panArgs.forced, panArgs.destination.Y, false);
                 }
                 else if (cameraPosition.Y < panArgs.destination.Y)
                 {
-                    MoveVertical(true, panArgs.speed);
+                    MoveVertical(panArgs.forced, true, panArgs.speed);
                 }
                 else if (cameraPosition.Y > panArgs.destination.Y)
                 {
-                    MoveVertical(false, panArgs.speed);
+                    MoveVertical(panArgs.forced, false, panArgs.speed);
                 }
                 Reposition();
-            }
-
-            if (panArgs.destination == Util.GetTopLeft(cameraPosition) || panArgs.lastPosition == Util.GetTopLeft(cameraPosition))
-            {
-                return true;
+                return false;
             }
             else
             {
-                return false;
-            }
-        }
-        /// <summary>
-        /// Pans the camera with the provided specification in panArgs.
-        /// Overrides camera movement constrictions.
-        /// </summary>
-        /// <param name="panArgs">Specifies how and where the camera will pan.</param>
-        /// <returns>True if the camera has finished its panning operation, False if not.</returns>
-        public bool ForcePan(CameraPan panArgs)
-        {
-            panArgs.lastPosition = Util.GetTopLeft(cameraPosition);
-
-            if (Math.Abs(panArgs.destination.X - cameraPosition.X) <= panArgs.speed)
-            {
-                ForceSetHorizontal(panArgs.destination.X, false);
-
-            }
-            else if (cameraPosition.X < panArgs.destination.X)
-            {
-                ForceMoveHorizontal(true, panArgs.speed);
-            }
-            else if (cameraPosition.X > panArgs.destination.X)
-            {
-                ForceMoveHorizontal(false, panArgs.speed);
-            }
-
-            if (Math.Abs(panArgs.destination.Y - cameraPosition.Y) <= panArgs.speed)
-            {
-                ForceSetVertical(panArgs.destination.Y, false);
-            }
-            else if (cameraPosition.Y < panArgs.destination.Y)
-            {
-                ForceMoveVertical(true, panArgs.speed);
-            }
-            else if (cameraPosition.Y > panArgs.destination.Y)
-            {
-                ForceMoveVertical(false, panArgs.speed);
-            }
-            Reposition();
-
-            if (panArgs.destination == Util.GetTopLeft(cameraPosition) || panArgs.lastPosition == Util.GetTopLeft(cameraPosition))
-            {
                 return true;
             }
-            else
-            {
-                return false;
-            }
         }
         /// <summary>
-        /// Pans the camera with the provided specification in panArgs. Provides a zoom out --> Pan to Point --> zoom back in effect.
-        /// Follows camera movement constrictions.
+        /// Used by camera panning that utilizes camera zooming.
         /// </summary>
         /// <param name="panArgs">Specifies how and where the camera will pan.</param>
-        /// <returns>True if the camera has finished its zooming panning operation, False if not.</returns>
-        public bool PanWithZoom(CameraPan panArgs)
+        /// <returns>True if the camera pan zoom out is complete, False if not.</returns>
+        public bool Pan_ZoomOut(PanArgs panArgs)
         {
-            if (movementAllowedVertical && movementAllowedHorizontal)
+            if (Util.PointInsideRectangle(panArgs.destination, cameraPosition) || zoom == minZoom)
             {
-                if (Pan(new CameraPan(true, false, false, panArgs.centerDestination, zoom, panArgs.destination, panArgs.origin)))
-                {
-                    if (!Util.PointInsideRectangle(panArgs.destination, cameraPosition) || zoom == minZoom)
-                    {
-                        SmoothZoomOut(.05f, false);
-                        return false;
-                    }
-                    else if (!ForcePan(new CameraPan(true, false, false, panArgs.centerDestination, zoom, panArgs.destination, panArgs.origin)))
-                    {
-                        return false;
-                    }
-                    else if (panArgs.originalZoom > (byte)(zoom + .05 * (zoom)))
-                    {
-                        SmoothZoomIn(.05f, false);
-                        return false;
-                    }
-                    else
-                    {
-                        SetZoom(panArgs.originalZoom, true);
-                        return true;
-                    }
-                }
-                else
-                {
-                    return true;
-                }
+                return true;
             }
             else 
-            {
-                return true;
-            }
-        }
-        /// <summary>
-        /// Pans the camera with the provided specification in panArgs. Provides a zoom out --> Pan to Point --> zoom back in effect.
-        /// Overrides camera movement constrictions.
-        /// </summary>
-        /// <param name="panArgs">Specifies how and where the camera will pan.</param>
-        /// <returns>True if the camera has finished its zooming panning operation, False if not.</returns>
-        public bool ForcePanWithZoom(CameraPan panArgs)
-        {
-            if (!Util.PointInsideRectangle(panArgs.destination, cameraPosition) || zoom == minZoom)
             {
                 SmoothZoomOut(.05f, false);
                 return false;
             }
-            else if (!ForcePan(new CameraPan(true, false, false, panArgs.centerDestination, zoom, panArgs.destination, panArgs.origin)))
-            {
-                return false;
-            }
-            else if (panArgs.originalZoom > (byte)(zoom + .05 * (zoom)))
-            {
-                SmoothZoomIn(.05f, false);
-                return false;
-            }
-            else
+        }
+        /// <summary>
+        /// Used by camera panning that utilizes camera zooming.
+        /// </summary>
+        /// <param name="panArgs">Specifies how and where the camera will pan.</param>
+        /// <returns>True if the camera pan zoom in is complete, False if not.</returns>
+        public bool Pan_ZoomIn(PanArgs panArgs)
+        {
+            if (panArgs.originalZoom < (byte)(zoom + .05 * (zoom)))
             {
                 SetZoom(panArgs.originalZoom, true);
                 return true;
             }
+            else 
+            {
+                SmoothZoomIn(.05f, false);
+                return false;
+            }
         }
         /// <summary>
         /// Moves the Camera vertically by the provided amount.
-        /// Follows Camera movement constrictions.
         /// </summary>
+        /// <param name="forced">True results in this movement overriding camera movement restrictions.</param>
         /// <param name="direction">True results in the Camera moving up, False results in the Camera moving down.</param>
         /// <param name="amount">The amount the Camera will move in the provided direction.</param>
-        public void MoveVertical(bool direction, int amount)
+        public void MoveVertical(bool forced, bool direction, int amount)
         {
-            if (movementAllowedVertical)
+            if (forced)
+            {
+                if (direction)
+                {
+                    //moves up
+                    cameraPosition.Y += amount;
+                }
+                else
+                {
+                    //moves down
+                    cameraPosition.Y -= amount;
+                }
+                Reposition();
+            }
+            else if (movementAllowedVertical)
             {
                 if (direction)
                 {
@@ -491,18 +450,28 @@ namespace Fantasy.Logic.Engine.screen.camera
         }
         /// <summary>
         /// Sets the Camera vetical coordinate to the provided Y.
-        /// Follows Camera movement constrictions.
         /// </summary>
+        /// <param name="forced">True results in this movement overriding camera movement restrictions.</param>
         /// <param name="Y">New Y coordinate for this Camera. By default this is the top right position of the Camera.</param>
         /// <param name="centerDestination">If true, the Camera set the Y as the center.</param>
-        public void SetVertical(int Y, bool centerDestination)
+        public void SetVertical(bool forced, int Y, bool centerDestination)
         {
             if (centerDestination)
             {
                 Y += cameraPosition.Height / 2;
             }
 
-            if (movementAllowedVertical)
+            if (forced)
+            {
+                if (centerDestination)
+                {
+                    Y += cameraPosition.Height / 2;
+                }
+
+                cameraPosition.Y = Y;
+                Reposition();
+            }
+            else if (movementAllowedVertical)
             {
                 if (PointInBoundingBox(new Point(cameraCenter.X, Y - (cameraPosition.Height / 2))))
                 {
@@ -521,13 +490,27 @@ namespace Fantasy.Logic.Engine.screen.camera
         }
         /// <summary>
         /// Moves the camera horizontally by the provided amount.
-        /// Follows camera movement constrictions.
         /// </summary>
+        /// <param name="forced">True results in this movement overriding camera movement restrictions.</param>
         /// <param name="direction">True results in the Camera moving right, False results in the Camera moving left.</param>
         /// <param name="amount">The amount the camera will move in the provided direction.</param>
-        public void MoveHorizontal(bool direction, int amount)
+        public void MoveHorizontal(bool forced, bool direction, int amount)
         {
-            if (movementAllowedHorizontal)
+            if (forced)
+            {
+                if (direction)
+                {
+                    //moves right
+                    cameraPosition.X += amount;
+                }
+                else
+                {
+                    //moves left
+                    cameraPosition.X -= amount;
+                }
+                Reposition();
+            }
+            else if (movementAllowedHorizontal)
             {
                 if (direction)
                 {
@@ -558,18 +541,28 @@ namespace Fantasy.Logic.Engine.screen.camera
         }
         /// <summary>
         /// Sets the camera horizontal coordinate to the provided X. 
-        /// Follows camera movement constrictions.
         /// </summary>
+        /// <param name="forced">True results in this movement overriding camera movement restrictions.</param>
         /// <param name="X">New X coordinate for this Camera. By default this is the top right position of the Camera.</param>
         /// <param name="centerDestination">If true, the Camera set the X as the center.</param>
-        public void SetHorizontal(int X, bool centerDestination)
+        public void SetHorizontal(bool forced, int X, bool centerDestination)
         {
             if (centerDestination)
             {
                 X -= cameraPosition.Width;
             }
 
-            if (movementAllowedHorizontal)
+            if (forced)
+            {
+                if (centerDestination)
+                {
+                    X -= cameraPosition.Width / 2;
+                }
+
+                cameraPosition.X = X;
+                Reposition();
+            }
+            else if (movementAllowedHorizontal)
             {
                 if (PointInBoundingBox(new Point(X + (cameraPosition.Width / 2), cameraCenter.Y)))
                 {
@@ -587,98 +580,39 @@ namespace Fantasy.Logic.Engine.screen.camera
             }
         }
         /// <summary>
-        /// Sets the camera center to the cameraCenter. 
-        /// Follows camerea movement constrictions.
+        /// Moves the camera is the specified direction by the provided amount.
         /// </summary>
+        /// <param name="forced">True results in this movement overriding camera movement restrictions.</param>
+        /// <param name="direction">The direction the camera will move.</param>
+        /// <param name="amount">The amount the camera will move in the provided direction.</param>
+        public void Move(bool forced, Orientation direction, int amount)
+        {
+            switch (direction)
+            {
+                case Orientation.up:
+                    MoveVertical(forced, true, amount);
+                    break;
+                case Orientation.right:
+                    MoveHorizontal(forced, true, amount);
+                    break;
+                case Orientation.left:
+                    MoveHorizontal(forced, false, amount);
+                    break;
+                case Orientation.down:
+                    MoveVertical(forced, false, amount);
+                    break;
+            }
+        }
+        /// <summary>
+        /// Sets the camera center to the cameraCenter. 
+        /// </summary>
+        /// <param name="forced">True results in this movement overriding camera movement restrictions.</param>
         /// <param name="coordinate">New coordinate for this Camera. By default this is the top right position of the Camera.</param>
         /// <param name="centerDestination">If true, the coordinate is set as the Camera center.</param>
-        public void SetCoordinate(Point coordinate, bool centerDestination)
+        public void SetCoordinate(bool forced, Point coordinate, bool centerDestination)
         {
-            SetHorizontal(coordinate.X, centerDestination);
-            SetVertical(coordinate.Y, centerDestination);
-        }
-        /// <summary>
-        /// Moves the camera vertically by the provided amount.
-        /// Overrides camera movement constrictions.
-        /// </summary>
-        /// <param name="direction">True results in the camera moving up, False results in the camera moving down.</param>
-        /// <param name="amount">The amount the camera will move in the provided direction.</param>
-        public void ForceMoveVertical(bool direction, int amount)
-        {
-            if (direction)
-            {
-                //moves up
-                cameraPosition.Y += amount;
-            }
-            else
-            {
-                //moves down
-                cameraPosition.Y -= amount;
-            }
-            Reposition();
-        }
-        /// <summary>
-        /// Sets the camera vetical coordinate to the provided Y. 
-        /// Overrides camera movement constrictions.
-        /// </summary>
-        /// <param name="Y">New Y coordinate for this Camera. By default this is the top right position of the Camera.</param>
-        /// <param name="centerDestination">If true, the Camera set the Y as the center.</param>
-        public void ForceSetVertical(int Y, bool centerDestination)
-        {
-            if (centerDestination)
-            {
-                Y += cameraPosition.Height / 2;
-            }
-
-            cameraPosition.Y = Y;
-            Reposition();
-        }
-        /// <summary>
-        /// Moves the camera horizontally by the provided amount. 
-        /// Overrides camera movement constrictions.
-        /// </summary>
-        /// <param name="direction">True results in the Camera moving right, False results in the Camera moving left.</param>
-        /// <param name="amount">The amount the camera will move in the provided direction.</param>
-        public void ForceMoveHorizontal(bool direction, int amount)
-        {
-            if (direction)
-            {
-                //moves right
-                cameraPosition.X += amount;
-            }
-            else
-            {
-                //moves left
-                cameraPosition.X -= amount;
-            }
-            Reposition();
-        }
-        /// <summary>
-        /// Sets the camera horizontal coordinate to the provided X. 
-        /// Overrides camera movement constrictions.
-        /// </summary>
-        /// <param name="X">New X coordinate for this Camera. By default this is the top right position of the Camera.</param>
-        /// <param name="centerDestination">If true, the Camera set the X as the center.</param>
-        public void ForceSetHorizontal(int X, bool centerDestination)
-        {
-            if (centerDestination)
-            {
-                X -= cameraPosition.Width / 2;
-            }
-
-            cameraPosition.X = X;
-            Reposition();
-        }
-        /// <summary>
-        /// Sets the camera center to the cameraCenter. 
-        /// Overrides camerea movement constrictions.
-        /// </summary>
-        /// <param name="coordinate">New coordinate for this Camera. By default this is the top right position of the Camera.</param>
-        /// <param name="centerDestination">If true, the coordinate is set as the Camera center.</param> 
-        public void ForceSetCoordinate(Point coordinate, bool centerDestination)
-        {
-            ForceSetHorizontal(coordinate.X, centerDestination);
-            ForceSetVertical(coordinate.Y, centerDestination);
+            SetHorizontal(forced, coordinate.X, centerDestination);
+            SetVertical(forced, coordinate.Y, centerDestination);
         }
     }
 }
