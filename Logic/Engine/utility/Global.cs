@@ -40,6 +40,9 @@ namespace Fantasy.Logic.Engine
         /// </summary>
         public static Scene _currentScene;
 
+        /// <summary>
+        /// The Game1 class defined by Monogame.
+        /// </summary>
         public static Game1 _game1;
     }
 }

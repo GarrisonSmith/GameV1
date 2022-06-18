@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.entities;
 using Fantasy.Logic.Engine.utility;
 
@@ -52,51 +51,51 @@ namespace Fantasy.Logic.Engine.screen.camera
 
                     break;
                 case CameraTasks.panning:
-                    if (!panArgs.zoomOutDone) 
-                    {
-                        if (camera.Pan_ZoomOut(panArgs))
-                        {
-                            panArgs.zoomOutDone = true;
-                        }
-                    }
-                    else if (!panArgs.panToDone)
-                    {
-                        byte tempZoom = camera.zoom;
-                        camera.SetZoom(panArgs.originalZoom, false);
-                        if (camera.Pan(panArgs))
-                        {
-                            panArgs.panToDone = true;
-                            panArgs.destination = panArgs.origin;
-                            panArgs.startWaitTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
-                        }
-                        camera.SetZoom(tempZoom, false);
-                    }
-                    else if (!panArgs.zoomInDone)
-                    {
-                        if (camera.Pan_ZoomIn(panArgs))
-                        {
-                            panArgs.zoomInDone = true;
-                        }
-                    }
-                    else if (!panArgs.waitDone)
-                    {
-                        if (panArgs.startWaitTime + panArgs.waitTime <= Global._gameTime.TotalGameTime.TotalMilliseconds)
-                        {
-                            panArgs.waitDone = true;
-                        }
-                    }
-                    else if (!panArgs.panBackDone)
-                    {
-                        if (camera.Pan(panArgs))
-                        {
-                            panArgs.panBackDone = true;
-                        }
-                    }
-                    else
-                    {
-                        sideTask = CameraTasks.none;
-                    }
+                    DoPanningTask(camera);
                     break;
+            }
+        }
+
+        private static void DoPanningTask(Camera camera)
+        {
+            if (!panArgs.waitDone)
+            {
+                if (panArgs.startWaitTime + panArgs.waitTime <= Global._gameTime.TotalGameTime.TotalMilliseconds)
+                {
+                    panArgs.waitDone = true;
+                }
+            }
+            else if (!panArgs.zoomOutDone)
+            {
+                if (camera.Pan_ZoomOut(panArgs))
+                {
+                    panArgs.zoomOutDone = true;
+                }
+            }
+            else if (!panArgs.panToDone)
+            {
+                if (camera.Pan(panArgs))
+                {
+                    panArgs.FinishCurrentDestination();
+                }
+            }
+            else if (!panArgs.zoomInDone)
+            {
+                if (camera.Pan_ZoomIn(panArgs))
+                {
+                    panArgs.zoomInDone = true;
+                }
+            }
+            else if (!panArgs.panBackDone)
+            {
+                if (camera.Pan(panArgs))
+                {
+                    panArgs.panBackDone = true;
+                }
+            }
+            else
+            {
+                sideTask = CameraTasks.none;
             }
         }
 
@@ -129,13 +128,40 @@ namespace Fantasy.Logic.Engine.screen.camera
             }
             followEntity = entity;
         }
-
-        public static void AssignPanningTask(Point point, bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime)
+        /// <summary>
+        /// Creates and assigned a panning task for a provided camera.
+        /// </summary>
+        /// <param name="destination">The point for the camera to pan to.</param>
+        /// <param name="forced">Determines if this pan task will override camera movement restrictions.</param>
+        /// <param name="useZoom">Determines if this pan task will utilize camera zooming.</param>
+        /// <param name="centerDestination">Determines if the destination will be centered in the cameras view, as opposed to in the top right.</param>
+        /// <param name="panBack">Determines if the camera will pan back to the camera original location.</param>
+        /// <param name="waitAfterPan">Determines if the camera will wait a specified amount of time after panning to the destination before either finishing the task or panning back.</param>
+        /// <param name="waitTime">The amount of time for the task to wait before continuing after panning to the destination.</param>
+        public static void AssignPanningTask(Camera camera, Point destination, bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime)
         {
             if (sideTask == CameraTasks.none)
             {
                 sideTask = CameraTasks.panning;
-                panArgs = new PanArgs(forced, useZoom, centerDestination, panBack, waitAfterPan, waitTime, Global._currentScene._camera.zoom, Util.GetTopLeft(Global._currentScene._camera.cameraPosition), point);
+                panArgs = new PanArgs(forced, useZoom, centerDestination, panBack, waitAfterPan, waitTime, camera.zoom, Util.GetTopLeft(camera.cameraPosition), destination);
+            }
+        }
+        /// <summary>
+        /// Creates and assigned a panning task for a provided camera.
+        /// </summary>
+        /// <param name="destinations">The points for the camera to pan to.</param>
+        /// <param name="forced">Determines if this pan task will override camera movement restrictions.</param>
+        /// <param name="useZoom">Determines if this pan task will utilize camera zooming.</param>
+        /// <param name="centerDestination">Determines if the destination will be centered in the cameras view, as opposed to in the top right.</param>
+        /// <param name="panBack">Determines if the camera will pan back to the camera original location.</param>
+        /// <param name="waitAfterPan">Determines if the camera will wait a specified amount of time after panning to the destination before either finishing the task or panning back.</param>
+        /// <param name="waitTime">The amount of time for the task to wait before continuing after panning to the destination.</param>
+        public static void AssignPanningTask(Camera camera, Point[] destinations, bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime)
+        {
+            if (sideTask == CameraTasks.none)
+            {
+                sideTask = CameraTasks.panning;
+                panArgs = new PanArgs(forced, useZoom, centerDestination, panBack, waitAfterPan, waitTime, camera.zoom, Util.GetTopLeft(camera.cameraPosition), destinations);
             }
         }
     }

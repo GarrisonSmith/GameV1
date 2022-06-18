@@ -8,7 +8,7 @@ using Fantasy.Logic.Engine.hitboxes;
 using Fantasy.Logic.Engine.graphics.particles;
 using Fantasy.Logic.Controls;
 using Fantasy.Logic.Engine.screen.camera;
-using Fantasy.Logic.Engine.utility;
+using Fantasy.Logic.Engine.physics;
 
 namespace Fantasy.Logic.Engine.screen
 {

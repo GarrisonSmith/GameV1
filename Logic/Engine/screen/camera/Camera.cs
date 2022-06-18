@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.utility;
 using Fantasy.Logic.Controls;
+using Fantasy.Logic.Engine.physics;
 
 namespace Fantasy.Logic.Engine.screen.camera
 {
@@ -83,6 +84,34 @@ namespace Fantasy.Logic.Engine.screen.camera
             Stretch(stretch, allowCentering);
         }
         /// <summary>
+        /// Camera will do the provided action.
+        /// </summary>
+        /// <param name="action">The action for them camera to do.</param>
+        public void DoAction(Actions action)
+        {
+            switch (action)
+            {
+                case Actions.up:
+                    MoveVertical(false, true, 10);
+                    break;
+                case Actions.down:
+                    MoveVertical(false, false, 10);
+                    break;
+                case Actions.left:
+                    MoveHorizontal(false, false, 10);
+                    break;
+                case Actions.right:
+                    MoveHorizontal(false, true, 10);
+                    break;
+                case Actions.zoomIn:
+                    ZoomIn(true);
+                    break;
+                case Actions.zoomOut:
+                    ZoomOut(true);
+                    break;
+            }
+        }
+        /// <summary>
         /// Creates the transfromation matrix used to apply camera effects when drawing.
         /// </summary>
         /// <returns>Matrix used to apply camera effects (Camera movement, Camera rotation) when drawing in Scene.</returns>
@@ -112,34 +141,6 @@ namespace Fantasy.Logic.Engine.screen.camera
             foo.X -= (cameraPosition.Width / 2);
             foo.Y += (cameraPosition.Height / 2);
             return foo;
-        }
-        /// <summary>
-        /// Camera will do the provided action.
-        /// </summary>
-        /// <param name="action">The action for them camera to do.</param>
-        public void DoAction(Actions action)
-        {
-            switch (action)
-            {
-                case Actions.up:
-                    MoveVertical(false, true, 10);
-                    break;
-                case Actions.down:
-                    MoveVertical(false, false, 10);
-                    break;
-                case Actions.left:
-                    MoveHorizontal(false, false, 10);
-                    break;
-                case Actions.right:
-                    MoveHorizontal(false, true, 10);
-                    break;
-                case Actions.zoomIn:
-                    ZoomIn(true);
-                    break;
-                case Actions.zoomOut:
-                    ZoomOut(true);
-                    break;
-            }
         }
         /// <summary>
         /// Sets this cameras zoom level to the default of 64.
@@ -319,46 +320,53 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// <returns>True if the camera has finished its panning operation, False if not.</returns>
         public bool Pan(PanArgs panArgs)
         {
-            if (panArgs.destination == Util.GetTopLeft(cameraPosition) || (panArgs.destination.X == cameraPosition.X && CoordinateValueOnBoundingBox(cameraCenter.Y, false)) ||
-                (panArgs.destination.Y == cameraPosition.Y && CoordinateValueOnBoundingBox(cameraCenter.X, true)) ||
-                (CoordinateValueOnBoundingBox(cameraCenter.Y, false) && CoordinateValueOnBoundingBox(cameraCenter.X, true)))
-            {
-                return true;
-            }
+            Point lastLocation = Util.GetTopLeft(cameraPosition);
 
+            byte tempZoom = zoom;
+            SetZoom(panArgs.originalZoom, false);
+
+            Point destination = panArgs.GetCurrentDestination();
+            if (panArgs.centerDestination)
+            {
+                destination = CenterPoint(panArgs.GetCurrentDestination());
+            }
+            
             if ((movementAllowedVertical && movementAllowedHorizontal) || panArgs.forced)
             {
-                if (Math.Abs(panArgs.destination.X - cameraPosition.X) <= panArgs.speed)
+                if (Math.Abs(destination.X - cameraPosition.X) <= panArgs.speed)
                 {
-                    SetHorizontal(panArgs.forced, panArgs.destination.X, false);
+                    SetHorizontal(panArgs.forced, destination.X, false);
 
                 }
-                else if (cameraPosition.X < panArgs.destination.X)
+                else if (cameraPosition.X < destination.X)
                 {
                     MoveHorizontal(panArgs.forced, true, panArgs.speed);
                 }
-                else if (cameraPosition.X > panArgs.destination.X)
+                else if (cameraPosition.X > destination.X)
                 {
                     MoveHorizontal(panArgs.forced, false, panArgs.speed);
                 }
 
-                if (Math.Abs(panArgs.destination.Y - cameraPosition.Y) <= panArgs.speed)
+                if (Math.Abs(destination.Y - cameraPosition.Y) <= panArgs.speed)
                 {
-                    SetVertical(panArgs.forced, panArgs.destination.Y, false);
+                    SetVertical(panArgs.forced, destination.Y, false);
                 }
-                else if (cameraPosition.Y < panArgs.destination.Y)
+                else if (cameraPosition.Y < destination.Y)
                 {
                     MoveVertical(panArgs.forced, true, panArgs.speed);
                 }
-                else if (cameraPosition.Y > panArgs.destination.Y)
+                else if (cameraPosition.Y > destination.Y)
                 {
                     MoveVertical(panArgs.forced, false, panArgs.speed);
                 }
                 Reposition();
-                return false;
+
+                SetZoom(tempZoom, false);
+                return (lastLocation == Util.GetTopLeft(cameraPosition));
             }
             else
             {
+                SetZoom(tempZoom, false);
                 return true;
             }
         }
@@ -369,7 +377,7 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// <returns>True if the camera pan zoom out is complete, False if not.</returns>
         public bool Pan_ZoomOut(PanArgs panArgs)
         {
-            if (Util.PointInsideRectangle(panArgs.destination, cameraPosition) || zoom == minZoom)
+            if (Util.PointInsideRectangle(panArgs.GetCurrentDestination(), cameraPosition) || zoom == minZoom)
             {
                 return true;
             }
