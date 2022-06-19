@@ -333,36 +333,36 @@ namespace Fantasy.Logic.Engine.screen.camera
             
             if ((movementAllowedVertical && movementAllowedHorizontal) || panArgs.forced)
             {
-                if (Math.Abs(destination.X - cameraPosition.X) <= panArgs.speed)
+                if (Math.Abs(destination.X - cameraPosition.X) <= panArgs.speed.pixelsPerMove)
                 {
                     SetHorizontal(panArgs.forced, destination.X, false);
 
                 }
                 else if (cameraPosition.X < destination.X)
                 {
-                    MoveHorizontal(panArgs.forced, true, panArgs.speed);
+                    MoveHorizontal(panArgs.forced, true, panArgs.speed.MovementAmount());
                 }
                 else if (cameraPosition.X > destination.X)
                 {
-                    MoveHorizontal(panArgs.forced, false, panArgs.speed);
+                    MoveHorizontal(panArgs.forced, false, panArgs.speed.MovementAmount());
                 }
 
-                if (Math.Abs(destination.Y - cameraPosition.Y) <= panArgs.speed)
+                if (Math.Abs(destination.Y - cameraPosition.Y) <= panArgs.speed.pixelsPerMove)
                 {
                     SetVertical(panArgs.forced, destination.Y, false);
                 }
                 else if (cameraPosition.Y < destination.Y)
                 {
-                    MoveVertical(panArgs.forced, true, panArgs.speed);
+                    MoveVertical(panArgs.forced, true, panArgs.speed.MovementAmount());
                 }
                 else if (cameraPosition.Y > destination.Y)
                 {
-                    MoveVertical(panArgs.forced, false, panArgs.speed);
+                    MoveVertical(panArgs.forced, false, panArgs.speed.MovementAmount());
                 }
                 Reposition();
 
                 SetZoom(tempZoom, false);
-                return (lastLocation == Util.GetTopLeft(cameraPosition));
+                return (lastLocation == Util.GetTopLeft(cameraPosition) && panArgs.speed.MovementAmount() != 0);
             }
             else
             {

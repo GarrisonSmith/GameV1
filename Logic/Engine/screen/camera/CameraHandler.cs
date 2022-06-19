@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.entities;
 using Fantasy.Logic.Engine.utility;
+using Fantasy.Logic.Engine.physics;
 
 namespace Fantasy.Logic.Engine.screen.camera
 {
@@ -138,12 +139,12 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// <param name="panBack">Determines if the camera will pan back to the camera original location.</param>
         /// <param name="waitAfterPan">Determines if the camera will wait a specified amount of time after panning to the destination before either finishing the task or panning back.</param>
         /// <param name="waitTime">The amount of time for the task to wait before continuing after panning to the destination.</param>
-        public static void AssignPanningTask(Camera camera, Point destination, bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime)
+        public static void AssignPanningTask(Camera camera, Point destination, MoveSpeed speed, bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime)
         {
             if (sideTask == CameraTasks.none)
             {
                 sideTask = CameraTasks.panning;
-                panArgs = new PanArgs(forced, useZoom, centerDestination, panBack, waitAfterPan, waitTime, camera.zoom, Util.GetTopLeft(camera.cameraPosition), destination);
+                panArgs = new PanArgs(forced, useZoom, centerDestination, panBack, waitAfterPan, waitTime, camera.zoom, speed, Util.GetTopLeft(camera.cameraPosition), destination);
             }
         }
         /// <summary>
@@ -156,12 +157,12 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// <param name="panBack">Determines if the camera will pan back to the camera original location.</param>
         /// <param name="waitAfterPan">Determines if the camera will wait a specified amount of time after panning to the destination before either finishing the task or panning back.</param>
         /// <param name="waitTime">The amount of time for the task to wait before continuing after panning to the destination.</param>
-        public static void AssignPanningTask(Camera camera, Point[] destinations, bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime)
+        public static void AssignPanningTask(Camera camera, Point[] destinations, MoveSpeed speed, bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime)
         {
             if (sideTask == CameraTasks.none)
             {
                 sideTask = CameraTasks.panning;
-                panArgs = new PanArgs(forced, useZoom, centerDestination, panBack, waitAfterPan, waitTime, camera.zoom, Util.GetTopLeft(camera.cameraPosition), destinations);
+                panArgs = new PanArgs(forced, useZoom, centerDestination, panBack, waitAfterPan, waitTime, camera.zoom, speed, Util.GetTopLeft(camera.cameraPosition), destinations);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Fantasy.Logic.Engine.physics;
 
 namespace Fantasy.Logic.Engine.screen.camera
 {
@@ -48,11 +49,11 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// </summary>
         public int currentDestination = 0;
         /// <summary>
-        /// Pan properties.
+        /// Pan properties. Determines how quickly the camera will move.
         /// </summary>
-        public int speed = 4;
+        public MoveSpeed speed;
         /// <summary>
-        /// Pan properties.
+        /// Pan properties. The time the pan begins waiting.
         /// </summary>
         public double startWaitTime;
         /// <summary>
@@ -88,7 +89,7 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// <param name="originalZoom">The original zoom of the camera during the creation of the task.</param>
         /// <param name="origin">The original location of the camera during the creation of the task.</param>
         /// <param name="destination">The destination of the pan.</param>
-        public PanArgs(bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime, byte originalZoom, Point origin, Point destination)
+        public PanArgs(bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime, byte originalZoom, MoveSpeed speed, Point origin, Point destination)
         {
             this.forced = forced;
             this.useZoom = useZoom;
@@ -96,6 +97,7 @@ namespace Fantasy.Logic.Engine.screen.camera
             this.originalZoom = originalZoom;
             this.centerDestination = centerDestination;
             this.waitTime = waitTime;
+            this.speed = speed;
             this.origin = origin;
             this.destinations = new Point[] { destination };
             panBackDone = !panBack;
@@ -113,7 +115,7 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// <param name="originalZoom">The original zoom of the camera during the creation of the task.</param>
         /// <param name="origin">The original location of the camera during the creation of the task.</param>
         /// <param name="destinations">The destinations of the pan.</param>
-        public PanArgs(bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime, byte originalZoom, Point origin, Point[] destinations)
+        public PanArgs(bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime, byte originalZoom, MoveSpeed speed, Point origin, Point[] destinations)
         {
             this.forced = forced;
             this.useZoom = useZoom;
@@ -121,6 +123,7 @@ namespace Fantasy.Logic.Engine.screen.camera
             this.originalZoom = originalZoom;
             this.centerDestination = centerDestination;
             this.waitTime = waitTime;
+            this.speed = speed;
             this.origin = origin;
             this.destinations = destinations;
             panBackDone = !panBack;
