@@ -2,16 +2,33 @@
 
 namespace Fantasy.Logic.Engine.physics
 {
+    /// <summary>
+    /// Describes the speed something moves.
+    /// </summary>
     public class MoveSpeed
-    {    
-        public int pixelsPerMove;
-
+    {
+        /// <summary>
+        /// The minimum number of pixels that can be moved per movement.
+        /// </summary>
+        private int pixelsPerMove;
+        /// <summary>
+        /// The minimum number of miliseconds that will result in a movement.
+        /// </summary>
         private int milisecondsPerMove;
-
+        /// <summary>
+        /// The last time a movement was allowed.
+        /// </summary>
+        private double lastMovementTime;
+        /// <summary>
+        /// The number of pixel per milisecond this MoveSpeed describes.
+        /// </summary>
         private double pixelsPerMilisecond;
 
-        private double lastMovementTime;
-
+        /// <summary>
+        /// Creates a MoveSpeed descriptor with the provided specifications.
+        /// </summary>
+        /// <param name="pixelsPerUnit">The number of pixels per unit of time this movement describes.</param>
+        /// <param name="unit">The unit of time the pixelsPerUnit uses.</param>
         public MoveSpeed(double pixelsPerUnit, TimeUnits unit)
         {
             lastMovementTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
@@ -33,35 +50,46 @@ namespace Fantasy.Logic.Engine.physics
                 pixelsPerMove = 1;
                 milisecondsPerMove = (int)Math.Truncate(1f / (pixelsPerMilisecond));
             }
-            else 
+            else
             {
                 pixelsPerMove = (int)Math.Truncate(pixelsPerMilisecond);
                 milisecondsPerMove = 1;
             }
         }
-
+        /// <summary>
+        /// Determines the amount of pixels to be moved based off the current Gametime.
+        /// </summary>
+        /// <returns></returns>
         public int MovementAmount()
         {
             double deltaMilisecond = Global._gameTime.TotalGameTime.TotalMilliseconds - lastMovementTime;
 
             if (deltaMilisecond >= 1 && milisecondsPerMove == 1)
             {
-                return (int)(deltaMilisecond * pixelsPerMove);
+                return (int)Math.Ceiling(deltaMilisecond * pixelsPerMove);
             }
 
             if (deltaMilisecond >= milisecondsPerMove)
             {
-                lastMovementTime = Global._gameTime.TotalGameTime.TotalMilliseconds;// + (deltaMilisecond - milisecondsPerMove);
-                return pixelsPerMove;
+                lastMovementTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+                return (int)Math.Ceiling(pixelsPerMove * (deltaMilisecond / milisecondsPerMove));
             }
 
             return 0;
         }
-
+        /// <summary>
+        /// Refreshes the last internally tracked time instance that movement happened to be the current Gametime.
+        /// </summary>
+        public void RefreshLastMovementTime()
+        {
+            lastMovementTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+        }
     }
-
+    /// <summary>
+    /// Different TimeUnits used by MoveSpeed objects.
+    /// </summary>
     public enum TimeUnits
-    { 
+    {
         miliseconds = 1,
         seconds = 2,
         ticks = 3

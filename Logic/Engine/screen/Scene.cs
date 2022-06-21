@@ -33,8 +33,8 @@ namespace Fantasy.Logic.Engine.screen
         public void DrawScene()
         {
             Global._spriteBatch.Begin(SpriteSortMode.Deferred, //first things drawn on bottom, last things on top
-                BlendState.NonPremultiplied,
-                SamplerState.PointClamp,
+                BlendState.AlphaBlend,
+                SamplerState.PointWrap,
                 null,
                 null,
                 null,

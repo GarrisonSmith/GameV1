@@ -87,6 +87,7 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// <param name="waitAfterPan">Determines if the camera will wait a specified amount of time after panning to the destination before either finishing the task or panning back.</param>
         /// <param name="waitTime">The amount of time for the task to wait before continuing after panning to the destination.</param>
         /// <param name="originalZoom">The original zoom of the camera during the creation of the task.</param>
+        /// <param name="speed">Describes the MoveSpeed of the camera.</param>
         /// <param name="origin">The original location of the camera during the creation of the task.</param>
         /// <param name="destination">The destination of the pan.</param>
         public PanArgs(bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime, byte originalZoom, MoveSpeed speed, Point origin, Point destination)
@@ -113,6 +114,7 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// <param name="waitAfterPan">Determines if the camera will wait a specified amount of time after panning to the destination before either finishing the task or panning back.</param>
         /// <param name="waitTime">The amount of time for the task to wait before continuing after panning to the destination.</param>
         /// <param name="originalZoom">The original zoom of the camera during the creation of the task.</param>
+        /// <param name="speed">Describes the MoveSpeed of the camera.</param>
         /// <param name="origin">The original location of the camera during the creation of the task.</param>
         /// <param name="destinations">The destinations of the pan.</param>
         public PanArgs(bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime, byte originalZoom, MoveSpeed speed, Point origin, Point[] destinations)

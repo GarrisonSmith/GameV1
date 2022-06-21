@@ -330,39 +330,48 @@ namespace Fantasy.Logic.Engine.screen.camera
             {
                 destination = CenterPoint(panArgs.GetCurrentDestination());
             }
-            
+
             if ((movementAllowedVertical && movementAllowedHorizontal) || panArgs.forced)
             {
-                if (Math.Abs(destination.X - cameraPosition.X) <= panArgs.speed.pixelsPerMove)
+                int movementAmount = panArgs.speed.MovementAmount();
+
+                if (Math.Abs(destination.X - cameraPosition.X) <= movementAmount)
                 {
                     SetHorizontal(panArgs.forced, destination.X, false);
 
                 }
-                else if (cameraPosition.X < destination.X)
-                {
-                    MoveHorizontal(panArgs.forced, true, panArgs.speed.MovementAmount());
-                }
-                else if (cameraPosition.X > destination.X)
-                {
-                    MoveHorizontal(panArgs.forced, false, panArgs.speed.MovementAmount());
-                }
-
-                if (Math.Abs(destination.Y - cameraPosition.Y) <= panArgs.speed.pixelsPerMove)
+                if (Math.Abs(destination.Y - cameraPosition.Y) <= movementAmount)
                 {
                     SetVertical(panArgs.forced, destination.Y, false);
                 }
-                else if (cameraPosition.Y < destination.Y)
+
+                if ((cameraPosition.X < destination.X && cameraPosition.Y < destination.Y) || (cameraPosition.X < destination.X && cameraPosition.Y > destination.Y) ||
+                    (cameraPosition.X > destination.X && cameraPosition.Y < destination.Y) || (cameraPosition.X > destination.X && cameraPosition.Y > destination.Y))
                 {
-                    MoveVertical(panArgs.forced, true, panArgs.speed.MovementAmount());
+                    movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
                 }
-                else if (cameraPosition.Y > destination.Y)
+
+                if (cameraPosition.X < destination.X && (panArgs.forced || !CoordinateValueOnBoundingBox(cameraCenter.X, true)))
                 {
-                    MoveVertical(panArgs.forced, false, panArgs.speed.MovementAmount());
+                    MoveHorizontal(panArgs.forced, true, movementAmount);
+                }
+                else if (cameraPosition.X > destination.X && (panArgs.forced || !CoordinateValueOnBoundingBox(cameraCenter.X, true)))
+                {
+                    MoveHorizontal(panArgs.forced, false, movementAmount);
+                }
+
+                if (cameraPosition.Y < destination.Y && (panArgs.forced || !CoordinateValueOnBoundingBox(cameraCenter.Y, true)))
+                {
+                    MoveVertical(panArgs.forced, true, movementAmount);
+                }
+                else if (cameraPosition.Y > destination.Y && (panArgs.forced || !CoordinateValueOnBoundingBox(cameraCenter.Y, true)))
+                {
+                    MoveVertical(panArgs.forced, false, movementAmount);
                 }
                 Reposition();
 
                 SetZoom(tempZoom, false);
-                return (lastLocation == Util.GetTopLeft(cameraPosition) && panArgs.speed.MovementAmount() != 0);
+                return (lastLocation == Util.GetTopLeft(cameraPosition) && movementAmount != 0);
             }
             else
             {
@@ -381,7 +390,7 @@ namespace Fantasy.Logic.Engine.screen.camera
             {
                 return true;
             }
-            else 
+            else
             {
                 SmoothZoomOut(.05f, false);
                 return false;
@@ -396,10 +405,10 @@ namespace Fantasy.Logic.Engine.screen.camera
         {
             if (panArgs.originalZoom < (byte)(zoom + .05 * (zoom)))
             {
-                SetZoom(panArgs.originalZoom, true);
+                SetZoom(panArgs.originalZoom, false);
                 return true;
             }
-            else 
+            else
             {
                 SmoothZoomIn(.05f, false);
                 return false;
