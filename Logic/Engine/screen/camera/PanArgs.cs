@@ -9,143 +9,166 @@ namespace Fantasy.Logic.Engine.screen.camera
     public class PanArgs
     {
         /// <summary>
-        /// Pan properties. Determines if this pan task will override camera movement restrictions.
+        /// Pan properties. Defines what order and how the panning operations will happen.
+        /// Possible instructions:
+        /// W: wait
+        /// P: pan to current destination
+        /// FP: force pan to current destination
+        /// ZI: zoom in to original zoom
+        /// ZO: zoom out to point
+        /// R: pan to origin
+        /// FR: force pan to origin
+        /// END: ends the pan
         /// </summary>
-        public bool forced;
+        private string[] panInstructions;
         /// <summary>
-        /// Pan properties. Determines if this pan task will utilize camera zooming.
+        /// The instruction currently being done.
         /// </summary>
-        public bool useZoom;
+        private int currentInstruction = 0;
         /// <summary>
-        /// Pan properties. Determines if the destination will be centered in the cameras view, as opposed to in the top right.
-        /// </summary>
-        public bool centerDestination;
-        /// <summary>
-        /// Pan properties. Determines if the camera will pan back to the camera original location.
-        /// </summary>
-        public bool panBack;
-        /// <summary>
-        /// Pan properties. Determines if the camera will wait a specified amount of time after panning to the destination before either finishing the task or panning back.
-        /// </summary>
-        public bool waitAfterPan;
-        /// <summary>
-        /// Pan properties. The amount of time for the task to wait before continuing after panning to the destination.
+        /// The amount of time for the task to wait before continuing after panning to the destination.
         /// </summary>
         public double waitTime;
         /// <summary>
-        /// Pan properties. The original zoom of the camera during the creation of the task.
+        /// The minimum zoom level allowed when zooming out.
         /// </summary>
-        public byte originalZoom;
+        public byte panMinZoom;
         /// <summary>
-        /// Pan properties. The original location of the camera during the creation of the task.
+        /// The original zoom of the camera during the creation of the task.
+        /// </summary>
+        public byte returnZoom;
+        /// <summary>
+        /// The original location of the camera during the creation of the task.
         /// </summary>
         public Point origin;
         /// <summary>
-        /// Pan properties. The destinations of the pan.
+        /// The destinations of the pan.
         /// </summary>
         public Point[] destinations;
         /// <summary>
-        /// Pan properties. The destination currently being panned to.
+        /// The destination currently being panned to.
         /// </summary>
-        public int currentDestination = 0;
+        private int currentDestination = 0;
         /// <summary>
-        /// Pan properties. Determines how quickly the camera will move.
+        /// Determines how quickly the camera will move.
         /// </summary>
         public MoveSpeed speed;
         /// <summary>
-        /// Pan properties. The time the pan begins waiting.
+        /// The time the pan begins waiting.
         /// </summary>
         public double startWaitTime;
-        /// <summary>
-        /// Pan progress. Signals if the camera is done panning to the destinations.
-        /// </summary>
-        public bool panToDone = false;
-        /// <summary>
-        /// Pan progress. Signals if the camera is done zooming in.
-        /// </summary>
-        public bool zoomInDone = false;
-        /// <summary>
-        /// Pan progress. Signals if the camera is done zooming out.
-        /// </summary>
-        public bool zoomOutDone = false;
-        /// <summary>
-        /// Pan progress. Signals if the camera is done waiting at a destination.
-        /// </summary>
-        public bool waitDone = true;
-        /// <summary>
-        /// Pan progress. Signals if the camera is done panning back to origin.
-        /// </summary>
-        public bool panBackDone;
 
         /// <summary>
         /// Creates a PanArgs object with the provided specifications.
         /// </summary>
-        /// <param name="forced">Determines if this pan task will override camera movement restrictions.</param>
-        /// <param name="useZoom">Determines if this pan task will utilize camera zooming.</param>
-        /// <param name="centerDestination">Determines if the destination will be centered in the cameras view, as opposed to in the top right.</param>
-        /// <param name="panBack">Determines if the camera will pan back to the camera original location.</param>
-        /// <param name="waitAfterPan">Determines if the camera will wait a specified amount of time after panning to the destination before either finishing the task or panning back.</param>
-        /// <param name="waitTime">The amount of time for the task to wait before continuing after panning to the destination.</param>
-        /// <param name="originalZoom">The original zoom of the camera during the creation of the task.</param>
+        /// <param name="panInstructions">String describing in what order the panning operations will be done, operations should be seperated with a '.'.
+        /// Possible instructions:
+        /// W: wait
+        /// P: pan to current destination
+        /// FP: force pan to current destination
+        /// ZI: zoom in to original zoom
+        /// ZO: zoom out to point
+        /// R: pan to origin
+        /// FR: force pan to origin
+        /// END: ends the pan
+        /// Example string: "ZO.P.ZI.W.P.W.P.W.R"</param>
+        /// <param name="waitTime">Determines if the camera will wait a specified amount of time after panning to the destination before either finishing the task or panning back.</param>
+        /// <param name="returnZoom">The zoom the camera will return to when zooming in.</param>
         /// <param name="speed">Describes the MoveSpeed of the camera.</param>
         /// <param name="origin">The original location of the camera during the creation of the task.</param>
         /// <param name="destination">The destination of the pan.</param>
-        public PanArgs(bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime, byte originalZoom, MoveSpeed speed, Point origin, Point destination)
+        public PanArgs(string panInstructions, double waitTime, byte returnZoom, MoveSpeed speed, Point origin, Point destination)
         {
-            this.forced = forced;
-            this.useZoom = useZoom;
-            this.panBack = panBack;
-            this.originalZoom = originalZoom;
-            this.centerDestination = centerDestination;
+            this.panInstructions = panInstructions.Split('.');
             this.waitTime = waitTime;
+            this.returnZoom = returnZoom;
             this.speed = speed;
             this.origin = origin;
             this.destinations = new Point[] { destination };
-            panBackDone = !panBack;
-            waitDone = !waitAfterPan;
+            startWaitTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
         }
         /// <summary>
         /// Creates a PanArgs object with the provided specifications.
         /// </summary>
-        /// <param name="forced">Determines if this pan task will override camera movement restrictions.</param>
-        /// <param name="useZoom">Determines if this pan task will utilize camera zooming.</param>
-        /// <param name="centerDestination">Determines if the destination will be centered in the cameras view, as opposed to in the top right.</param>
-        /// <param name="panBack">Determines if the camera will pan back to the camera original location.</param>
-        /// <param name="waitAfterPan">Determines if the camera will wait a specified amount of time after panning to the destination before either finishing the task or panning back.</param>
-        /// <param name="waitTime">The amount of time for the task to wait before continuing after panning to the destination.</param>
-        /// <param name="originalZoom">The original zoom of the camera during the creation of the task.</param>
+        /// <param name="panInstructions">String describing in what order the panning operations will be done, operations should be seperated with a '.'.
+        /// Possible instructions:
+        /// W: wait
+        /// P: pan to current destination
+        /// FP: force pan to current destination
+        /// ZI: zoom in to original zoom
+        /// ZO: zoom out to point
+        /// R: pan to origin
+        /// FR: force pan to origin
+        /// END: ends the pan
+        /// Example string: "ZO.P.ZI.W.P.W.P.W.R"</param>
+        /// <param name="waitTime">Determines if the camera will wait a specified amount of time after panning to the destination before either finishing the task or panning back.</param>
+        /// <param name="returnZoom">The zoom the camera will return to when zooming in.</param>
         /// <param name="speed">Describes the MoveSpeed of the camera.</param>
         /// <param name="origin">The original location of the camera during the creation of the task.</param>
         /// <param name="destinations">The destinations of the pan.</param>
-        public PanArgs(bool forced, bool useZoom, bool centerDestination, bool panBack, bool waitAfterPan, double waitTime, byte originalZoom, MoveSpeed speed, Point origin, Point[] destinations)
+        public PanArgs(string panInstructions, double waitTime, byte returnZoom, MoveSpeed speed, Point origin, Point[] destinations)
         {
-            this.forced = forced;
-            this.useZoom = useZoom;
-            this.panBack = panBack;
-            this.originalZoom = originalZoom;
-            this.centerDestination = centerDestination;
+            this.panInstructions = panInstructions.Split('.');
             this.waitTime = waitTime;
+            this.returnZoom = returnZoom;
             this.speed = speed;
             this.origin = origin;
             this.destinations = destinations;
-            panBackDone = !panBack;
-            waitDone = !waitAfterPan;
+            startWaitTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+        }
+        /// <summary>
+        /// Finished the current instruction and moves the PanArgs onto the next one.
+        /// </summary>
+        public void FinishCurrentInstruction()
+        {
+            if (currentInstruction + 1 < panInstructions.Length  && currentInstruction != -1)
+            {
+                if (panInstructions[currentInstruction].Equals("P") || panInstructions[currentInstruction].Equals("FP"))
+                {
+                    FinishCurrentDestination();
+                }
+                if (panInstructions[currentInstruction].Equals("W"))
+                {
+                    speed.RefreshLastMovementTime();
+                }
+                currentInstruction++;
+                if (panInstructions[currentInstruction].Equals("W"))
+                {
+                    startWaitTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+                }
+            }
+            else
+            {
+                currentInstruction = -1;
+            }
+        }
+        /// <summary>
+        /// Determines the current instruction of the PanArgs
+        /// </summary>
+        /// <returns>String describing the current instruction to be done.</returns>
+        public string GetCurrentInstruction()
+        {
+            if (currentInstruction == -1)
+            {
+                return "END";
+            }
+            else
+            {
+                return panInstructions[currentInstruction];
+            }
         }
         /// <summary>
         /// Transitions the panning location from the current destination to the next destination.
         /// </summary>
-        public void FinishCurrentDestination()
+        private void FinishCurrentDestination()
         {
-            waitDone = false;
             startWaitTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
-            if (currentDestination + 1 < destinations.Length)
+            if (currentDestination + 1 < destinations.Length && currentInstruction != -1)
             {
                 currentDestination++;
             }
             else
             {
-                panToDone = true;
-                centerDestination = false;
                 currentDestination = -1;
             }
         }
@@ -163,6 +186,14 @@ namespace Fantasy.Logic.Engine.screen.camera
             {
                 return destinations[currentDestination];
             }
+        }
+        /// <summary>
+        /// Determines if this PanArgs has finished its last wait instruction or not.
+        /// </summary>
+        /// <returns>True if the last wait instruction has been completed, False if not.</returns>
+        public bool WaitFinished()
+        {
+            return (startWaitTime + waitTime <= Global._gameTime.TotalGameTime.TotalMilliseconds);
         }
     }
 }

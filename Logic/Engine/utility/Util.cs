@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace Fantasy.Logic.Engine.utility
 {
@@ -31,7 +32,7 @@ namespace Fantasy.Logic.Engine.utility
         /// <returns>A point containing the top left point of the provided rectangle foo.</returns>
         public static Point GetTopLeft(Rectangle foo)
         {
-            return new Point(foo.X , foo.Y);
+            return new Point(foo.X, foo.Y);
         }
         /// <summary>
         /// Constructs a Xna Point object from the provided string foo, foo must be of the form "{X:0 Y:0}".
@@ -62,6 +63,16 @@ namespace Fantasy.Logic.Engine.utility
                     int.Parse(foo.Substring(foo.IndexOf("Width:") + 6, foo.IndexOf('H') - (foo.IndexOf("Width:") + 7))),
                     int.Parse(foo.Substring(foo.IndexOf("Height:") + 7, foo.IndexOf('}') - (foo.IndexOf("Height:") + 7)))
                     );
+        }
+        /// <summary>
+        /// Determines the distance between two points.
+        /// </summary>
+        /// <param name="foo">A point to be investigated.</param>
+        /// <param name="bar">A point to be investigated.</param>
+        /// <returns>The distance between foo and bar.</returns>
+        public static double DistanceBetweenPoints(Point foo, Point bar)
+        {
+            return Math.Sqrt(Math.Pow(foo.X - bar.X, 2) + Math.Pow(foo.Y - bar.Y, 2));
         }
     }
 }

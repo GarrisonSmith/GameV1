@@ -88,7 +88,7 @@ namespace Fantasy.Logic.Engine.screen
             switch (_controlContexts)
             {
                 case ControlContexts.camera:
-                    _camera.DoAction(actionControl.action);
+                    CameraHandler.DoAction(actionControl);
                     break;
                 case ControlContexts.character:
 

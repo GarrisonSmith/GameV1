@@ -106,11 +106,11 @@ namespace Fantasy.Logic.Controls
             {
                 if (mouseState.ScrollWheelValue < currentVerticalScroll) //scroll in logic
                 {
-                    Global._currentScene._camera.SmoothZoomIn(.1f, false);
+                    //Global._currentScene._camera.SmoothZoomIn(.1f, false);
                 }
                 else //scroll out logic
                 {
-                    Global._currentScene._camera.SmoothZoomOut(.1f, false);
+                    //Global._currentScene._camera.SmoothZoomOut(.1f, false);
                 }
                 currentVerticalScroll = mouseState.ScrollWheelValue;
             }

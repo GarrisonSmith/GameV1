@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.utility;
-using Fantasy.Logic.Controls;
 using Fantasy.Logic.Engine.physics;
 
 namespace Fantasy.Logic.Engine.screen.camera
@@ -84,34 +83,6 @@ namespace Fantasy.Logic.Engine.screen.camera
             Stretch(stretch, allowCentering);
         }
         /// <summary>
-        /// Camera will do the provided action.
-        /// </summary>
-        /// <param name="action">The action for them camera to do.</param>
-        public void DoAction(Actions action)
-        {
-            switch (action)
-            {
-                case Actions.up:
-                    MoveVertical(false, true, 10);
-                    break;
-                case Actions.down:
-                    MoveVertical(false, false, 10);
-                    break;
-                case Actions.left:
-                    MoveHorizontal(false, false, 10);
-                    break;
-                case Actions.right:
-                    MoveHorizontal(false, true, 10);
-                    break;
-                case Actions.zoomIn:
-                    ZoomIn(true);
-                    break;
-                case Actions.zoomOut:
-                    ZoomOut(true);
-                    break;
-            }
-        }
-        /// <summary>
         /// Creates the transfromation matrix used to apply camera effects when drawing.
         /// </summary>
         /// <returns>Matrix used to apply camera effects (Camera movement, Camera rotation) when drawing in Scene.</returns>
@@ -155,24 +126,24 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// Increases this cameras zoom level by one.
         /// </summary>
         /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
-        public void ZoomIn(bool allowCentering)
+        /// <param name="direction">True zoomes the camera in, False zooms the camera out.</param>
+        public void Zoom(bool allowCentering, bool direction)
         {
-            if (zoom + 1 <= maxZoom)
+            if (direction)
             {
-                Stretch(((zoom + 1f) / 64f), allowCentering);
-                zoom = (byte)(zoom + 1);
+                if (zoom + 1 <= maxZoom)
+                {
+                    Stretch(((zoom + 1f) / 64f), allowCentering);
+                    zoom = (byte)(zoom + 1);
+                }
             }
-        }
-        /// <summary>
-        /// Decreases this cameras zoom level by one.
-        /// </summary>
-        /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
-        public void ZoomOut(bool allowCentering)
-        {
-            if (zoom - 1 >= minZoom)
+            else
             {
-                Stretch(((zoom - 1f) / 64f), allowCentering);
-                zoom = (byte)(zoom - 1);
+                if (zoom - 1 >= minZoom)
+                {
+                    Stretch(((zoom - 1f) / 64f), allowCentering);
+                    zoom = (byte)(zoom - 1);
+                }
             }
         }
         /// <summary>
@@ -195,31 +166,30 @@ namespace Fantasy.Logic.Engine.screen.camera
             {
                 if (this.zoom > zoom)
                 {
-                    ZoomOut(allowCentering);
+                    Zoom(allowCentering, false);
                 }
                 else
                 {
-                    ZoomIn(allowCentering);
+                    Zoom(allowCentering, true);
                 }
             }
         }
         /// <summary>
         /// Increases this camera zoom amount by the provided percent.
         /// </summary>
-        /// <param name="percentIncrease">The percent the zoom will be increased by.</param>
+        /// <param name="percentChange">The percent the zoom will be changed by.</param>
         /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
-        public void SmoothZoomIn(float percentIncrease, bool allowCentering)
+        /// /// <param name="direction">True zoomes the camera in, False zooms the camera out.</param>
+        public void SmoothZoom(float percentChange, bool allowCentering, bool direction)
         {
-            SetZoom((int)(zoom + percentIncrease * (zoom)), allowCentering);
-        }
-        /// <summary>
-        /// Decreases this camera zoom amount by the provided percent.
-        /// </summary>
-        /// <param name="percentDecrease">The percent the zoom will be decreased by.</param>
-        /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
-        public void SmoothZoomOut(float percentDecrease, bool allowCentering)
-        {
-            SetZoom((int)(zoom - percentDecrease * (zoom)), allowCentering);
+            if (direction)
+            {
+                SetZoom((int)(zoom + percentChange * (zoom)), allowCentering);
+            }
+            else 
+            {
+                SetZoom((int)(zoom - percentChange * (zoom)), allowCentering);
+            }
         }
         /// <summary>
         /// Sets the Camera stretch to the provided amount.
@@ -314,35 +284,27 @@ namespace Fantasy.Logic.Engine.screen.camera
             return Util.PointInsideRectangle(point, boundingBox);
         }
         /// <summary>
-        /// Pans the camera with the provided specification in panArgs. If the destination is out of the cameras bounding box then the camera will pan as close as possible.
+        /// Pans camera by one incremenet with the provided specifications.
         /// </summary>
-        /// <param name="panArgs">Specifies how and where the camera will pan.</param>
+        /// <param name="destination">The point for the camera center to move towards.</param>
+        /// <param name="movementAmount">The amount for the camera to move by.</param>
+        /// <param name="forced">True results in this movement overriding camera movement restrictions. </param>
         /// <returns>True if the camera has finished its panning operation, False if not.</returns>
-        public bool Pan(PanArgs panArgs)
+        public bool Pan(Point destination, int movementAmount, bool forced)
         {
             Point lastLocation = Util.GetTopLeft(cameraPosition);
+            destination = CenterPoint(destination);
 
-            byte tempZoom = zoom;
-            SetZoom(panArgs.originalZoom, false);
-
-            Point destination = panArgs.GetCurrentDestination();
-            if (panArgs.centerDestination)
+            if ((movementAllowedVertical && movementAllowedHorizontal) || forced)
             {
-                destination = CenterPoint(panArgs.GetCurrentDestination());
-            }
-
-            if ((movementAllowedVertical && movementAllowedHorizontal) || panArgs.forced)
-            {
-                int movementAmount = panArgs.speed.MovementAmount();
-
                 if (Math.Abs(destination.X - cameraPosition.X) <= movementAmount)
                 {
-                    SetHorizontal(panArgs.forced, destination.X, false);
+                    SetHorizontal(forced, destination.X, false);
 
                 }
                 if (Math.Abs(destination.Y - cameraPosition.Y) <= movementAmount)
                 {
-                    SetVertical(panArgs.forced, destination.Y, false);
+                    SetVertical(forced, destination.Y, false);
                 }
 
                 if ((cameraPosition.X < destination.X && cameraPosition.Y < destination.Y) || (cameraPosition.X < destination.X && cameraPosition.Y > destination.Y) ||
@@ -351,66 +313,65 @@ namespace Fantasy.Logic.Engine.screen.camera
                     movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
                 }
 
-                if (cameraPosition.X < destination.X && (panArgs.forced || !CoordinateValueOnBoundingBox(cameraCenter.X, true)))
+                if (cameraPosition.X < destination.X)
                 {
-                    MoveHorizontal(panArgs.forced, true, movementAmount);
+                    MoveHorizontal(forced, true, movementAmount);
                 }
-                else if (cameraPosition.X > destination.X && (panArgs.forced || !CoordinateValueOnBoundingBox(cameraCenter.X, true)))
+                else if (cameraPosition.X > destination.X)
                 {
-                    MoveHorizontal(panArgs.forced, false, movementAmount);
+                    MoveHorizontal(forced, false, movementAmount);
                 }
 
-                if (cameraPosition.Y < destination.Y && (panArgs.forced || !CoordinateValueOnBoundingBox(cameraCenter.Y, true)))
+                if (cameraPosition.Y < destination.Y)
                 {
-                    MoveVertical(panArgs.forced, true, movementAmount);
+                    MoveVertical(forced, true, movementAmount);
                 }
-                else if (cameraPosition.Y > destination.Y && (panArgs.forced || !CoordinateValueOnBoundingBox(cameraCenter.Y, true)))
+                else if (cameraPosition.Y > destination.Y)
                 {
-                    MoveVertical(panArgs.forced, false, movementAmount);
+                    MoveVertical(forced, false, movementAmount);
                 }
                 Reposition();
 
-                SetZoom(tempZoom, false);
                 return (lastLocation == Util.GetTopLeft(cameraPosition) && movementAmount != 0);
             }
             else
             {
-                SetZoom(tempZoom, false);
                 return true;
             }
         }
         /// <summary>
-        /// Used by camera panning that utilizes camera zooming.
+        /// Used by camera panning tasks. Zooms the camera out by one increment.
         /// </summary>
-        /// <param name="panArgs">Specifies how and where the camera will pan.</param>
+        /// <param name="destination">The current destination of the camera panning task.</param>
+        /// <param name="panMinZoom">The minimum zoom level allowed by this camera panning task.</param>
         /// <returns>True if the camera pan zoom out is complete, False if not.</returns>
-        public bool Pan_ZoomOut(PanArgs panArgs)
+        public bool Pan_ZoomOut(Point destination, byte panMinZoom)
         {
-            if (Util.PointInsideRectangle(panArgs.GetCurrentDestination(), cameraPosition) || zoom == minZoom)
+            if (Util.PointInsideRectangle(destination, cameraPosition) || zoom == panMinZoom || zoom == minZoom)
             {
                 return true;
             }
             else
             {
-                SmoothZoomOut(.05f, false);
+                SmoothZoom(.05f, false, false);
                 return false;
             }
         }
         /// <summary>
-        /// Used by camera panning that utilizes camera zooming.
+        /// Used by camera panning tasks. Zooms the camera in by one increment.
         /// </summary>
-        /// <param name="panArgs">Specifies how and where the camera will pan.</param>
+        /// <param name="returnZoom">The original zoom of the camera prior to the camera panning task.</param>
         /// <returns>True if the camera pan zoom in is complete, False if not.</returns>
-        public bool Pan_ZoomIn(PanArgs panArgs)
+        public bool Pan_ZoomIn(byte returnZoom)
         {
-            if (panArgs.originalZoom < (byte)(zoom + .05 * (zoom)))
+            if (returnZoom < (byte)(zoom + .05 * (zoom)))
             {
-                SetZoom(panArgs.originalZoom, false);
+                SetZoom(returnZoom, false);
                 return true;
             }
             else
             {
-                SmoothZoomIn(.05f, false);
+                SmoothZoom(.05f, false, true);
                 return false;
             }
         }
@@ -422,7 +383,7 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// <param name="amount">The amount the Camera will move in the provided direction.</param>
         public void MoveVertical(bool forced, bool direction, int amount)
         {
-            if (forced)
+            if (forced || !PointInBoundingBox(cameraCenter))
             {
                 if (direction)
                 {
@@ -513,7 +474,7 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// <param name="amount">The amount the camera will move in the provided direction.</param>
         public void MoveHorizontal(bool forced, bool direction, int amount)
         {
-            if (forced)
+            if (forced || !PointInBoundingBox(cameraCenter))
             {
                 if (direction)
                 {
