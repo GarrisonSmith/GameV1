@@ -100,7 +100,8 @@ namespace Fantasy.Logic.Controls
             {
                 return foo.action;
             }
-            else {
+            else
+            {
                 return Actions.inaction;
             }
         }

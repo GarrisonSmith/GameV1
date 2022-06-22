@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.entities;
 using Fantasy.Logic.Controls;
 using Fantasy.Logic.Engine.physics;
@@ -7,7 +9,7 @@ namespace Fantasy.Logic.Engine.screen.camera
 {
     static class CameraHandler
     {
-        public static CameraTasks mainTask = CameraTasks.free;
+        public static CameraTasks mainTask = CameraTasks.forcedFree;
 
         public static CameraTasks sideTask = CameraTasks.none;
 
@@ -33,49 +35,114 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// Camera will do the provided action.
         /// </summary>
         /// <param name="actionControl">The action control for the camera to do.</param>
-        public static void DoAction(ActionControl actionControl)
+        public static void DoActions(List<ActionControl> actives)
         {
             if (sideTask == CameraTasks.none)
             {
-                System.Diagnostics.Debug.WriteLine(actionControl.held);
-                if (!actionControl.held)
+                bool up = false;
+                bool down = false;
+                bool right = false;
+                bool left = false;
+                bool zoomIn = false;
+                bool zoomOut = false;
+
+                if (actives.Exists(x => x.action == Actions.up))
+                {
+                    up = true;
+                }
+                if (actives.Exists(x => x.action == Actions.down))
+                {
+                    down = true;
+                }
+                if (actives.Exists(x => x.action == Actions.right))
+                {
+                    right = true;
+                }
+                if (actives.Exists(x => x.action == Actions.left))
+                {
+                    left = true;
+                }
+                if (actives.Exists(x => x.action == Actions.zoomIn && x.justTriggered))
+                {
+                    zoomIn = true;
+                }
+                if (actives.Exists(x => x.action == Actions.zoomOut && x.justTriggered))
+                {
+                    zoomOut = true;
+                }
+
+                int movementAmount = speed.MovementAmount();
+                if (up && !down)
+                {
+                    if (right && !left)
+                    {
+                        movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
+                        MoveCamera(Orientation.up, movementAmount);
+                        MoveCamera(Orientation.right, movementAmount);
+                    }
+                    else if (left && !right)
+                    {
+                        movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
+                        MoveCamera(Orientation.up, movementAmount);
+                        MoveCamera(Orientation.left, movementAmount);
+                    }
+                    else
+                    {
+                        MoveCamera(Orientation.up, movementAmount);
+                    }
+                }
+                else if (down && !up)
+                {
+                    if (right && !left)
+                    {
+                        movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
+                        MoveCamera(Orientation.down, movementAmount);
+                        MoveCamera(Orientation.right, movementAmount);
+                    }
+                    else if (left && !right)
+                    {
+                        movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
+                        MoveCamera(Orientation.down, movementAmount);
+                        MoveCamera(Orientation.left, movementAmount);
+                    }
+                    else
+                    {
+                        MoveCamera(Orientation.down, movementAmount);
+                    }
+                }
+                else if (right && !left)
+                {
+                    MoveCamera(Orientation.right, movementAmount);
+                }
+                else if (left && !right)
+                {
+                    MoveCamera(Orientation.left, movementAmount);
+                }
+                else
                 {
                     speed.RefreshLastMovementTime();
                 }
 
-                switch (actionControl.action)
+                if (zoomIn && !zoomOut)
                 {
-                    case Actions.up:
-                        MoveCamera(Orientation.up);
-                        break;
-                    case Actions.down:
-                        MoveCamera(Orientation.down);
-                        break;
-                    case Actions.left:
-                        MoveCamera(Orientation.left);
-                        break;
-                    case Actions.right:
-                        MoveCamera(Orientation.right);
-                        break;
-                    case Actions.zoomIn:
-                        Global._currentScene._camera.SmoothZoom(.10f, true, true);
-                        break;
-                    case Actions.zoomOut:
-                        Global._currentScene._camera.SmoothZoom(.10f, true, false);
-                        break;
+                    Global._currentScene._camera.SmoothZoom(.10f, !(mainTask == CameraTasks.forcedFree || mainTask == CameraTasks.forcedFollowing), true);
+                }
+                else if (zoomOut && !zoomIn)
+                {
+                    Global._currentScene._camera.SmoothZoom(.10f, !(mainTask == CameraTasks.forcedFree || mainTask == CameraTasks.forcedFollowing), false);
                 }
             }
         }
 
-        public static void MoveCamera(Orientation direction)
+        public static void MoveCamera(Orientation direction, int amount)
         {
             if (mainTask == CameraTasks.free)
             {
-                Global._currentScene._camera.Move(false, direction, speed.MovementAmount());
+                Global._currentScene._camera.Move(false, direction, amount);
             }
             else if (mainTask == CameraTasks.forcedFree)
             {
-                Global._currentScene._camera.Move(true, direction, speed.MovementAmount());
+                Global._currentScene._camera.Move(true, direction, amount);
             }
         }
         /// <summary>

@@ -12,6 +12,7 @@ namespace Fantasy.Logic.Controls
 
         public static void ProcessMouseState(MouseState mouseState)
         {
+            List<ActionControl> actives = new List<ActionControl>();
             foreach (ActionControl actionControl in ActionControl.ControlActions)
             {
                 if (actionControl.input > (Inputs)254 && actionControl.input <= (Inputs)307)
@@ -24,7 +25,7 @@ namespace Fantasy.Logic.Controls
                             actionControl.held = true;
                             actionControl.heldStartTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
                         }
-                        Global._currentScene.ProcessInput(actionControl);
+                        actives.Add(actionControl);
                     }
                     else
                     {
@@ -40,7 +41,7 @@ namespace Fantasy.Logic.Controls
                             actionControl.held = true;
                             actionControl.heldStartTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
                         }
-                        Global._currentScene.ProcessInput(actionControl);
+                        actives.Add(actionControl);
                     }
                     else
                     {
@@ -56,7 +57,7 @@ namespace Fantasy.Logic.Controls
                             actionControl.held = true;
                             actionControl.heldStartTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
                         }
-                        Global._currentScene.ProcessInput(actionControl);
+                        actives.Add(actionControl);
                     }
                     else
                     {
@@ -72,7 +73,7 @@ namespace Fantasy.Logic.Controls
                             actionControl.held = true;
                             actionControl.heldStartTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
                         }
-                        Global._currentScene.ProcessInput(actionControl);
+                        actives.Add(actionControl);
                     }
                     else
                     {
@@ -88,7 +89,7 @@ namespace Fantasy.Logic.Controls
                             actionControl.held = true;
                             actionControl.heldStartTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
                         }
-                        Global._currentScene.ProcessInput(actionControl);
+                        actives.Add(actionControl);
                     }
                     else
                     {
@@ -98,6 +99,7 @@ namespace Fantasy.Logic.Controls
                 }
             }
             DetermineZoom(mouseState);
+            Global._currentScene.ProcessInputs(actives);
         }
 
         private static void DetermineZoom(MouseState mouseState)

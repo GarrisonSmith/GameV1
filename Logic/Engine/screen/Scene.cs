@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.graphics;
@@ -83,12 +84,13 @@ namespace Fantasy.Logic.Engine.screen
                 _character.SetCharacterPosition(sceneEvent.transitionStartLocation);
             }
         }
-        public void ProcessInput(ActionControl actionControl)
+        public void ProcessInputs(List<ActionControl> actives)
         {
             switch (_controlContexts)
             {
                 case ControlContexts.camera:
-                    CameraHandler.DoAction(actionControl);
+                    CameraHandler.DoActions(actives);
+                    //System.Diagnostics.Debug.WriteLine(actionControl.action.ToString());
                     break;
                 case ControlContexts.character:
 

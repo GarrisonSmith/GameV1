@@ -26,9 +26,13 @@ namespace Fantasy.Logic.Controls
         /// </summary>
         public double heldStartTime;
         /// <summary>
-        /// True if this ActionControl just triggered, False if not.
+        /// True if this ActionControl was just pressed, False if not.
         /// </summary>
-        public bool held;
+        public bool justTriggered = false;
+        /// <summary>
+        /// True if this ActionControl has been held, False if it was just pressed.
+        /// </summary>
+        public bool held = false;
 
         /// <summary>
         /// Creates a ActionConrol with the provided parameters.

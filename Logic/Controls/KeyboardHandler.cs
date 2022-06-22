@@ -10,6 +10,7 @@ namespace Fantasy.Logic.Controls
     {
         public static void ProcessKeyboardState(KeyboardState keyboardState)
         {
+            List<ActionControl> actives = new List<ActionControl>();
             foreach (ActionControl actionControl in ActionControl.ControlActions)
             {
                 if (actionControl.input <= (Inputs)254)
@@ -24,8 +25,13 @@ namespace Fantasy.Logic.Controls
                             {
                                 actionControl.held = true;
                                 actionControl.heldStartTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+                                actionControl.justTriggered = true;
                             }
-                            Global._currentScene.ProcessInput(actionControl);
+                            else 
+                            {
+                                actionControl.justTriggered = false;
+                            }
+                            actives.Add(actionControl);
                             break;
                         }
                     }
@@ -36,6 +42,7 @@ namespace Fantasy.Logic.Controls
                     }
                 }
             }
+            Global._currentScene.ProcessInputs(actives);
         }
     }
 
