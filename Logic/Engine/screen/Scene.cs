@@ -18,7 +18,7 @@ namespace Fantasy.Logic.Engine.screen
         public Camera _camera;
         public TileMap _tileMap;
         public Character _character;
-        public ControlContexts _controlContexts = ControlContexts.camera;
+        public ControlContexts _controlContexts = ControlContexts.character;
         public Particle particle = new Particle(new Point(0,0), Color.CornflowerBlue, 1, 10000);
         public Scene(TileMap _tileMap)
         {

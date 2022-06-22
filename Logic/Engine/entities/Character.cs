@@ -9,23 +9,21 @@ namespace Fantasy.Logic.Engine.entities
     class Character : Entity
     {
         public bool characterIsMoving;
-        public int speed;
         public Orientation orientation;
         public Animation frames;
 
         public Character() { }
 
-        public Character(string id, string type, string spriteSheetName, int layer, Entitybox hitbox, int speed, Orientation orientation)
+        public Character(string id, string type, Texture2D spriteSheet, int layer, Entitybox hitbox, MoveSpeed speed, Orientation orientation)
         {
             this.id = id;
             this.type = type;
+            this.spriteSheet = spriteSheet;
             this.layer = layer;
             this.speed = speed;
             this.orientation = orientation;
             this.hitbox = hitbox;
             this.hitbox.collisionArea = new Rectangle[] { new Rectangle(8, 116, 48, 16) };
-
-            spriteSheet = Global._content.Load<Texture2D>("character-sets/" + spriteSheetName);
         }
 
         public void DrawCharacter()

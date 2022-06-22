@@ -1,5 +1,7 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.hitboxes;
+using Fantasy.Logic.Engine.physics;
 
 namespace Fantasy.Logic.Engine.entities
 {
@@ -21,13 +23,17 @@ namespace Fantasy.Logic.Engine.entities
         /// </summary>
         public int layer;
         /// <summary>
-        /// This entities hitbox for collision on a TileMap or other entities.
+        /// This entities hitbox for collision on a TileMap or other entities. Also stores the characters location.
         /// </summary>
         public Entitybox hitbox;
         /// <summary>
         /// The spritesheet this entity uses when drawing or when animated.
         /// </summary>
         public Texture2D spriteSheet;
+        /// <summary>
+        /// Describes the MoveSpeed of the entity.
+        /// </summary>
+        public MoveSpeed speed;
 
         /// <summary>
         /// Generic inheriated constructor.
@@ -38,17 +44,44 @@ namespace Fantasy.Logic.Engine.entities
         /// </summary>
         /// <param name="id">String that will be used to identify this entity.</param>
         /// <param name="type">The type this enity will be.</param>
-        /// <param name="spriteSheetName">The name of the spritesheet this enity will use when drawing or when aniamted.</param>
+        /// <param name="spriteSheet">The spritesheet this enity will use when drawing or when animated.</param>
         /// <param name="layer">The layer this entity will occupy.</param>
         /// <param name="hitbox">This entities hitbox for collision on a TileMap or other entities.</param>
-        public Entity(string id, string type, string spriteSheetName, int layer, Entitybox hitbox)
+        /// <param name="speed">Describes the MoveSpeed of the entity.</param>
+        public Entity(string id, string type, Texture2D spriteSheet, int layer, Entitybox hitbox, MoveSpeed speed)
         {
             this.id = id;
             this.type = type;
+            this.spriteSheet = spriteSheet;
             this.layer = layer;
             this.hitbox = hitbox;
+            this.speed = speed;
+        }
 
-            spriteSheet = Global._content.Load<Texture2D>(spriteSheetName);
+        public void MoveEntity(Orientation direction)
+        {
+            int tempSpeed = speed.MovementAmount();
+            Rectangle newCharacterArea;
+            do
+            {
+                newCharacterArea = hitbox.characterArea;
+                switch (direction)
+                {
+                    case Orientation.up:
+                        newCharacterArea.Y += tempSpeed;
+                        break;
+                    case Orientation.right:
+                        newCharacterArea.X += tempSpeed;
+                        break;
+                    case Orientation.left:
+                        newCharacterArea.X -= tempSpeed;
+                        break;
+                    case Orientation.down:
+                        newCharacterArea.Y -= tempSpeed;
+                        break;
+                }
+                tempSpeed--;
+            } while (!hitbox.AttemptMovement(layer, newCharacterArea) && tempSpeed != 0);
         }
         /// <summary>
         /// Draws the collision area of the hitbox of this entity, 

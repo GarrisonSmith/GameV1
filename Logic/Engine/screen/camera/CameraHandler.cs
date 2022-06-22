@@ -34,7 +34,7 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// <summary>
         /// Camera will do the provided action.
         /// </summary>
-        /// <param name="actionControl">The action control for the camera to do.</param>
+        /// <param name="actives">All active actionControls for the camera to do.</param>
         public static void DoActions(List<ActionControl> actives)
         {
             if (sideTask == CameraTasks.none)
@@ -43,8 +43,6 @@ namespace Fantasy.Logic.Engine.screen.camera
                 bool down = false;
                 bool right = false;
                 bool left = false;
-                bool zoomIn = false;
-                bool zoomOut = false;
 
                 if (actives.Exists(x => x.action == Actions.up))
                 {
@@ -62,6 +60,64 @@ namespace Fantasy.Logic.Engine.screen.camera
                 {
                     left = true;
                 }
+
+                if (mainTask == CameraTasks.free || mainTask == CameraTasks.forcedFree)
+                {
+                    int movementAmount = speed.MovementAmount();
+                    if (up && !down)
+                    {
+                        if (right && !left)
+                        {
+                            movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
+                            MoveCamera(Orientation.up, movementAmount);
+                            MoveCamera(Orientation.right, movementAmount);
+                        }
+                        else if (left && !right)
+                        {
+                            movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
+                            MoveCamera(Orientation.up, movementAmount);
+                            MoveCamera(Orientation.left, movementAmount);
+                        }
+                        else
+                        {
+                            MoveCamera(Orientation.up, movementAmount);
+                        }
+                    }
+                    else if (down && !up)
+                    {
+                        if (right && !left)
+                        {
+                            movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
+                            MoveCamera(Orientation.down, movementAmount);
+                            MoveCamera(Orientation.right, movementAmount);
+                        }
+                        else if (left && !right)
+                        {
+                            movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
+                            MoveCamera(Orientation.down, movementAmount);
+                            MoveCamera(Orientation.left, movementAmount);
+                        }
+                        else
+                        {
+                            MoveCamera(Orientation.down, movementAmount);
+                        }
+                    }
+                    else if (right && !left)
+                    {
+                        MoveCamera(Orientation.right, movementAmount);
+                    }
+                    else if (left && !right)
+                    {
+                        MoveCamera(Orientation.left, movementAmount);
+                    }
+                    else
+                    {
+                        speed.RefreshLastMovementTime();
+                    }
+                }
+                bool zoomIn = false;
+                bool zoomOut = false;
+
                 if (actives.Exists(x => x.action == Actions.zoomIn && x.justTriggered))
                 {
                     zoomIn = true;
@@ -69,58 +125,6 @@ namespace Fantasy.Logic.Engine.screen.camera
                 if (actives.Exists(x => x.action == Actions.zoomOut && x.justTriggered))
                 {
                     zoomOut = true;
-                }
-
-                int movementAmount = speed.MovementAmount();
-                if (up && !down)
-                {
-                    if (right && !left)
-                    {
-                        movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
-                        MoveCamera(Orientation.up, movementAmount);
-                        MoveCamera(Orientation.right, movementAmount);
-                    }
-                    else if (left && !right)
-                    {
-                        movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
-                        MoveCamera(Orientation.up, movementAmount);
-                        MoveCamera(Orientation.left, movementAmount);
-                    }
-                    else
-                    {
-                        MoveCamera(Orientation.up, movementAmount);
-                    }
-                }
-                else if (down && !up)
-                {
-                    if (right && !left)
-                    {
-                        movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
-                        MoveCamera(Orientation.down, movementAmount);
-                        MoveCamera(Orientation.right, movementAmount);
-                    }
-                    else if (left && !right)
-                    {
-                        movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
-                        MoveCamera(Orientation.down, movementAmount);
-                        MoveCamera(Orientation.left, movementAmount);
-                    }
-                    else
-                    {
-                        MoveCamera(Orientation.down, movementAmount);
-                    }
-                }
-                else if (right && !left)
-                {
-                    MoveCamera(Orientation.right, movementAmount);
-                }
-                else if (left && !right)
-                {
-                    MoveCamera(Orientation.left, movementAmount);
-                }
-                else
-                {
-                    speed.RefreshLastMovementTime();
                 }
 
                 if (zoomIn && !zoomOut)
@@ -134,7 +138,7 @@ namespace Fantasy.Logic.Engine.screen.camera
             }
         }
 
-        public static void MoveCamera(Orientation direction, int amount)
+        private static void MoveCamera(Orientation direction, int amount)
         {
             if (mainTask == CameraTasks.free)
             {
