@@ -84,7 +84,7 @@ namespace Fantasy.Logic.Engine.screen
                 _character.SetCharacterPosition(sceneEvent.transitionStartLocation);
             }
         }
-        public void ProcessInputs(List<ActionControl> actives)
+        public void ProcessInputs(List<Actions> actives)
         {
             switch (_controlContexts)
             {
