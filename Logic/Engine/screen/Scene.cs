@@ -23,11 +23,11 @@ namespace Fantasy.Logic.Engine.screen
         public Scene(TileMap _tileMap)
         {
             this._tileMap = _tileMap;
-            this._character = new Character("character_two", "character", "character_two_spritesheet", 1, new Entitybox("character", new Rectangle(0, 0, 64, 128)), 3, Orientation.up);
         }
         public void LoadScene()
         {
-            _camera = new Camera(new Point(640, 640), true, false);
+            _camera = new Camera(new Point(0, 0), true, false);
+            _character = new Character("character_two", "character", Global._content.Load<Texture2D>(@"character-sets\character_two_spritesheet"), 1, new Entitybox("character", new Rectangle(0, 0, 64, 128)), new MoveSpeed(96, TimeUnits.seconds), Orientation.up);
             _tileMap.LoadTileTextures();
             _tileMap.LoadTileHitboxes();
         }
@@ -58,22 +58,12 @@ namespace Fantasy.Logic.Engine.screen
 
             Global._spriteBatch.End();
         }
-        public void ClearAndRedraw()
-        {
-            Global._graphics.GraphicsDevice.Clear(Color.Gray);
-            DrawScene();
-            Global._game1.RunOneFrame();
-            //Global._graphics.BeginDraw();
-            //DrawScene();
-            //Global._graphics.EndDraw();
-        }
         public void TransitionScene(string tileMapString)
         {
             _tileMap = new TileMap(tileMapString);
             _tileMap.LoadTileTextures();
             _tileMap.LoadTileHitboxes();
             _camera.SetBoundingBox(true);
-            ClearAndRedraw();
         }
         public void DoEvent(SceneEvent sceneEvent)
         {
@@ -84,7 +74,7 @@ namespace Fantasy.Logic.Engine.screen
                 _character.SetCharacterPosition(sceneEvent.transitionStartLocation);
             }
         }
-        public void ProcessInputs(List<Actions> actives)
+        public void ProcessInputs(List<ActionControl> actives)
         {
             switch (_controlContexts)
             {
@@ -93,7 +83,7 @@ namespace Fantasy.Logic.Engine.screen
                     //System.Diagnostics.Debug.WriteLine(actionControl.action.ToString());
                     break;
                 case ControlContexts.character:
-
+                    _character.DoActions(actives);
                     break;
                 case ControlContexts.menu:
 

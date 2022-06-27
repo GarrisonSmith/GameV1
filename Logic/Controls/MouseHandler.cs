@@ -12,7 +12,7 @@ namespace Fantasy.Logic.Controls
 
         public static void ProcessMouseState(MouseState mouseState)
         {
-            List<Actions> actives = new List<Actions>();
+            List<ActionControl> actives = new List<ActionControl>();
             foreach (ActionControl actionControl in ActionControl.ControlActions)
             {
                 if (actionControl.input > (Inputs)254 && actionControl.input <= (Inputs)307)
@@ -25,7 +25,7 @@ namespace Fantasy.Logic.Controls
                             actionControl.held = true;
                             actionControl.heldStartTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
                         }
-                        actives.Add(actionControl.action);
+                        actives.Add(actionControl);
                     }
                     else
                     {

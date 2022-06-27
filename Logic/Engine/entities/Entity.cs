@@ -1,7 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.hitboxes;
 using Fantasy.Logic.Engine.physics;
+using Fantasy.Logic.Controls;
+using System.Collections.Generic;
 
 namespace Fantasy.Logic.Engine.entities
 {
@@ -34,6 +37,14 @@ namespace Fantasy.Logic.Engine.entities
         /// Describes the MoveSpeed of the entity.
         /// </summary>
         public MoveSpeed speed;
+        /// <summary>
+        /// Describe the current movement state of the Entity.
+        /// </summary>
+        public EntityMovementState movement;
+        /// <summary>
+        /// Determines if the current movement is forced.
+        /// </summary>
+        public bool forcedMovement;
 
         /// <summary>
         /// Generic inheriated constructor.
@@ -56,11 +67,145 @@ namespace Fantasy.Logic.Engine.entities
             this.layer = layer;
             this.hitbox = hitbox;
             this.speed = speed;
+            movement = EntityMovementState.idle;
+            forcedMovement = false;
         }
 
-        public void MoveEntity(Orientation direction)
+        /// <summary>
+        /// Updates this entity.
+        /// </summary>
+        public void UpdateEntity()
         {
-            int tempSpeed = speed.MovementAmount();
+            int movementAmount = speed.MovementAmount();
+            switch (movement)
+            {
+                case EntityMovementState.idle:
+                    //speed.RefreshLastMovementTime();
+                    break;
+                case EntityMovementState.movingUp:
+                    MoveEntity(Orientation.up, movementAmount);
+                    break;
+                case EntityMovementState.movingDown:
+                    MoveEntity(Orientation.down, movementAmount);
+                    break;
+                case EntityMovementState.movingRight:
+                    MoveEntity(Orientation.right, movementAmount);
+                    break;
+                case EntityMovementState.movingRightUp:
+                    MoveEntity(Orientation.right, (int)(movementAmount * (1 / Math.Sqrt(2))));
+                    MoveEntity(Orientation.up, (int)(movementAmount * (1 / Math.Sqrt(2))));
+                    break;
+                case EntityMovementState.movingRightDown:
+                    MoveEntity(Orientation.right, (int)(movementAmount * (1 / Math.Sqrt(2))));
+                    MoveEntity(Orientation.down, (int)(movementAmount * (1 / Math.Sqrt(2))));
+                    break;
+                case EntityMovementState.movingLeft:
+                    MoveEntity(Orientation.left, movementAmount);
+                    break;
+                case EntityMovementState.movingLeftUp:
+                    MoveEntity(Orientation.left, (int)(movementAmount * (1 / Math.Sqrt(2))));
+                    MoveEntity(Orientation.up, (int)(movementAmount * (1 / Math.Sqrt(2))));
+                    break;
+                case EntityMovementState.movingLeftDown:
+                    MoveEntity(Orientation.left, (int)(movementAmount * (1 / Math.Sqrt(2))));
+                    MoveEntity(Orientation.down, (int)(movementAmount * (1 / Math.Sqrt(2))));
+                    break;
+            }
+        }
+        /// <summary>
+        /// Camera will do the provided action.
+        /// </summary>
+        /// <param name="actives">All active actionControls for the camera to do.</param>
+        public void DoActions(List<ActionControl> actives)
+        {
+            bool up = false;
+            bool down = false;
+            bool right = false;
+            bool left = false;
+
+            if (actives.Exists(x => x.action == Actions.up))
+            {
+                up = true;
+            }
+            if (actives.Exists(x => x.action == Actions.down))
+            {
+                down = true;
+            }
+            if (actives.Exists(x => x.action == Actions.right))
+            {
+                right = true;
+            }
+            if (actives.Exists(x => x.action == Actions.left))
+            {
+                left = true;
+            }
+
+            if (up && !down)
+            {
+                if (right && !left)
+                {
+                   SetMovement(EntityMovementState.movingRightUp, false);
+                }
+                else if (left && !right)
+                {
+                    SetMovement(EntityMovementState.movingLeftUp, false);
+                }
+                else
+                {
+                    SetMovement(EntityMovementState.movingUp, false);
+                    //System.Diagnostics.Debug.WriteLine("hello");
+                }
+            }
+            else if (down && !up)
+            {
+                if (right && !left)
+                {
+                    SetMovement(EntityMovementState.movingRightDown, false);
+                }
+                else if (left && !right)
+                {
+                    SetMovement(EntityMovementState.movingLeftDown, false);
+                }
+                else
+                {
+                    SetMovement(EntityMovementState.movingDown, false);
+                }
+            }
+            else if (right && !left)
+            {
+                SetMovement(EntityMovementState.movingRight, false);
+            }
+            else if (left && !right)
+            {
+                SetMovement(EntityMovementState.movingLeft, false);
+            }
+            else
+            {
+                //System.Diagnostics.Debug.WriteLine("oh no");
+                SetMovement(EntityMovementState.idle, false);
+            }
+        }
+        /// <summary>
+        /// Sets this entities movement state to the provided direction.
+        /// </summary>
+        /// <param name="direction">The direction this entity will move in per update.</param>
+        /// <param name="forced">Determines if the provided movement state is forced.</param>
+        public void SetMovement(EntityMovementState direction, bool forced)
+        {
+            if (movement != direction)
+            {
+                speed.RefreshLastMovementTime();
+                movement = direction;
+            }
+            forcedMovement = forced;
+        }
+        /// <summary>
+        /// Move the entity in the provided direction by the provided amount.
+        /// </summary>
+        /// <param name="direction">The direction for the entity to move.</param>
+        /// <param name="amount">The amount for the entity to be moved by.</param>
+        public void MoveEntity(Orientation direction, int amount)
+        {
             Rectangle newCharacterArea;
             do
             {
@@ -68,20 +213,29 @@ namespace Fantasy.Logic.Engine.entities
                 switch (direction)
                 {
                     case Orientation.up:
-                        newCharacterArea.Y += tempSpeed;
+                        newCharacterArea.Y += amount;
                         break;
                     case Orientation.right:
-                        newCharacterArea.X += tempSpeed;
+                        newCharacterArea.X += amount;
                         break;
                     case Orientation.left:
-                        newCharacterArea.X -= tempSpeed;
+                        newCharacterArea.X -= amount;
                         break;
                     case Orientation.down:
-                        newCharacterArea.Y -= tempSpeed;
+                        newCharacterArea.Y -= amount;
                         break;
                 }
-                tempSpeed--;
-            } while (!hitbox.AttemptMovement(layer, newCharacterArea) && tempSpeed != 0);
+                amount--;
+            } while (!hitbox.AttemptMovement(layer, newCharacterArea) && amount != 0 && !forcedMovement);
+        }
+        /// <summary>
+        /// Sets the characters position to be the provide point.
+        /// </summary>
+        /// <param name="posistion">The position for the entity to be moved to.</param>
+        public void SetCharacterPosition(Point posistion)
+        {
+            hitbox.characterArea.X = posistion.X;
+            hitbox.characterArea.Y = posistion.Y;
         }
         /// <summary>
         /// Draws the collision area of the hitbox of this entity, 

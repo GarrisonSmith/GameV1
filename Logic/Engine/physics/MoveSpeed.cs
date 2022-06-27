@@ -31,7 +31,15 @@ namespace Fantasy.Logic.Engine.physics
         /// <param name="unit">The unit of time the pixelsPerUnit uses.</param>
         public MoveSpeed(double pixelsPerUnit, TimeUnits unit)
         {
-            lastMovementTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+            if (Global._gameTime == null)
+            {
+                lastMovementTime = 0;
+            }
+            else
+            {
+                lastMovementTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
+            }
+
             switch (unit)
             {
                 case TimeUnits.miliseconds:

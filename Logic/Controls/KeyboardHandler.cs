@@ -10,7 +10,16 @@ namespace Fantasy.Logic.Controls
     {
         public static void ProcessKeyboardState(KeyboardState keyboardState)
         {
-            List<Actions> actives = new List<Actions>();
+            if (keyboardState.IsKeyDown(Keys.W))
+            {
+                //System.Diagnostics.Debug.WriteLine("here here");
+            }
+            else 
+            {
+                //System.Diagnostics.Debug.WriteLine("no no no");
+            }
+
+            List<ActionControl> actives = new List<ActionControl>();
             foreach (ActionControl actionControl in ActionControl.ControlActions)
             {
                 if (actionControl.input <= (Inputs)254)
@@ -31,7 +40,7 @@ namespace Fantasy.Logic.Controls
                             {
                                 actionControl.justTriggered = false;
                             }
-                            actives.Add(actionControl.action);
+                            actives.Add(actionControl);
                             break;
                         }
                     }
