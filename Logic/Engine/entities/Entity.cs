@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.hitboxes;
 using Fantasy.Logic.Engine.physics;
-using Fantasy.Logic.Controls;
+using Fantasy.Logic.Controllers;
 using System.Collections.Generic;
 
 namespace Fantasy.Logic.Engine.entities
@@ -37,6 +37,10 @@ namespace Fantasy.Logic.Engine.entities
         /// Describes the MoveSpeed of the entity.
         /// </summary>
         public MoveSpeed speed;
+        /// <summary>
+        /// Describes the orientation the entity is facing.
+        /// </summary>
+        public Orientation orientation;
         /// <summary>
         /// Describe the current movement state of the Entity.
         /// </summary>
@@ -80,35 +84,43 @@ namespace Fantasy.Logic.Engine.entities
             switch (movement)
             {
                 case EntityMovementState.idle:
-                    //speed.RefreshLastMovementTime();
+                    speed.RefreshLastMovementTime();
                     break;
                 case EntityMovementState.movingUp:
+                    orientation = Orientation.up;
                     MoveEntity(Orientation.up, movementAmount);
                     break;
                 case EntityMovementState.movingDown:
+                    orientation = Orientation.down;
                     MoveEntity(Orientation.down, movementAmount);
                     break;
                 case EntityMovementState.movingRight:
+                    orientation = Orientation.right;
                     MoveEntity(Orientation.right, movementAmount);
                     break;
                 case EntityMovementState.movingRightUp:
-                    MoveEntity(Orientation.right, (int)(movementAmount * (1 / Math.Sqrt(2))));
-                    MoveEntity(Orientation.up, (int)(movementAmount * (1 / Math.Sqrt(2))));
+                    orientation = Orientation.right;
+                    MoveEntity(Orientation.right, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
+                    MoveEntity(Orientation.up, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
                     break;
                 case EntityMovementState.movingRightDown:
-                    MoveEntity(Orientation.right, (int)(movementAmount * (1 / Math.Sqrt(2))));
-                    MoveEntity(Orientation.down, (int)(movementAmount * (1 / Math.Sqrt(2))));
+                    orientation = Orientation.right;
+                    MoveEntity(Orientation.right, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
+                    MoveEntity(Orientation.down, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
                     break;
                 case EntityMovementState.movingLeft:
+                    orientation = Orientation.left;
                     MoveEntity(Orientation.left, movementAmount);
                     break;
                 case EntityMovementState.movingLeftUp:
-                    MoveEntity(Orientation.left, (int)(movementAmount * (1 / Math.Sqrt(2))));
-                    MoveEntity(Orientation.up, (int)(movementAmount * (1 / Math.Sqrt(2))));
+                    orientation = Orientation.left;
+                    MoveEntity(Orientation.left, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
+                    MoveEntity(Orientation.up, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
                     break;
                 case EntityMovementState.movingLeftDown:
-                    MoveEntity(Orientation.left, (int)(movementAmount * (1 / Math.Sqrt(2))));
-                    MoveEntity(Orientation.down, (int)(movementAmount * (1 / Math.Sqrt(2))));
+                    orientation = Orientation.left;
+                    MoveEntity(Orientation.left, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
+                    MoveEntity(Orientation.down, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
                     break;
             }
         }
@@ -153,7 +165,6 @@ namespace Fantasy.Logic.Engine.entities
                 else
                 {
                     SetMovement(EntityMovementState.movingUp, false);
-                    //System.Diagnostics.Debug.WriteLine("hello");
                 }
             }
             else if (down && !up)
@@ -181,7 +192,6 @@ namespace Fantasy.Logic.Engine.entities
             }
             else
             {
-                //System.Diagnostics.Debug.WriteLine("oh no");
                 SetMovement(EntityMovementState.idle, false);
             }
         }

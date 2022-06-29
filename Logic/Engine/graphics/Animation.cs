@@ -64,6 +64,10 @@ namespace Fantasy.Logic.Engine.graphics
         /// </summary>
         public int sourceHeight;
         /// <summary>
+        /// The orientation of the animation.
+        /// </summary>
+        public Orientation orientation;
+        /// <summary>
         /// The current state of the animation.
         /// </summary>
         public AnimationState animationState;
@@ -91,6 +95,7 @@ namespace Fantasy.Logic.Engine.graphics
             this.columnReference = columnReference;
             this.sourceWidth = sourceWidth;
             this.sourceHeight = sourceHeight;
+            orientation = Orientation.down;
             this.animationState = animationState;
         }
         /// <summary>
@@ -177,6 +182,7 @@ namespace Fantasy.Logic.Engine.graphics
                     newRow = 0;
                     break;
             }
+            this.orientation = orientation;
         }
     }
 

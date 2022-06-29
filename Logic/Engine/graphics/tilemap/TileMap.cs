@@ -896,8 +896,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <returns>Point containing the center of the TileMap drawing collisionArea.</returns>
         public Point GetTileMapCenter()
         {
-            Rectangle foo = GetTileMapBounding();
-            return new Point(foo.X + (foo.Width / 2), foo.Y - (foo.Height / 2));
+            return Util.GetCenter(GetTileMapBounding());
 
         }
         /// <summary>
@@ -907,8 +906,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <returns>Point containing the center of the corrasponding layers of theTileMap drawing collisionArea.</returns>
         public Point GetTileMapCenter(int[] layers)
         {
-            Rectangle foo = GetTileMapBounding(layers);
-            return new Point(foo.X + (foo.Width / 2), foo.Y - (foo.Height / 2));
+            return Util.GetCenter(GetTileMapBounding());
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap of the provided layer in the TileMap with the provided Global._baseStretch.
@@ -917,8 +915,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <returns>Point containing the center of the corrasponding layer of theTileMap drawing collisionArea.</returns>
         public Point GetTileMapCenter(int layer)
         {
-            Rectangle foo = GetTileMapBounding(layer);
-            return new Point(foo.X + (foo.Width / 2), foo.Y - (foo.Height / 2));
+            return Util.GetCenter(GetTileMapBounding());
         }
     }
 }

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.entities;
-using Fantasy.Logic.Controls;
+using Fantasy.Logic.Controllers;
 using Fantasy.Logic.Engine.physics;
+using Fantasy.Logic.Engine.utility;
 
 namespace Fantasy.Logic.Engine.screen.camera
 {
@@ -167,10 +168,10 @@ namespace Fantasy.Logic.Engine.screen.camera
                     //camera will freely accept forced movements.
                     break;
                 case CameraTasks.following:
-                    Global._currentScene._camera.SetCoordinate(false, followEntity.hitbox.characterArea.Center, false);
+                    Global._currentScene._camera.SetCoordinate(false, Util.GetCenter(followEntity.hitbox.characterArea), true);
                     break;
                 case CameraTasks.forcedFollowing:
-                    Global._currentScene._camera.SetCoordinate(false, followEntity.hitbox.characterArea.Center, true);
+                    Global._currentScene._camera.SetCoordinate(true, Util.GetCenter(followEntity.hitbox.characterArea), true);
                     break;
                 case CameraTasks.panning:
                     DoPanningTask();

@@ -64,7 +64,7 @@ namespace Fantasy.Logic.Engine.screen.camera
             cameraPosition.Height = Global._graphics.PreferredBackBufferHeight;
             if (centerStartingCoordinate)
             {
-                startingCoordinate = new Point(startingCoordinate.X - ((int)cameraPosition.Width / 2), startingCoordinate.Y + ((int)cameraPosition.Height / 2));
+                startingCoordinate = new Point(startingCoordinate.X - (cameraPosition.Width / 2), startingCoordinate.Y + (cameraPosition.Height / 2));
             }
             cameraPosition.X = startingCoordinate.X;
             cameraPosition.Y = startingCoordinate.Y;
@@ -99,8 +99,7 @@ namespace Fantasy.Logic.Engine.screen.camera
         /// </summary>
         public void Reposition()
         {
-            cameraCenter.X = cameraPosition.X + (cameraPosition.Width / 2);
-            cameraCenter.Y = cameraPosition.Y - (cameraPosition.Height / 2);
+            cameraCenter = Util.GetCenter(cameraPosition);
         }
         /// <summary>
         /// Centers the provided point.
@@ -441,11 +440,6 @@ namespace Fantasy.Logic.Engine.screen.camera
 
             if (forced)
             {
-                if (centerDestination)
-                {
-                    Y += cameraPosition.Height / 2;
-                }
-
                 cameraPosition.Y = Y;
                 Reposition();
             }
@@ -527,16 +521,11 @@ namespace Fantasy.Logic.Engine.screen.camera
         {
             if (centerDestination)
             {
-                X -= cameraPosition.Width;
+                X -= cameraPosition.Width / 2;
             }
 
             if (forced)
             {
-                if (centerDestination)
-                {
-                    X -= cameraPosition.Width / 2;
-                }
-
                 cameraPosition.X = X;
                 Reposition();
             }

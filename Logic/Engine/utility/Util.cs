@@ -35,6 +35,15 @@ namespace Fantasy.Logic.Engine.utility
             return new Point(foo.X, foo.Y);
         }
         /// <summary>
+        /// Gets the center point of the provided rectangle foo.
+        /// </summary>
+        /// <param name="foo">The rectangle tot be used.</param>
+        /// <returns>A point that is in the center of of the provided rectangle foo.</returns>
+        public static Point GetCenter(Rectangle foo)
+        {
+            return new Point(foo.X + (foo.Width / 2), foo.Y - (foo.Height / 2));
+        }
+        /// <summary>
         /// Constructs a Xna Point object from the provided string foo, foo must be of the form "{X:0 Y:0}".
         /// Will return the first point in a string if other characters exist or if another point exits, example: 
         /// "Lorem {X:0 Y:0} ipsum {X:1 Y:1}" will return the point {X: 0 Y:0}.

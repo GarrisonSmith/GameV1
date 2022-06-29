@@ -49,8 +49,9 @@ namespace Fantasy.Logic.Engine.physics
                     pixelsPerMilisecond = pixelsPerUnit * .001;
                     break;
                 case TimeUnits.ticks:
-                    //TODO: not implemented
-                    break;
+                    pixelsPerMove = (int)Math.Truncate(pixelsPerUnit);
+                    milisecondsPerMove = 0;
+                    return;
             }
 
             if (pixelsPerMilisecond < 1)
@@ -70,6 +71,11 @@ namespace Fantasy.Logic.Engine.physics
         /// <returns></returns>
         public int MovementAmount()
         {
+            if (milisecondsPerMove == 0)
+            {
+                return pixelsPerMove;
+            }
+
             double deltaMilisecond = Global._gameTime.TotalGameTime.TotalMilliseconds - lastMovementTime;
 
             if (deltaMilisecond >= 1 && milisecondsPerMove == 1)

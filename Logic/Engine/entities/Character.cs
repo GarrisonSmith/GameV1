@@ -8,7 +8,6 @@ namespace Fantasy.Logic.Engine.entities
 {
     class Character : Entity
     {
-        public Orientation orientation;
         public Animation frames;
 
         public Character() { }
@@ -23,28 +22,12 @@ namespace Fantasy.Logic.Engine.entities
             this.orientation = orientation;
             this.hitbox = hitbox;
             this.hitbox.collisionArea = new Rectangle[] { new Rectangle(8, 116, 48, 16) };
+            frames = new Animation(400, 400, 0, 3, 0, 0, 64, 128, AnimationState.idle);
         }
 
         public void DrawCharacter()
         {
-            if (frames == null)
-            {
-                switch (orientation)
-                {
-                    case Orientation.up:
-                        frames = new Animation(400, 400, 0, 3, 3, 0, 64, 128, AnimationState.idle);
-                        break;
-                    case Orientation.right:
-                        frames = new Animation(400, 400, 0, 3, 1, 0, 64, 128, AnimationState.idle);
-                        break;
-                    case Orientation.left:
-                        frames = new Animation(400, 400, 0, 3, 2, 0, 64, 128, AnimationState.idle);
-                        break;
-                    case Orientation.down:
-                        frames = new Animation(400, 400, 0, 3, 0, 0, 64, 128, AnimationState.idle);
-                        break;
-                }
-            }
+            frames.ChangeOrientation(orientation);
 
             if (movement != EntityMovementState.idle)
             {

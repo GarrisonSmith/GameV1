@@ -7,7 +7,7 @@ using Fantasy.Logic.Engine.graphics.tilemap;
 using Fantasy.Logic.Engine.entities;
 using Fantasy.Logic.Engine.hitboxes;
 using Fantasy.Logic.Engine.graphics.particles;
-using Fantasy.Logic.Controls;
+using Fantasy.Logic.Controllers;
 using Fantasy.Logic.Engine.screen.camera;
 using Fantasy.Logic.Engine.physics;
 
@@ -18,7 +18,6 @@ namespace Fantasy.Logic.Engine.screen
         public Camera _camera;
         public TileMap _tileMap;
         public Character _character;
-        public ControlContexts _controlContexts = ControlContexts.character;
         public Particle particle = new Particle(new Point(0,0), Color.CornflowerBlue, 1, 10000);
         public Scene(TileMap _tileMap)
         {
@@ -27,7 +26,9 @@ namespace Fantasy.Logic.Engine.screen
         public void LoadScene()
         {
             _camera = new Camera(new Point(0, 0), true, false);
-            _character = new Character("character_two", "character", Global._content.Load<Texture2D>(@"character-sets\character_two_spritesheet"), 1, new Entitybox("character", new Rectangle(0, 0, 64, 128)), new MoveSpeed(96, TimeUnits.seconds), Orientation.up);
+            _character = new Character("character_two", "character", Global._content.Load<Texture2D>(@"character-sets\character_two_spritesheet"),
+                1, new Entitybox("character", new Rectangle(0, 0, 64, 128)), new MoveSpeed(96, TimeUnits.seconds), Orientation.down);
+            CameraHandler.AssignFollowingTask(_character, false);
             _tileMap.LoadTileTextures();
             _tileMap.LoadTileHitboxes();
         }
@@ -42,9 +43,9 @@ namespace Fantasy.Logic.Engine.screen
                 _camera.GetTransformation());
 
             _tileMap.DrawLayers();
-            Debug.DebugOnScene(this);
-            _tileMap.DrawHitboxes(1);
-            _character.DrawHitbox();
+            //Debug.DebugOnScene(this);
+            //_tileMap.DrawHitboxes(1);
+            //_character.DrawHitbox();
             _character.DrawCharacter();
             particle.Draw();
 
@@ -54,7 +55,7 @@ namespace Fantasy.Logic.Engine.screen
 
             Global._spriteBatch.Begin();
 
-            Debug.DebugOverlay(this);
+            //Debug.DebugOverlay(this);
 
             Global._spriteBatch.End();
         }
@@ -76,11 +77,14 @@ namespace Fantasy.Logic.Engine.screen
         }
         public void ProcessInputs(List<ActionControl> actives)
         {
-            switch (_controlContexts)
+            
+            
+            
+            
+            switch (Controls.currentContext)
             {
                 case ControlContexts.camera:
                     CameraHandler.DoActions(actives);
-                    //System.Diagnostics.Debug.WriteLine(actionControl.action.ToString());
                     break;
                 case ControlContexts.character:
                     _character.DoActions(actives);
@@ -91,12 +95,4 @@ namespace Fantasy.Logic.Engine.screen
             }
         }
     }
-
-    enum ControlContexts
-    {
-        camera,
-        character,
-        menu
-    }
-
 }
