@@ -2,7 +2,6 @@
 using System.Xml;
 using Microsoft.Xna.Framework.Input;
 using Fantasy.Logic.Engine;
-using System.Collections.Generic;
 
 namespace Fantasy.Logic.Controllers
 {
@@ -11,7 +10,11 @@ namespace Fantasy.Logic.Controllers
     /// </summary>
     static class Controls
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static ControlContexts currentContext;
+        
         /// <summary>
         /// The ActionControl for the "up" action.
         /// Basic movement action.
@@ -94,7 +97,7 @@ namespace Fantasy.Logic.Controllers
                         int index = 0;
                         foreach (XmlElement baz in bar)
                         {
-                            temp.activeContexts[index] = (ControlContexts)Enum.Parse(typeof(ControlContexts), baz.InnerText);
+                            temp.disableContexts[index] = (ControlContexts)Enum.Parse(typeof(ControlContexts), baz.InnerText);
                             index++;
                         }
                     }
@@ -108,9 +111,9 @@ namespace Fantasy.Logic.Controllers
         /// <param name="mouseState">The MouseState to be processed.</param>
         public static void ProcessControllers(KeyboardState keyboardSate, MouseState mouseState)
         {
-            List<ActionControl> actives = new List<ActionControl>();
-            actives.AddRange(KeyboardHandler.ProcessKeyboardState(keyboardSate));
-            actives.AddRange(MouseHandler.ProcessMouseState(mouseState));
+            CurrentActionsList actives = new CurrentActionsList();
+            KeyboardHandler.ProcessKeyboardState(keyboardSate, actives);
+            MouseHandler.ProcessMouseState(mouseState, actives);
             Global._currentScene.ProcessInputs(actives);
         }
         /// <summary>
@@ -119,23 +122,25 @@ namespace Fantasy.Logic.Controllers
         /// <param name="keyboardState">The KeyboardState to be processed.</param>
         public static void ProcessKeyboard(KeyboardState keyboardState)
         {
-            List<ActionControl> actives = KeyboardHandler.ProcessKeyboardState(keyboardState);
+            CurrentActionsList actives = new CurrentActionsList();
+            KeyboardHandler.ProcessKeyboardState(keyboardState, actives);
             Global._currentScene.ProcessInputs(actives);
         }
         /// <summary>
-        /// /Process the provided MouseState.
+        /// Processes the provided MouseState.
         /// </summary>
         /// <param name="mouseState">The MouseState to be processed.</param>
         public static void ProcessMouse(MouseState mouseState)
         {
-            List<ActionControl> actives = MouseHandler.ProcessMouseState(mouseState);
+            CurrentActionsList actives = new CurrentActionsList();
+            MouseHandler.ProcessMouseState(mouseState, actives);
             Global._currentScene.ProcessInputs(actives);
         }
         /// <summary>
         /// Gets the corrasponding Action that the provided Key is bound to.
         /// </summary>
-        /// <param name="key">The Key to find the matching Action to.</param>
-        /// <returns></returns>
+        /// <param name="input">The input to find the matching Action to.</param>
+        /// <returns>The Action that corrasponds to the provided input.</returns>
         public static Actions GetAction(Inputs input)
         {
             ActionControl foo = ActionControl.ControlActions.Find(x => x.input.Equals(input));
@@ -152,7 +157,7 @@ namespace Fantasy.Logic.Controllers
         /// Gets the corrasponding Key that the provided Action is bound to.
         /// </summary>
         /// <param name="action">The Action to find the matching Key to.</param>
-        /// <returns></returns>
+        /// <returns>The Input that corrasponds to the provided action.</returns>
         public static Inputs GetKey(Actions action)
         {
             ActionControl foo = ActionControl.ControlActions.Find(x => x.action.Equals(action));

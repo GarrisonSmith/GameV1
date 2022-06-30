@@ -1,0 +1,51 @@
+﻿using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Fantasy.Logic.Engine.utility;
+
+namespace Fantasy.Logic.Engine.graphics.tilemap
+{
+    class AnimatedTile : Tile
+    {
+        /// <summary>
+        /// Manages the tiles animation.
+        /// </summary>
+        public Animation frames;
+
+        /// <summary>
+        /// Constructs a animated tile with the given properties.
+        /// <param name="tileID">is parsed to get the tiles tileSetName and tiles x and y values.</param>
+        /// <param name="column">the column this tile occupies on its TileMapLayer.</param>
+        /// <param name="row">the row this tile occupies on its TileMapLayer.</param>
+        /// <param name="frameAmount">the number of frames this animated tile has.</param>
+        /// <param name="minFrameDuration">the minimum number of milliseconds a frame will be drawn for.</param>
+        /// <param name="maxFrameDuration">the maximum number of milliseconds a frame will be drawn for.</param>
+        /// </summary>
+        public AnimatedTile(string tileID, int column, int row, int frameAmount, int minFrameDuration, int maxFrameDuration, bool hasHitbox)
+        {
+            tileMapCoordinate = new Point(column, row);
+            this.hasHitbox = hasHitbox;
+            if (tileID == "BLACK")
+            {
+                this.tileSetName = tileID;
+                tileSetCoordinate = new Point(0, 0);
+                color = Color.Black;
+            }
+            else
+            {
+                this.tileSetName = tileID.Substring(0, tileID.IndexOf('{'));
+                tileSetCoordinate = Util.PointFromString(tileID);
+                color = Color.White;
+            }
+            frames = new Animation(minFrameDuration, maxFrameDuration, 0, frameAmount - 1, tileSetCoordinate.Y / 64, tileSetCoordinate.X / 64, 64, 64, AnimationState.cycling);
+        }
+        /// <summary>
+        /// Draws the current tile frame with the provided stretch.
+        /// </summary>
+        /// <param name="tileSet">the reference tileSet this tiles graphic references.</param>
+        new public void DrawTile(Texture2D tileSet)
+        {
+            frames.DrawAnimation(new Point(tileMapCoordinate.X * 64, (tileMapCoordinate.Y + 1) * 64), tileSet, color);
+        }
+    }
+}
