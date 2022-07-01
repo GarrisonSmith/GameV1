@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using Fantasy.Logic.Engine.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Fantasy.Logic.Engine.graphics;
 using Fantasy.Logic.Engine.graphics.tilemap;
 using Fantasy.Logic.Engine.entities;
 using Fantasy.Logic.Engine.hitboxes;
@@ -29,7 +28,6 @@ namespace Fantasy.Logic.Engine.screen
             _character = new Character("character_two", "character", Global._content.Load<Texture2D>(@"character-sets\character_two_spritesheet"),
                 1, new Entitybox("character", new Rectangle(0, 0, 64, 128)), new MoveSpeed(96, TimeUnits.seconds), Orientation.down);
             CameraHandler.AssignFollowingTask(_character, false);
-            _tileMap.LoadTileTextures();
             _tileMap.LoadTileHitboxes();
         }
         public void DrawScene()
@@ -56,14 +54,13 @@ namespace Fantasy.Logic.Engine.screen
             Global._spriteBatch.Begin();
 
             //Debug.DebugOverlay(this);
-            MouseHandler.Draw();
+            MouseControlHandler.DrawMouse();
 
             Global._spriteBatch.End();
         }
         public void TransitionScene(string tileMapString)
         {
             _tileMap = new TileMap(tileMapString);
-            _tileMap.LoadTileTextures();
             _tileMap.LoadTileHitboxes();
             _camera.SetBoundingBox(true);
         }

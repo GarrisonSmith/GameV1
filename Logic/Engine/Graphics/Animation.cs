@@ -2,13 +2,14 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.physics;
+using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.graphics
 {
     /// <summary>
     /// Defines and manages a sprites animations.
     /// </summary>
-    class Animation
+    public class Animation
     {
         /// <summary>
         /// Freezes any and all animations on whatever current frame they are drawing.

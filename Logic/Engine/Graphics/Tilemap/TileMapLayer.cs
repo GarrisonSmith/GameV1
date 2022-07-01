@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Xml;
 using Fantasy.Logic.Engine.hitboxes;
-using Fantasy.Logic.Engine.utility;
+using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.screen;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
     /// <summary>
-    /// Desribes a layer of tiles in a given <c>TileMap</c>.
+    /// Desribes a layer of tiles in a given TileMap.
     /// </summary>
     class TileMapLayer
     {
@@ -41,8 +41,8 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <param name="initialize">string to be parsed to describe the Tiles in the TileMapLayer.</param>
         public TileMapLayer(int layer, string initialize)
         {
-            this.map = new List<Tile>();
-            this.layerEventboxes = new List<Eventbox>();
+            map = new List<Tile>();
+            layerEventboxes = new List<Eventbox>();
             this.layer = layer;
 
             XmlDocument animatedList = new XmlDocument();
@@ -107,13 +107,13 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                             }
 
 
-                            if (column > this.width)
+                            if (column > width)
                             {
-                                this.width = column;
+                                width = column;
                             }
-                            if (row > this.height)
+                            if (row > height)
                             {
-                                this.height = row;
+                                height = row;
                             }
                         }
                         column++;
@@ -159,22 +159,6 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             }
         }
         /// <summary>
-        /// Returns the tile with the given index from the TileMaplayer. If the index is invalid returns null.
-        /// </summary>
-        /// <param name="index">The index of the tile to be returned.</param>
-        /// <returns>The tile with the corresponding index. If not tile with that index exists then null.</returns>
-        public Tile GetTile(int index)
-        {
-            if (map.Count - 1 >= index)
-            {
-                return map[index];
-            }
-            else
-            {
-                return null;
-            }
-        }
-        /// <summary>
         /// Returns the tile with the given coordinate from the TileMaplayer. If the coordiante is invalid returns null.
         /// </summary>
         /// <param name="coordinate">The coordinate of the tile to be returned. coordinate.X is the column and coordinate.Y is the row the tile occupies in the TileMapLayer.</param>
@@ -191,14 +175,6 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             return null;
         }
         /// <summary>
-        /// Returns the layer dimensions in as a point containing width and height.
-        /// </summary>
-        /// <returns>Point where the X value is the TileMapLayer width and the Y is the TileMapLayer height.</returns>
-        public Point GetLayerDimensions()
-        {
-            return new Point(this.width, this.height);
-        }
-        /// <summary>
         /// Checks if the provided Hitbox with the provided position collide with any tiles that have hitboxes in this TileMapLayer.
         /// </summary>
         /// <param name="box">The Hitbox to be checked.</param>
@@ -210,7 +186,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             {
                 foreach (Tilebox k in tileHitboxes)
                 {
-                    if (j.tileSetName + j.tileSetCoordinate == k.reference)
+                    if (j.tileSet.Name + j.tileSetCoordinate == k.reference)
                     {
                         if (k.Collision(new Point(j.tileMapCoordinate.X * 64, (j.tileMapCoordinate.Y + 1) * 64), box))
                         {
@@ -237,7 +213,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             {
                 foreach (Tilebox k in tileHitboxes)
                 {
-                    if (j.tileSetName + j.tileSetCoordinate == k.reference)
+                    if (j.tileSet.Name + j.tileSetCoordinate == k.reference)
                     {
                         k.DrawHitbox(new Point(j.tileMapCoordinate.X * 64, (j.tileMapCoordinate.Y + 1) * 64));
                     }
@@ -247,6 +223,126 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             foreach (Eventbox foo in layerEventboxes)
             {
                 foo.DrawHitbox();
+            }
+        }
+        /// <summary>
+        /// Draws all Tiles in this TileMapLayer.
+        /// </summary>
+        public void DrawTileMapLayer()
+        {
+            foreach (Tile i in map)
+            {
+                if (i is AnimatedTile)
+                {
+                    ((AnimatedTile)i).DrawTile();
+                }
+                else
+                {
+                    i.DrawTile();
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all Tiles in the provided row of this TileMapLayer.
+        /// </summary>
+        /// <param name="row">The row of the TileMapLayer to be drawn.</param>
+        public void DrawTileMapLayerRow(int row)
+        {
+            foreach (Tile i in map)
+            {
+                if (i.tileMapCoordinate.X == row)
+                {
+                    if (i is AnimatedTile)
+                    {
+                        ((AnimatedTile)i).DrawTile();
+                    }
+                    else
+                    {
+                        i.DrawTile();
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all Tiles in the provided rows of this TileMapLayer.
+        /// </summary>
+        /// <param name="row">The rows of the TileMapLayer to be drawn.</param>
+        public void DrawTileMapLayerRows(int[] row)
+        {
+            foreach (int r in row)
+            {
+                DrawTileMapLayerRow(r);
+            }
+        }
+        /// <summary>
+        /// Draws all Tiles in the provided row of this TileMapLayer.
+        /// </summary>
+        /// <param name="column">The column of the TileMapLayer to be drawn.</param>
+        public void DrawTileMapLayerColumn(int column)
+        {
+            foreach (Tile i in map)
+            {
+                if (i.tileMapCoordinate.Y == column)
+                {
+                    if (i is AnimatedTile)
+                    {
+                        ((AnimatedTile)i).DrawTile();
+                    }
+                    else
+                    {
+                        i.DrawTile();
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all Tiles in the provided rows of this TileMapLayer.
+        /// </summary>
+        /// <param name="column">The columns of the TileMapLayer to be drawn.</param>
+        public void DrawTileMapLayerColumns(int[] column)
+        {
+            foreach (int c in column)
+            {
+                DrawTileMapLayerColumn(c);
+            }
+        }
+        /// <summary>
+        /// Draws all Tile in the provided drawArea of this TileMapLayer
+        /// </summary>
+        /// <param name="drawArea">The area of the TileMapLayer to be drawn.</param>
+        public void DrawTileMapLayerArea(Rectangle drawArea)
+        {
+            drawArea.Y = -drawArea.Y;
+            foreach (Tile j in map)
+            {
+                Rectangle tileArea = new Rectangle(
+                    j.tileMapCoordinate.X * 64,
+                    -(j.tileMapCoordinate.Y + 1) * 64,
+                    64,
+                    64);
+
+                if (tileArea.Intersects(drawArea))
+                {
+                    if (j is AnimatedTile)
+                    {
+                        ((AnimatedTile)j).DrawTile();
+                    }
+                    else
+                    {
+                        j.DrawTile();
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Draws all Tile in the provided drawAreas of this TileMapLayer
+        /// </summary>
+        /// <param name="drawArea">The areas of the TileMapLayer to be drawn.</param>
+        public void DrawTileMapLayerAreas(Rectangle[] drawArea)
+        {
+            foreach (Rectangle a in drawArea)
+            {
+                DrawTileMapLayerArea(a);
             }
         }
     }

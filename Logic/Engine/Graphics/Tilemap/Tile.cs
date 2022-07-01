@@ -1,24 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Fantasy.Logic.Engine.utility;
+using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
     /// <summary>
     /// Describes A tile in a given TileMapLayer.
     /// </summary>
-    class Tile
+    public class Tile
     {
         /// <summary>
-        /// Name of the tile set this tile describes.
+        /// Reference graphical tile set used by this tile.
         /// </summary>
-        public string tileSetName;
+        public Texture2D tileSet;
         /// <summary>
         /// Top left coordinate of the tile collisionArea this tile describes inside of the given tile set.
         /// </summary>
         public Point tileSetCoordinate;
         /// <summary>
-        /// Point this tile occupies in its TileMapLayer. The X value is the horizontal position and the Y value is the vertical position.
+        /// Point this tile occupies in its TileMapLayer. The X value is the horizontal tile column and the Y value is the vertical tile row.
         /// </summary>
         public Point tileMapCoordinate;
         /// <summary>
@@ -26,14 +26,13 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// </summary>
         public Color color;
         /// <summary>
-        /// The index of the graphic in the TileMap for this tile.
-        /// </summary>
-        public int graphicsIndex;
-        /// <summary>
         /// Determines if this Tile has a corresponding Hitbox or not.
         /// </summary>
         public bool hasHitbox;
 
+        /// <summary>
+        /// Generic inherited constructor.
+        /// </summary>
         public Tile() { }
         /// <summary>
         /// Constructs a tile with the given properties.
@@ -47,23 +46,21 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             this.hasHitbox = hasHitbox;
             if (tileID == "BLACK")
             {
-                this.tileSetName = tileID;
+                ContentHandler.tileTextures.TryGetValue(tileID, out tileSet);
                 tileSetCoordinate = new Point(0, 0);
                 color = Color.Black;
             }
             else
             {
-                
-                this.tileSetName = tileID.Substring(0, tileID.IndexOf('{'));
+                ContentHandler.tileTextures.TryGetValue(tileID.Substring(0, tileID.IndexOf('{')), out tileSet);
                 tileSetCoordinate = Util.PointFromString(tileID);
                 color = Color.White;
             }
         }
         /// <summary>
-        /// Draws the tile with the provided stretch.
+        /// Draws the tile.
         /// </summary>
-        /// <param name="tileSet">the reference tileSet this tiles graphic references.</param>
-        public void DrawTile(Texture2D tileSet)
+        public void DrawTile()
         {
             Global._spriteBatch.Draw(tileSet, new Vector2(tileMapCoordinate.X * 64, -(tileMapCoordinate.Y+1) * 64),
                 new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64),

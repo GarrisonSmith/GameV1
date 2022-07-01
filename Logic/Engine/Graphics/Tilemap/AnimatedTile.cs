@@ -1,7 +1,5 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Fantasy.Logic.Engine.utility;
+﻿using Microsoft.Xna.Framework;
+using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
@@ -27,23 +25,22 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             this.hasHitbox = hasHitbox;
             if (tileID == "BLACK")
             {
-                this.tileSetName = tileID;
+                ContentHandler.tileTextures.TryGetValue(tileID, out tileSet);
                 tileSetCoordinate = new Point(0, 0);
                 color = Color.Black;
             }
             else
             {
-                this.tileSetName = tileID.Substring(0, tileID.IndexOf('{'));
+                ContentHandler.tileTextures.TryGetValue(tileID.Substring(0, tileID.IndexOf('{')), out tileSet);
                 tileSetCoordinate = Util.PointFromString(tileID);
                 color = Color.White;
             }
             frames = new Animation(minFrameDuration, maxFrameDuration, 0, frameAmount - 1, tileSetCoordinate.Y / 64, tileSetCoordinate.X / 64, 64, 64, AnimationState.cycling);
         }
         /// <summary>
-        /// Draws the current tile frame with the provided stretch.
+        /// Draws the animated tile.
         /// </summary>
-        /// <param name="tileSet">the reference tileSet this tiles graphic references.</param>
-        new public void DrawTile(Texture2D tileSet)
+        new public void DrawTile()
         {
             frames.DrawAnimation(new Point(tileMapCoordinate.X * 64, (tileMapCoordinate.Y + 1) * 64), tileSet, color);
         }

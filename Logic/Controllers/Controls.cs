@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml;
 using Microsoft.Xna.Framework.Input;
-using Fantasy.Logic.Engine;
+using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Controllers
 {
@@ -11,7 +11,7 @@ namespace Fantasy.Logic.Controllers
     static class Controls
     {
         /// <summary>
-        /// 
+        /// The current main control context that ActionControls are being applied to.
         /// </summary>
         public static ControlContexts currentContext;
         
@@ -112,8 +112,8 @@ namespace Fantasy.Logic.Controllers
         public static void ProcessControllers(KeyboardState keyboardSate, MouseState mouseState)
         {
             CurrentActionsList actives = new CurrentActionsList();
-            KeyboardHandler.ProcessKeyboardState(keyboardSate, actives);
-            MouseHandler.ProcessMouseState(mouseState, actives);
+            KeyboardControlHandler.ProcessKeyboardState(keyboardSate, actives);
+            MouseControlHandler.ProcessMouseState(mouseState, actives);
             Global._currentScene.ProcessInputs(actives);
         }
         /// <summary>
@@ -123,7 +123,7 @@ namespace Fantasy.Logic.Controllers
         public static void ProcessKeyboard(KeyboardState keyboardState)
         {
             CurrentActionsList actives = new CurrentActionsList();
-            KeyboardHandler.ProcessKeyboardState(keyboardState, actives);
+            KeyboardControlHandler.ProcessKeyboardState(keyboardState, actives);
             Global._currentScene.ProcessInputs(actives);
         }
         /// <summary>
@@ -133,7 +133,7 @@ namespace Fantasy.Logic.Controllers
         public static void ProcessMouse(MouseState mouseState)
         {
             CurrentActionsList actives = new CurrentActionsList();
-            MouseHandler.ProcessMouseState(mouseState, actives);
+            MouseControlHandler.ProcessMouseState(mouseState, actives);
             Global._currentScene.ProcessInputs(actives);
         }
         /// <summary>

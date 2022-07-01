@@ -1,4 +1,5 @@
 ﻿using System;
+using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.physics
 {
@@ -80,15 +81,15 @@ namespace Fantasy.Logic.Engine.physics
 
             if (deltaMilisecond >= 1 && milisecondsPerMove == 1)
             {
-                return (int)Math.Ceiling(deltaMilisecond * pixelsPerMove);
+                RefreshLastMovementTime();
+                return (int)Math.Round(deltaMilisecond * pixelsPerMove);
             }
 
             if (deltaMilisecond >= milisecondsPerMove)
             {
-                lastMovementTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
-                return (int)Math.Ceiling(pixelsPerMove * (deltaMilisecond / milisecondsPerMove));
+                RefreshLastMovementTime();
+                return (int)Math.Round(pixelsPerMove * (deltaMilisecond / milisecondsPerMove));
             }
-
             return 0;
         }
         /// <summary>

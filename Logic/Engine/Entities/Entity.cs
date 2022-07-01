@@ -80,7 +80,7 @@ namespace Fantasy.Logic.Engine.entities
         /// </summary>
         public void UpdateEntity()
         {
-            int movementAmount = speed.MovementAmount();
+            int movementAmount;
             switch (movement)
             {
                 case EntityMovementState.idle:
@@ -88,39 +88,43 @@ namespace Fantasy.Logic.Engine.entities
                     break;
                 case EntityMovementState.movingUp:
                     orientation = Orientation.up;
-                    MoveEntity(Orientation.up, movementAmount);
+                    MoveEntity(Orientation.up, speed.MovementAmount());
                     break;
                 case EntityMovementState.movingDown:
                     orientation = Orientation.down;
-                    MoveEntity(Orientation.down, movementAmount);
+                    MoveEntity(Orientation.down, speed.MovementAmount());
                     break;
                 case EntityMovementState.movingRight:
                     orientation = Orientation.right;
-                    MoveEntity(Orientation.right, movementAmount);
+                    MoveEntity(Orientation.right, speed.MovementAmount());
                     break;
                 case EntityMovementState.movingRightUp:
                     orientation = Orientation.right;
-                    MoveEntity(Orientation.right, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
-                    MoveEntity(Orientation.up, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
+                    movementAmount = (int)Math.Ceiling(speed.MovementAmount() * (1 / Math.Sqrt(2)));
+                    MoveEntity(Orientation.right, movementAmount);
+                    MoveEntity(Orientation.up, movementAmount);
                     break;
                 case EntityMovementState.movingRightDown:
                     orientation = Orientation.right;
-                    MoveEntity(Orientation.right, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
-                    MoveEntity(Orientation.down, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
+                    movementAmount = (int)Math.Ceiling(speed.MovementAmount() * (1 / Math.Sqrt(2)));
+                    MoveEntity(Orientation.right, movementAmount);
+                    MoveEntity(Orientation.down, movementAmount);
                     break;
                 case EntityMovementState.movingLeft:
                     orientation = Orientation.left;
-                    MoveEntity(Orientation.left, movementAmount);
+                    MoveEntity(Orientation.left, speed.MovementAmount());
                     break;
                 case EntityMovementState.movingLeftUp:
                     orientation = Orientation.left;
-                    MoveEntity(Orientation.left, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
-                    MoveEntity(Orientation.up, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
+                    movementAmount = (int)Math.Ceiling(speed.MovementAmount() * (1 / Math.Sqrt(2)));
+                    MoveEntity(Orientation.left, movementAmount);
+                    MoveEntity(Orientation.up, movementAmount);
                     break;
                 case EntityMovementState.movingLeftDown:
                     orientation = Orientation.left;
-                    MoveEntity(Orientation.left, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
-                    MoveEntity(Orientation.down, (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2))));
+                    movementAmount = (int)Math.Ceiling(speed.MovementAmount() * (1 / Math.Sqrt(2)));
+                    MoveEntity(Orientation.left, movementAmount);
+                    MoveEntity(Orientation.down, movementAmount);
                     break;
             }
         }

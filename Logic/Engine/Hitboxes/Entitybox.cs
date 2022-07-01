@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.graphics;
+using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.hitboxes
 {

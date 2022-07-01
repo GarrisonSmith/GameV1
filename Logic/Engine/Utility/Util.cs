@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace Fantasy.Logic.Engine.utility
+namespace Fantasy.Logic.Engine.Utility
 {
     /// <summary>
     /// Static class containg generally useful methods used throughout the project.

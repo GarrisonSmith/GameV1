@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Fantasy.Logic.Engine.screen;
 
-namespace Fantasy.Logic.Engine
+namespace Fantasy.Logic.Engine.Utility
 {
     /// <summary>
     /// Static class containg members used and referenced throughout the project.

@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Fantasy.Logic.Engine.utility;
+using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.physics;
 
 namespace Fantasy.Logic.Engine.screen.camera

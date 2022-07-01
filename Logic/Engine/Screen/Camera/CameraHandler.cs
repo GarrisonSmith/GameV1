@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.entities;
 using Fantasy.Logic.Controllers;
 using Fantasy.Logic.Engine.physics;
-using Fantasy.Logic.Engine.utility;
+using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.screen.camera
 {
@@ -80,52 +80,51 @@ namespace Fantasy.Logic.Engine.screen.camera
 
                 if (mainTask == CameraTasks.free || mainTask == CameraTasks.forcedFree)
                 {
-                    int movementAmount = speed.MovementAmount();
                     if (up && !down)
                     {
                         if (right && !left)
                         {
-                            movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
+                            int movementAmount = (int)Math.Ceiling(speed.MovementAmount() * (1 / Math.Sqrt(2)));
                             MoveCamera(Orientation.up, movementAmount);
                             MoveCamera(Orientation.right, movementAmount);
                         }
                         else if (left && !right)
                         {
-                            movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
+                            int movementAmount = (int)Math.Ceiling(speed.MovementAmount() * (1 / Math.Sqrt(2)));
                             MoveCamera(Orientation.up, movementAmount);
                             MoveCamera(Orientation.left, movementAmount);
                         }
                         else
                         {
-                            MoveCamera(Orientation.up, movementAmount);
+                            MoveCamera(Orientation.up, speed.MovementAmount());
                         }
                     }
                     else if (down && !up)
                     {
                         if (right && !left)
                         {
-                            movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
+                            int movementAmount = (int)Math.Ceiling(speed.MovementAmount() * (1 / Math.Sqrt(2)));
                             MoveCamera(Orientation.down, movementAmount);
                             MoveCamera(Orientation.right, movementAmount);
                         }
                         else if (left && !right)
                         {
-                            movementAmount = (int)Math.Ceiling(movementAmount * (1 / Math.Sqrt(2)));
+                            int movementAmount = (int)Math.Ceiling(speed.MovementAmount() * (1 / Math.Sqrt(2)));
                             MoveCamera(Orientation.down, movementAmount);
                             MoveCamera(Orientation.left, movementAmount);
                         }
                         else
                         {
-                            MoveCamera(Orientation.down, movementAmount);
+                            MoveCamera(Orientation.down, speed.MovementAmount());
                         }
                     }
                     else if (right && !left)
                     {
-                        MoveCamera(Orientation.right, movementAmount);
+                        MoveCamera(Orientation.right, speed.MovementAmount());
                     }
                     else if (left && !right)
                     {
-                        MoveCamera(Orientation.left, movementAmount);
+                        MoveCamera(Orientation.left, speed.MovementAmount());
                     }
                     else
                     {
