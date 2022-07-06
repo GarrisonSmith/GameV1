@@ -83,5 +83,48 @@ namespace Fantasy.Logic.Engine.Utility
         {
             return Math.Sqrt(Math.Pow(foo.X - bar.X, 2) + Math.Pow(foo.Y - bar.Y, 2));
         }
+        /// <summary>
+        /// Creates and returns a array of points describing the perimeter of the provided rectangle.
+        /// </summary>
+        /// <param name="foo">The rectangle to referenced.</param>
+        /// <returns>Point array containing the points on the provided rectangles perimeter.</returns>
+        public static Point[] RectanglePerimeterPoints(Rectangle foo)
+        {
+            Point[] arr = new Point[foo.Width * 2 + foo.Height * 2];
+            int index = 0;
+
+            for (int i = foo.X; i < foo.X + foo.Width; i++)
+            {
+                arr[index] = new Point(i, foo.Y);
+                index++;
+            }
+            for (int i = foo.X; i < foo.X + foo.Width; i++)
+            {
+                arr[index] = new Point(i, foo.Y - foo.Height);
+                index++;
+            }
+            for (int i = foo.Y; i < foo.Y - foo.Height; i--)
+            {
+                arr[index] = new Point(foo.X, i);
+                index++;
+            }
+            for (int i = foo.Y; i < foo.Y - foo.Height; i--)
+            {
+                arr[index] = new Point(foo.X + foo.Width, i);
+                index++;
+            }
+
+            return arr;
+        }
+        /// <summary>
+        /// Determines if two rectangles intersect one another.
+        /// </summary>
+        /// <param name="foo">The first rectangle to be referenced.</param>
+        /// <param name="bar">The second rectangle to be referenced.</param>
+        /// <returns>True if the two rectangles intersect anywhere, False if not.</returns>
+        public static bool RectanglesIntersect(Rectangle foo, Rectangle bar)
+        {
+            return !(foo.X + foo.Width < bar.X || bar.X + bar.Width < foo.X || foo.Y - foo.Height > bar.Y || bar.Y - bar.Height > foo.Y);
+        }
     }
 }

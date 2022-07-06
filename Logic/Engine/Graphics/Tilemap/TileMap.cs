@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
-using Fantasy.Logic.Engine.hitboxes;
+using Fantasy.Logic.Engine.Hitboxes;
 using System.Xml;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
@@ -10,7 +10,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
     /// <summary>
     /// Contains a tile maps from a given string description. Tiles are 64 by 64 pixels large.
     /// </summary>
-    class TileMap
+    public class TileMap
     {
         /// <summary>
         /// List containing the TileMapLayers of this TileMap.

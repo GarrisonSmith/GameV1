@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.graphics;
-using Fantasy.Logic.Engine.hitboxes;
-using Fantasy.Logic.Engine.physics;
+using Fantasy.Logic.Engine.Hitboxes;
+using Fantasy.Logic.Engine.Physics;
 
 namespace Fantasy.Logic.Engine.entities
 {
-    class Character : Entity
+    public class Character : Entity
     {
         public Animation frames;
 

@@ -1,4 +1,4 @@
-﻿namespace Fantasy.Logic.Engine.physics
+﻿namespace Fantasy.Logic.Engine.Physics
 {
     /// <summary>
     /// Describes different orientations used throughout the game.

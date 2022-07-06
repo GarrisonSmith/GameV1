@@ -3,12 +3,12 @@ using System.Xml;
 using Fantasy.Logic.Engine.Utility;
 
 
-namespace Fantasy.Logic.Engine.screen
+namespace Fantasy.Logic.Engine.Screen
 {
     /// <summary>
     /// Describes a scene event to be processed by a Scene.
     /// </summary>
-    class SceneEvent
+    public class SceneEvent
     {
         /// <summary>
         /// Determines if this SceneEvent describes a scene transition. 

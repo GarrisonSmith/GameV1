@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
+using Fantasy.Logic.Engine.Hitboxes;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
@@ -28,7 +29,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <summary>
         /// Determines if this Tile has a corresponding Hitbox or not.
         /// </summary>
-        public bool hasHitbox;
+        public Tilebox hitbox;
 
         /// <summary>
         /// Generic inherited constructor.

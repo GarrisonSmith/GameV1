@@ -4,15 +4,15 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.graphics.tilemap;
 using Fantasy.Logic.Engine.entities;
-using Fantasy.Logic.Engine.hitboxes;
+using Fantasy.Logic.Engine.Hitboxes;
 using Fantasy.Logic.Engine.graphics.particles;
 using Fantasy.Logic.Controllers;
-using Fantasy.Logic.Engine.screen.camera;
-using Fantasy.Logic.Engine.physics;
+using Fantasy.Logic.Engine.Screen.View;
+using Fantasy.Logic.Engine.Physics;
 
-namespace Fantasy.Logic.Engine.screen
+namespace Fantasy.Logic.Engine.Screen
 {
-    class Scene
+    public class Scene
     {
         public Camera _camera;
         public TileMap _tileMap;

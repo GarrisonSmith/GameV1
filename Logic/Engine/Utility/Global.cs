@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using Fantasy.Logic.Engine.screen;
+using Fantasy.Logic.Engine.Screen;
 
 namespace Fantasy.Logic.Engine.Utility
 {

@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Fantasy.Logic.Engine.hitboxes;
-using Fantasy.Logic.Engine.physics;
+using Fantasy.Logic.Engine.Hitboxes;
+using Fantasy.Logic.Engine.Physics;
 using Fantasy.Logic.Controllers;
 using System.Collections.Generic;
 
@@ -11,7 +11,7 @@ namespace Fantasy.Logic.Engine.entities
     /// <summary>
     /// Describes a basic entity, inherited by more complex entity types.
     /// </summary>
-    class Entity
+    public abstract class Entity
     {
         /// <summary>
         /// String used to identify this entity.

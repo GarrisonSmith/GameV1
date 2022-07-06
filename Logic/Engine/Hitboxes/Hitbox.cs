@@ -1,38 +1,39 @@
 ﻿using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.graphics;
 
-namespace Fantasy.Logic.Engine.hitboxes
+namespace Fantasy.Logic.Engine.Hitboxes
 {
     /// <summary>
     /// Generic Hitbox inherited by other collision boxes.
     /// </summary>
-    class Hitbox
+    public abstract class Hitbox
     {
         /// <summary>
-        /// Array of Rectangles that describe the boxes area.
+        /// Set of rectangles that describes the boxes area.
         /// </summary>
-        public Rectangle[] collisionArea;
+        public RectangleSet geometry;
 
         /// <summary>
         /// Generic inherited constructor. 
         /// </summary>
         public Hitbox() { }
+
+        /// <summary>
+        /// Determines if this Tilebox has collided with the provided Hitbox.
+        /// </summary>
+        /// <param name="foo">The Hitbox to be investigated.</param>
+        /// <returns>True if this Tilebox collides with the provided Hitbox, False if not.</returns>
+        public bool Collision(Hitbox foo)
+        {
+            return geometry.Intersection(foo.geometry);
+        }
         /// <summary>
         /// Draws all of the rectangles inside of this boxes collisionArea.
-        /// Used for debugging.
         /// </summary>
-        public void DrawHitbox()
+        /// <param name="drawSegments">True results in overlapping perimeters being drawn, False results in only unique perimeter values being drawn.</param>
+        public void DrawHitbox(bool drawSegments = false)
         {
-            foreach (Rectangle foo in collisionArea)
-            {
-                Rectangle bar = new Rectangle(
-                 foo.X,
-                 -foo.Y,
-                 foo.Width,
-                 foo.Height);
-
-                Debug.DrawRectangle(bar);
-            }
+            geometry.Draw(drawSegments);
         }
     }
 }

@@ -4,7 +4,7 @@ using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.graphics.particles
 {
-    class Particle
+    public class Particle
     {
         public static Texture2D white_particle = Global._content.Load<Texture2D>("tile-sets/particle");
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using Fantasy.Logic.Engine.Utility;
 
-namespace Fantasy.Logic.Engine.physics
+namespace Fantasy.Logic.Engine.Physics
 {
     /// <summary>
     /// Describes the speed something moves.

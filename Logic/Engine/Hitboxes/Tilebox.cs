@@ -1,100 +1,45 @@
 ﻿using Microsoft.Xna.Framework;
-using Fantasy.Logic.Engine.graphics;
 
-namespace Fantasy.Logic.Engine.hitboxes
+namespace Fantasy.Logic.Engine.Hitboxes
 {
     /// <summary>
-    /// Hitbox used by Tiles to describe their collision areas.
+    /// Hitbox used by Tiles to describe their collision areas and what they collide with.
     /// </summary>
-    class Tilebox : Hitbox
+    public class Tilebox : Hitbox
     {
         /// <summary>
-        /// The name of the tile this Tilebox refers to.
+        /// Determines if this TileBox has collision with Entities.
         /// </summary>
-        public string reference;
+        public bool entityCollision;
 
         /// <summary>
-        /// Creates a Tilebox with the provided reference.
+        /// Creates a Tilebox with the provided parameters.
         /// </summary>
-        /// <param name="reference">The name of the tile this Tilebox will refer to.</param>
-        public Tilebox(string reference)
+        /// <param name="position">Describes the top right position of the rectangles in boundings before any offset.</param>
+        /// <param name="boundings">The rectangles describing the Tileboxes collision area. Each rectangles X and Y values are used as offsets on positions corrasponding values.</param>
+        /// <param name="entityCollision">True will result in this Tilebox having collision with Entities, False will not.</param>
+        public Tilebox(Point position, Rectangle[] boundings, bool entityCollision = true)
         {
-            this.reference = reference;
+            geometry = new RectangleSet(position, boundings);
+            this.entityCollision = entityCollision;
         }
+        
         /// <summary>
-        /// Creates a Tilebox with the provided reference and collisionArea.
+        /// Determines if this Tilebox has collided with the provided Hitbox.
         /// </summary>
-        /// <param name="reference">The name of the tile this Tilebox will refer to.</param>
-        /// <param name="collisionArea">Array of Rectangles that will describe the Tileboxes area.</param>
-        public Tilebox(string reference, Rectangle[] collisionArea) : this(reference)
+        /// <param name="foo">The Hitbox to be investigated.</param>
+        /// <returns>True if this Tilebox collides with the provided Hitbox, False if not.</returns>
+        new public bool Collision(Hitbox foo)
         {
-            this.collisionArea = collisionArea;
-        }
-        /// <summary>
-        /// Checks if the provided rectangle intersects with this boxes area.
-        /// </summary>
-        /// <param name="inRef">Point used as offset on the rectangle foos position.</param>
-        /// <param name="thisRef">Point used as offset on the rectangles in collisionAreas position.</param>
-        /// <param name="foo">The rectangle to be checked.</param>
-        /// <returns>True if the rectangle foo intersects any rectangle in collisionArea, False if not.</returns>
-        public bool Collision(Point inRef, Point thisRef, Rectangle foo)
-        {
-            Rectangle doo = new Rectangle(
-                inRef.X + foo.X,
-                inRef.Y - foo.Y - foo.Height,
-                foo.Width,
-                foo.Height);
-
-            foreach (Rectangle bar in collisionArea)
+            if (foo is Entitybox entitybox)
             {
-                Rectangle baz = new Rectangle(
-                thisRef.X + bar.X,
-                thisRef.Y - bar.Y - bar.Height,
-                bar.Width,
-                bar.Height);
-                if (baz.Intersects(doo))
+                if (!entityCollision || !entitybox.tileCollision)
                 {
-                    return true;
+                    return false;
                 }
             }
-            return false;
-        }
-        /// <summary>
-        /// Checks if the provided entityBox is colliding with this boxes area.
-        /// </summary>
-        /// <param name="thisRef">Point used as offset on the rectangles in collisionAreas position.</param>
-        /// <param name="entityBox">The entityBox to be checked.</param>
-        /// <returns>True if entityBoxs collisionArea intersects this Tileboxes collisionArea, False if not.</returns>
-        public bool Collision(Point thisRef, Entitybox entityBox)
-        {
-            Rectangle[] foofoo = entityBox.collisionArea;
             
-            foreach (Rectangle foo in foofoo)
-            {
-                if (Collision(entityBox.characterArea.Location, thisRef, foo))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        /// <summary>
-        /// Draws all of the rectangles inside of this boxes collisionArea with the offset from the point thisRef.
-        /// Used for debugging.
-        /// </summary>
-        /// <param name="thisRef">Point used as offset on the rectangles in collisionAreas position.</param>
-        public void DrawHitbox(Point thisRef)
-        {
-            foreach (Rectangle foo in collisionArea)
-            {
-                Rectangle bar = new Rectangle(
-                 thisRef.X + foo.X,
-                 thisRef.Y - foo.Y,
-                 foo.Width,
-                 foo.Height);
-
-                Debug.DrawRectangle(bar);
-            }
+            return geometry.Intersection(foo.geometry);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Fantasy.Logic.Controllers
     /// <summary>
     /// Data structure used for stroing the currently detected ActionControls to be processed in thier proper contexts.
     /// </summary>
-    class CurrentActionsList
+    public class CurrentActionsList
     {
         /// <summary>
         /// List containing the current camera ActionControls.

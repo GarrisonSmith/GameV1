@@ -1,106 +1,54 @@
 ﻿using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.graphics;
-using Fantasy.Logic.Engine.screen;
+using Fantasy.Logic.Engine.Screen;
 using Fantasy.Logic.Engine.Utility;
 
-namespace Fantasy.Logic.Engine.hitboxes
+namespace Fantasy.Logic.Engine.Hitboxes
 {
     /// <summary>
     /// Hitbox used by TileMapLayers to describe the collision area of collision triggered SceneEvents.
     /// </summary>
-    class Eventbox : Hitbox
+    public class Eventbox : Hitbox
     {
         /// <summary>
         /// The sceneEvent for this Eventbox.
         /// </summary>
         public SceneEvent sceneEvent;
         /// <summary>
-        /// The location this Eventbox occupies on its TileMapLayer. Offsets the rectangles in collisionArea.
+        /// Determines if this Eventbox has collision with Entities.
         /// </summary>
-        public Point location;
+        public bool entityCollision;
 
         /// <summary>
-        /// Creates a Eventbox with the provided location.
+        /// Creates a Eventbox with the provided parameters.
         /// </summary>
-        /// <param name="location">The location this Eventbox will occupy on its TileMapLayer.</param>
-        public Eventbox(Point location)
-        {
-            this.location = location;
-        }
-        /// <summary>
-        /// Creates a Eventbox with the provided location, sceneEvent, and collisionArea.
-        /// </summary>
-        /// <param name="location">The location this Eventbox will occupy on its TileMapLayer.</param>
-        /// <param name="sceneEvent">The sceneEvent this Eventbox will contain.</param>
-        /// <param name="collisionArea">Array of Rectangles that will describe the Tileboxes area.</param>
-        public Eventbox(Point location, SceneEvent sceneEvent, Rectangle[] collisionArea) : this(location)
+        /// <param name="sceneEvent">The SceneEvent that will trigger upon this Eventbox detecting a collision.</param>
+        /// <param name="position">Describes the top right position of the rectangles in boundings before any offset.</param>
+        /// <param name="boundings">The rectangles describing the Eventbox collision area. Each rectangles X and Y values are used as offsets on positions corrasponding values.</param>
+        /// <param name="entityCollision">True will result in this Eventbox having collision with Entities, False will not.</param>
+        public Eventbox(SceneEvent sceneEvent, Point position, Rectangle[] boundings, bool entityCollision = true)
         {
             this.sceneEvent = sceneEvent;
-            this.collisionArea = collisionArea;
+            geometry = new RectangleSet(position, boundings);
+            this.entityCollision = entityCollision;
         }
-        /// <summary>
-        /// Checks if the provided rectangle intersects with this boxes area.
-        /// </summary>
-        /// <param name="inRef">Point used as offset on the rectangle foos position.</param>
-        /// <param name="foo">The rectangle to be checked.</param>
-        /// <returns>True if the rectangle foo intersects any rectangle in collisionArea, False if not.</returns>
-        public bool Collision(Point inRef, Rectangle foo)
-        {
-            Rectangle temp = new Rectangle(
-                inRef.X + foo.X,
-                inRef.Y - foo.Y - foo.Height,
-                foo.Width,
-                foo.Height);
 
-            foreach (Rectangle bar in collisionArea)
+        /// <summary>
+        /// Determines if this Tilebox has collided with the provided Hitbox.
+        /// </summary>
+        /// <param name="foo">The Hitbox to be investigated.</param>
+        /// <returns>True if this Tilebox collides with the provided Hitbox, False if not.</returns>
+        new public bool Collision(Hitbox foo)
+        {
+            if (foo is Entitybox entitybox)
             {
-                Rectangle baz = new Rectangle(
-                location.X + bar.X,
-                location.Y - bar.Y - bar.Height,
-                bar.Width,
-                bar.Height);
-                if (baz.Intersects(temp))
+                if (!entityCollision || !entitybox.eventCollision)
                 {
-                    Global._currentScene.DoEvent(sceneEvent);
-                    return true;
+                    return false;
                 }
             }
-            return false;
-        }
-        /// <summary>
-        /// Checks if the provided entityBox is colliding with this boxes area.
-        /// </summary>
-        /// <param name="entityBox">The entityBox to be checked.</param>
-        /// <returns>True if entityBoxs collisionArea intersects this Eventboxes collisionArea, False if not.</returns>
-        public bool Collision(Entitybox entityBox)
-        {
-            Rectangle[] foofoo = entityBox.collisionArea;
 
-            foreach (Rectangle foo in foofoo)
-            {
-                if (Collision(entityBox.characterArea.Location, foo))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        /// <summary>
-        /// Draws all of the rectangles inside of this boxes collisionArea.
-        /// Used for debugging.
-        /// </summary>
-        new public void DrawHitbox()
-        {
-            foreach (Rectangle foo in collisionArea)
-            {
-                Rectangle bar = new Rectangle(
-                 location.X + foo.X,
-                 location.Y - foo.Y,
-                 foo.Width,
-                 foo.Height);
-
-                Debug.DrawRectangle(bar);
-            }
+            return geometry.Intersection(foo.geometry);
         }
     }
 }

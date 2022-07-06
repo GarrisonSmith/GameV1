@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Xml;
-using Fantasy.Logic.Engine.hitboxes;
+using Fantasy.Logic.Engine.Hitboxes;
 using Fantasy.Logic.Engine.Utility;
-using Fantasy.Logic.Engine.screen;
+using Fantasy.Logic.Engine.Screen;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
@@ -85,14 +85,27 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                                 }
                             }
 
-                            bool hitbox = false;
+
                             foreach (XmlElement foo in hitboxList.GetElementsByTagName("tileSet"))
                             {
                                 foreach (XmlElement bar in foo)
                                 {
                                     if (j == foo.GetAttribute("name") + bar.GetAttribute("name"))
                                     {
-                                        hitbox = true;
+                                        Tilebox temp = new Tilebox(foo.GetAttribute("name") + bar.GetAttribute("name"));
+                                        if (foo.ChildNodes[0].InnerText == "FULL")
+                                        {
+                                            temp.collisionArea = new Rectangle[] { new Rectangle(0, 0, 64, 64) };
+                                        }
+                                        else
+                                        {
+                                            temp.collisionArea = new Rectangle[foo.ChildNodes.Count - 1];
+                                            for (int index = 1; index < bar.ChildNodes.Count; index++)
+                                            {
+                                                Rectangle hitArea = Util.RectangleFromString(bar.ChildNodes[index].InnerText);
+                                                temp.collisionArea[index - 1] = hitArea;
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -312,16 +325,9 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <param name="drawArea">The area of the TileMapLayer to be drawn.</param>
         public void DrawTileMapLayerArea(Rectangle drawArea)
         {
-            drawArea.Y = -drawArea.Y;
             foreach (Tile j in map)
             {
-                Rectangle tileArea = new Rectangle(
-                    j.tileMapCoordinate.X * 64,
-                    -(j.tileMapCoordinate.Y + 1) * 64,
-                    64,
-                    64);
-
-                if (tileArea.Intersects(drawArea))
+                if (Util.RectanglesIntersect(drawArea, j.tileArea))
                 {
                     if (j is AnimatedTile)
                     {

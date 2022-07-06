@@ -5,7 +5,7 @@ namespace Fantasy.Logic.Controllers
     /// <summary>
     /// Object used to describe what keys cause what actions.
     /// </summary>
-    class ActionControl
+    public class ActionControl
     {
         /// <summary>
         /// Static list containing all instances of this object.
