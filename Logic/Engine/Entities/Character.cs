@@ -21,7 +21,6 @@ namespace Fantasy.Logic.Engine.entities
             this.speed = speed;
             this.orientation = orientation;
             this.hitbox = hitbox;
-            this.hitbox.collisionArea = new Rectangle[] { new Rectangle(8, 116, 48, 16) };
             frames = new Animation(400, 400, 0, 3, 0, 0, 64, 128, AnimationState.idle);
         }
 
@@ -38,7 +37,7 @@ namespace Fantasy.Logic.Engine.entities
                 frames.animationState = AnimationState.finishing;
             }
 
-            frames.DrawAnimation(hitbox.characterArea.Location, spriteSheet, Color.White);
+            frames.DrawAnimation(hitbox.GetPosition(), spriteSheet, Color.White);
         }
     }
 }

@@ -69,7 +69,7 @@ namespace Fantasy.Logic.Engine.Screen
             System.Diagnostics.Debug.WriteLine("Event Recieved" + Global._gameTime.TotalGameTime.TotalMilliseconds);
             if (sceneEvent.transitionScene)
             {
-                TransitionScene(sceneEvent.transitionTileMapName);
+                TransitionScene(sceneEvent.transitionTileMap);
                 _character.SetCharacterPosition(sceneEvent.transitionStartLocation);
             }
         }

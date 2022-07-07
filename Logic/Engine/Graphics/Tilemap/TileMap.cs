@@ -16,10 +16,6 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// List containing the TileMapLayers of this TileMap.
         /// </summary>
         public List<TileMapLayer> map;
-        /// <summary>
-        /// List containing the Hitboxes of the tiles in this TileMap.
-        /// </summary>
-        public List<Tilebox> tileHitboxes;
 
         /// <summary>
         /// Constructs the TileMap from the provided tileMap files name.
@@ -29,7 +25,6 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             string initialize = System.IO.File.ReadAllText(@"Content\tile-maps\" + tileMapName + ".txt");
             map = new List<TileMapLayer>();
-            tileHitboxes = new List<Tilebox>();
             string[] layerTemp = initialize.Split('<');
             foreach (string i in layerTemp)
             {
@@ -79,15 +74,15 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                                         Tilebox temp = new Tilebox(foo.GetAttribute("name") + bar.GetAttribute("name"));
                                         if (foo.ChildNodes[0].InnerText == "FULL")
                                         {
-                                            temp.collisionArea = new Rectangle[] { new Rectangle(0, 0, 64, 64) };
+                                            temp.geometry = new Rectangle[] { new Rectangle(0, 0, 64, 64) };
                                         }
                                         else
                                         {
-                                            temp.collisionArea = new Rectangle[foo.ChildNodes.Count - 1];
+                                            temp.geometry = new Rectangle[foo.ChildNodes.Count - 1];
                                             for (int index = 1; index < bar.ChildNodes.Count; index++)
                                             {
                                                 Rectangle hitArea = Util.RectangleFromString(bar.ChildNodes[index].InnerText);
-                                                temp.collisionArea[index - 1] = hitArea;
+                                                temp.geometry[index - 1] = hitArea;
                                             }
                                         }
                                         tileHitboxes.Add(temp);

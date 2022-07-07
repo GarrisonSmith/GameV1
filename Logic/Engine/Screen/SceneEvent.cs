@@ -17,7 +17,7 @@ namespace Fantasy.Logic.Engine.Screen
         /// <summary>
         /// The name of the TileMap the scene will transition to if this SceneEvent causes a scene transition.
         /// </summary>
-        public string transitionTileMapName;
+        public string transitionTileMap;
         /// <summary>
         /// The starting location of the character if this SceneEvent causes a scene transition.
         /// </summary>
@@ -44,12 +44,15 @@ namespace Fantasy.Logic.Engine.Screen
         public void CreateSceneTransition(XmlElement sceneTransitionInfo)
         {
             transitionScene = true;
-            transitionTileMapName = sceneTransitionInfo.GetAttribute("name");
             foreach (XmlElement foo in sceneTransitionInfo)
             {
-                if (foo.Name == "startLocation")
+                if (foo.Name.Equals("tansitionStartLocation"))
                 {
                     transitionStartLocation = Util.PointFromString(foo.InnerText);
+                }
+                else if (foo.Name.Equals("transitionTileMap"))
+                {
+                    transitionTileMap = foo.InnerText;
                 }
             }
         }

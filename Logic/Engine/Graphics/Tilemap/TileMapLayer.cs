@@ -5,13 +5,14 @@ using System.Xml;
 using Fantasy.Logic.Engine.Hitboxes;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Screen;
+using Fantasy.Logic.XmlDigest;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
     /// <summary>
     /// Desribes a layer of tiles in a given TileMap.
     /// </summary>
-    class TileMapLayer
+    public class TileMapLayer
     {
         /// <summary>
         /// List containing this layers tiles.
@@ -95,15 +96,15 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                                         Tilebox temp = new Tilebox(foo.GetAttribute("name") + bar.GetAttribute("name"));
                                         if (foo.ChildNodes[0].InnerText == "FULL")
                                         {
-                                            temp.collisionArea = new Rectangle[] { new Rectangle(0, 0, 64, 64) };
+                                            temp.geometry = new Rectangle[] { new Rectangle(0, 0, 64, 64) };
                                         }
                                         else
                                         {
-                                            temp.collisionArea = new Rectangle[foo.ChildNodes.Count - 1];
+                                            temp.geometry = new Rectangle[foo.ChildNodes.Count - 1];
                                             for (int index = 1; index < bar.ChildNodes.Count; index++)
                                             {
                                                 Rectangle hitArea = Util.RectangleFromString(bar.ChildNodes[index].InnerText);
-                                                temp.collisionArea[index - 1] = hitArea;
+                                                temp.geometry[index - 1] = hitArea;
                                             }
                                         }
                                     }
@@ -141,34 +142,9 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// </summary>
         public void LoadEventboxes(XmlElement layerTag)
         {
-            foreach (XmlElement foo in layerTag.GetElementsByTagName("eventBox"))
+            foreach (XmlElement eventboxTag in layerTag.GetElementsByTagName("eventBox"))
             {
-                Point tempPoint = Util.PointFromString(foo.GetAttribute("name"));
-                Eventbox temp = new Eventbox(new Point(tempPoint.X * 64, tempPoint.Y * 64));
-
-                foreach (XmlElement bar in foo)
-                {
-
-                    if (foo.ChildNodes[0].InnerText == "FULL")
-                    {
-                        temp.collisionArea = new Rectangle[] { new Rectangle(0, 0, 64, 64) };
-                        break;
-                    }
-                    else
-                    {
-                        temp.collisionArea = new Rectangle[foo.ChildNodes.Count - 1];
-                        for (int index = 1; index < bar.ChildNodes.Count; index++)
-                        {
-                            Rectangle hitArea = Util.RectangleFromString(bar.ChildNodes[index].InnerText);
-                            temp.collisionArea[index - 1] = hitArea;
-                        }
-                        break;
-                    }
-                }
-
-                temp.sceneEvent = new SceneEvent(foo);
-                layerEventboxes.Add(temp);
-
+                layerEventboxes.Add(TileMapXmlDigest.GetEventbox(eventboxTag));
             }
         }
         /// <summary>
@@ -190,28 +166,18 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <summary>
         /// Checks if the provided Hitbox with the provided position collide with any tiles that have hitboxes in this TileMapLayer.
         /// </summary>
-        /// <param name="box">The Hitbox to be checked.</param>
-        /// <param name="tileHitboxes">The reference Hitboxes for the tiles in this TileMapLayer.</param>
+        /// <param name="entityBox">The Hitbox to be checked.</param>
         /// <returns>True if a collision exists between the TileMapLayer and provided Hitbox and position, False if not.</returns>
-        public bool CheckLayerCollision(Entitybox box, List<Tilebox> tileHitboxes)
+        public bool CheckLayerCollision(Entitybox entityBox)
         {
             foreach (Tile j in map)
             {
-                foreach (Tilebox k in tileHitboxes)
-                {
-                    if (j.tileSet.Name + j.tileSetCoordinate == k.reference)
-                    {
-                        if (k.Collision(new Point(j.tileMapCoordinate.X * 64, (j.tileMapCoordinate.Y + 1) * 64), box))
-                        {
-                            return true;
-                        }
-                    }
-                }
+                j.hitbox.Collision(entityBox);
             }
 
             foreach (Eventbox foo in layerEventboxes)
             {
-                foo.Collision(box);
+                foo.Collision(entityBox);
             }
 
             return false;
@@ -219,18 +185,11 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <summary>
         /// Draws all the Hitboxes in the TileMapLayer.
         /// </summary>
-        /// <param name="tileHitboxes">The reference Hitboxes for the tiles in this TileMapLayer.</param>
-        public void DrawLayerHitboxes(List<Tilebox> tileHitboxes)
+        public void DrawLayerHitboxes()
         {
             foreach (Tile j in map)
             {
-                foreach (Tilebox k in tileHitboxes)
-                {
-                    if (j.tileSet.Name + j.tileSetCoordinate == k.reference)
-                    {
-                        k.DrawHitbox(new Point(j.tileMapCoordinate.X * 64, (j.tileMapCoordinate.Y + 1) * 64));
-                    }
-                }
+                j.hitbox.DrawHitbox();
             }
 
             foreach (Eventbox foo in layerEventboxes)
@@ -327,7 +286,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             foreach (Tile j in map)
             {
-                if (Util.RectanglesIntersect(drawArea, j.tileArea))
+                if (Util.RectanglesIntersect(drawArea, j.GetTileArea()))
                 {
                     if (j is AnimatedTile)
                     {

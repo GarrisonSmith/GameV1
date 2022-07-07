@@ -25,13 +25,14 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// Creates a Entitybox with the provided parameters.
         /// </summary>
         /// <param name="position">Describes the top right position of the rectangles in boundings before any offset.</param>
+        /// <param name="visualArea">Describes the the visual area of the Tilebox. The rectangles X and Y values are used as offsets on positions corrasponding values.</param> 
         /// <param name="boundings">The rectangles describing the Entitybox collision area. Each rectangles X and Y values are used as offsets on positions corrasponding values.</param>
         /// <param name="eventCollision">True will result in this Entitybox having collision with Events, False will not.</param>
         /// <param name="entityCollision">True will result in this Entitybox having collision with Entities, False will not.</param>
         /// <param name="tileCollision">True will result in this Entitybox having collision with Tiles, False will not.</param>
-        public Entitybox(Point position, Rectangle[] boundings, bool eventCollision = true, bool entityCollision = true, bool tileCollision = true)
+        public Entitybox(Point position, Rectangle visualArea, Rectangle[] boundings, bool eventCollision = true, bool entityCollision = true, bool tileCollision = true)
         {
-            geometry = new RectangleSet(position, boundings);
+            geometry = new HitboxGeometry(position, visualArea, boundings);
             this.eventCollision = eventCollision;
             this.entityCollision = entityCollision;
             this.tileCollision = tileCollision;

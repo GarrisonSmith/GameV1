@@ -41,10 +41,9 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <param name="column">the column this tile occupies on its TileMapLayer.</param>
         /// <param name="row">the row this tile occupies on its TileMapLayer.</param>
         /// </summary>
-        public Tile(string tileID, int column, int row, bool hasHitbox)
+        public Tile(string tileID, int column, int row, Tilebox hitbox)
         {
             tileMapCoordinate = new Point(column, row);
-            this.hasHitbox = hasHitbox;
             if (tileID == "BLACK")
             {
                 ContentHandler.tileTextures.TryGetValue(tileID, out tileSet);
@@ -57,13 +56,23 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 tileSetCoordinate = Util.PointFromString(tileID);
                 color = Color.White;
             }
+            this.hitbox = hitbox;
+        }
+
+        /// <summary>
+        /// Gets the area this Tile occupies.
+        /// </summary>
+        /// <returns>A rectangle describing the area this Tile occupies on its TileMapLayer.</returns>
+        public Rectangle GetTileArea()
+        {
+            return hitbox.GetVisualArea();
         }
         /// <summary>
         /// Draws the tile.
         /// </summary>
         public void DrawTile()
         {
-            Global._spriteBatch.Draw(tileSet, new Vector2(tileMapCoordinate.X * 64, -(tileMapCoordinate.Y+1) * 64),
+            Global._spriteBatch.Draw(tileSet, hitbox.GetVectorPosition(),
                 new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64),
                 color, 0f, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), 0);
         }

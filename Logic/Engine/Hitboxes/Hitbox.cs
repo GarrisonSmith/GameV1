@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Fantasy.Logic.Engine.graphics;
 
 namespace Fantasy.Logic.Engine.Hitboxes
 {
@@ -11,13 +10,45 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// <summary>
         /// Set of rectangles that describes the boxes area.
         /// </summary>
-        public RectangleSet geometry;
+        public HitboxGeometry geometry;
 
         /// <summary>
         /// Generic inherited constructor. 
         /// </summary>
         public Hitbox() { }
 
+        /// <summary>
+        /// Gets this Hitboxes position as a point.
+        /// </summary>
+        /// <returns>Point representing this Hitboxes position.</returns>
+        public Point GetPointPosition()
+        {
+            return geometry.position;
+        }
+        /// <summary>
+        /// Gets this Hitboxes position as a Vector2.
+        /// </summary>
+        /// <param name="invertY">Determines if the Y value of the returned Vector2 is inversed. Used for drawing.</param>
+        /// <returns>Vector2 representing this Hitboxes position.</returns>
+        public Vector2 GetVectorPosition(bool invertY = true)
+        {
+            if (invertY)
+            {
+                return new Vector2(geometry.position.X, -geometry.position.Y);
+            }
+            else
+            {
+                return new Vector2(geometry.position.X, geometry.position.Y);
+            }
+        }
+        /// <summary>
+        /// Gets this Hitboxes visual area.
+        /// </summary>
+        /// <returns>A rectangle describing the visual area of this Hitbox.</returns>
+        public Rectangle GetVisualArea()
+        {
+            return geometry.GetAbsoluteVisualArea();
+        }
         /// <summary>
         /// Determines if this Tilebox has collided with the provided Hitbox.
         /// </summary>
@@ -28,7 +59,7 @@ namespace Fantasy.Logic.Engine.Hitboxes
             return geometry.Intersection(foo.geometry);
         }
         /// <summary>
-        /// Draws all of the rectangles inside of this boxes collisionArea.
+        /// Draws all of the rectangles inside of this Hitboxes collision area.
         /// </summary>
         /// <param name="drawSegments">True results in overlapping perimeters being drawn, False results in only unique perimeter values being drawn.</param>
         public void DrawHitbox(bool drawSegments = false)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.Utility;
+using Fantasy.Logic.Engine.Hitboxes;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
@@ -19,10 +20,9 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <param name="minFrameDuration">the minimum number of milliseconds a frame will be drawn for.</param>
         /// <param name="maxFrameDuration">the maximum number of milliseconds a frame will be drawn for.</param>
         /// </summary>
-        public AnimatedTile(string tileID, int column, int row, int frameAmount, int minFrameDuration, int maxFrameDuration, bool hasHitbox)
+        public AnimatedTile(string tileID, int column, int row, int frameAmount, int minFrameDuration, int maxFrameDuration, Tilebox hitbox)
         {
             tileMapCoordinate = new Point(column, row);
-            this.hasHitbox = hasHitbox;
             if (tileID == "BLACK")
             {
                 ContentHandler.tileTextures.TryGetValue(tileID, out tileSet);
@@ -36,13 +36,14 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 color = Color.White;
             }
             frames = new Animation(minFrameDuration, maxFrameDuration, 0, frameAmount - 1, tileSetCoordinate.Y / 64, tileSetCoordinate.X / 64, 64, 64, AnimationState.cycling);
+            this.hitbox = hitbox;
         }
         /// <summary>
         /// Draws the animated tile.
         /// </summary>
         new public void DrawTile()
         {
-            frames.DrawAnimation(new Point(tileMapCoordinate.X * 64, (tileMapCoordinate.Y + 1) * 64), tileSet, color);
+            frames.DrawAnimation(hitbox.GetPointPosition(), tileSet, color);
         }
     }
 }
