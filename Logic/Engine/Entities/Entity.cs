@@ -220,6 +220,7 @@ namespace Fantasy.Logic.Engine.entities
         /// <param name="amount">The amount for the entity to be moved by.</param>
         public void MoveEntity(Orientation direction, int amount)
         {
+            /*
             Rectangle newCharacterArea;
             do
             {
@@ -241,6 +242,7 @@ namespace Fantasy.Logic.Engine.entities
                 }
                 amount--;
             } while (!hitbox.AttemptMovement(layer, newCharacterArea) && amount != 0 && !forcedMovement);
+            */
         }
         /// <summary>
         /// Sets the characters position to be the provide point.
@@ -248,8 +250,8 @@ namespace Fantasy.Logic.Engine.entities
         /// <param name="posistion">The position for the entity to be moved to.</param>
         public void SetCharacterPosition(Point posistion)
         {
-            hitbox.characterArea.X = posistion.X;
-            hitbox.characterArea.Y = posistion.Y;
+            //hitbox.characterArea.X = posistion.X;
+            //hitbox.characterArea.Y = posistion.Y;
         }
         /// <summary>
         /// Draws the collision area of the hitbox of this entity, 

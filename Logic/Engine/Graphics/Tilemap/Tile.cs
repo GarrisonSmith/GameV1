@@ -6,7 +6,7 @@ using Fantasy.Logic.Engine.Hitboxes;
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
     /// <summary>
-    /// Describes A tile in a given TileMapLayer.
+    /// Describes a Tile in a given TileMapLayer.
     /// </summary>
     public class Tile
     {
@@ -23,58 +23,69 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// </summary>
         public Point tileMapCoordinate;
         /// <summary>
-        /// Color this tile loads when drawn.
+        /// Describes position of visual area this Tile occupies..
         /// </summary>
-        public Color color;
+        public Rectangle positionBox;
         /// <summary>
-        /// Determines if this Tile has a corresponding Hitbox or not.
+        /// 
         /// </summary>
-        public Tilebox hitbox;
+        public Tilebox[] hitboxes;
 
         /// <summary>
         /// Generic inherited constructor.
         /// </summary>
         public Tile() { }
         /// <summary>
-        /// Constructs a tile with the given properties.
-        /// <param name="tileID">is parsed to get the tiles tileSetName and tiles x and y values.</param>
-        /// <param name="column">the column this tile occupies on its TileMapLayer.</param>
-        /// <param name="row">the row this tile occupies on its TileMapLayer.</param>
+        /// Creates a Tile with the provided perameters.
         /// </summary>
-        public Tile(string tileID, int column, int row, Tilebox hitbox)
+        /// <param name="tileSet">The tileSet this Tile will use.</param>
+        /// <param name="tileSetCoordinate">The coordinate of the tileSet this tiles graphic is located at.</param>
+        /// <param name="tileMapCoordinate">Point containing the column (x value) and row (y value) this Tile occupies on its TileMapLayer.</param>
+        /// <param name="positionBox">Describes where the tile is located (top right position) and the area this tile occupies.</param>
+        /// <param name="hitboxes">Describes the hitboxes of this Tile.</param>
+        public Tile(Texture2D tileSet, Point tileSetCoordinate, Point tileMapCoordinate, Rectangle positionBox, Tilebox[] hitboxes)
         {
-            tileMapCoordinate = new Point(column, row);
-            if (tileID == "BLACK")
-            {
-                ContentHandler.tileTextures.TryGetValue(tileID, out tileSet);
-                tileSetCoordinate = new Point(0, 0);
-                color = Color.Black;
-            }
-            else
-            {
-                ContentHandler.tileTextures.TryGetValue(tileID.Substring(0, tileID.IndexOf('{')), out tileSet);
-                tileSetCoordinate = Util.PointFromString(tileID);
-                color = Color.White;
-            }
-            this.hitbox = hitbox;
+            this.tileSet = tileSet;
+            this.tileSetCoordinate = tileSetCoordinate;
+            this.tileMapCoordinate = tileMapCoordinate;
+            this.positionBox = positionBox;
+            this.hitboxes = hitboxes;
         }
-
+        
         /// <summary>
-        /// Gets the area this Tile occupies.
+        /// Determines if the provided Entitybox collides with any of the Tiles hitboxes.
         /// </summary>
-        /// <returns>A rectangle describing the area this Tile occupies on its TileMapLayer.</returns>
-        public Rectangle GetTileArea()
+        /// <param name="entitybox">The Entitybox to be investigated.</param>
+        /// <returns>True if the provided Entitybox collides with a Tiles hitbox, False if not.</returns>
+        public bool TileCollision(Entitybox entitybox)
         {
-            return hitbox.GetVisualArea();
+            foreach (Tilebox foo in hitboxes)
+            {
+                if (foo.Collision(entitybox))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         /// <summary>
         /// Draws the tile.
         /// </summary>
         public void DrawTile()
         {
-            Global._spriteBatch.Draw(tileSet, hitbox.GetVectorPosition(),
+            Global._spriteBatch.Draw(tileSet, Util.GetTopLeftVector(positionBox, true),
                 new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64),
-                color, 0f, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), 0);
+                Color.White, 0f, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), 0);
+        }
+        /// <summary>
+        /// Draws all of this Tiles hitboxes.
+        /// </summary>
+        public void DrawHitboxes()
+        {
+            foreach (Tilebox foo in hitboxes)
+            {
+                foo.DrawHitbox();
+            }
         }
     }
 }

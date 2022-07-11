@@ -51,7 +51,7 @@ namespace Fantasy.Logic.Controllers
         /// </summary>
         private static void Instantiate()
         {
-            currentContext = ControlContexts.character;
+            currentContext = ControlContexts.camera;
 
             //basic movement keys
             up = new ActionControl(Actions.up);

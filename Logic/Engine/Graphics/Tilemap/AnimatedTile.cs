@@ -1,49 +1,45 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Hitboxes;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
-    class AnimatedTile : Tile
+    /// <summary>
+    /// Describes a AnimatedTile in a given TileMapLayer.
+    /// </summary>
+    public class AnimatedTile : Tile
     {
         /// <summary>
         /// Manages the tiles animation.
         /// </summary>
-        public Animation frames;
+        public Animation animation;
 
         /// <summary>
-        /// Constructs a animated tile with the given properties.
-        /// <param name="tileID">is parsed to get the tiles tileSetName and tiles x and y values.</param>
-        /// <param name="column">the column this tile occupies on its TileMapLayer.</param>
-        /// <param name="row">the row this tile occupies on its TileMapLayer.</param>
-        /// <param name="frameAmount">the number of frames this animated tile has.</param>
-        /// <param name="minFrameDuration">the minimum number of milliseconds a frame will be drawn for.</param>
-        /// <param name="maxFrameDuration">the maximum number of milliseconds a frame will be drawn for.</param>
+        /// Creates a Tile with the provided perameters.
         /// </summary>
-        public AnimatedTile(string tileID, int column, int row, int frameAmount, int minFrameDuration, int maxFrameDuration, Tilebox hitbox)
+        /// <param name="tileSet">The tileSet this Tile will use.</param>
+        /// <param name="tileSetCoordinate">The coordinate of the tileSet this tiles graphic is located at.</param>
+        /// <param name="tileMapCoordinate">Point containing the column (x value) and row (y value) this Tile occupies on its TileMapLayer.</param>
+        /// <param name="positionBox">Describes where the tile is located (top right position) and the area this tile occupies.</param>
+        /// <param name="hitboxes">Describes the hitboxes of this Tile.</param>
+        /// <param name="animation">The Animation this AnimatedTile will use.</param>
+        public AnimatedTile(Texture2D tileSet, Point tileSetCoordinate, Point tileMapCoordinate, Rectangle positionBox, Tilebox[] hitboxes, Animation animation)
         {
-            tileMapCoordinate = new Point(column, row);
-            if (tileID == "BLACK")
-            {
-                ContentHandler.tileTextures.TryGetValue(tileID, out tileSet);
-                tileSetCoordinate = new Point(0, 0);
-                color = Color.Black;
-            }
-            else
-            {
-                ContentHandler.tileTextures.TryGetValue(tileID.Substring(0, tileID.IndexOf('{')), out tileSet);
-                tileSetCoordinate = Util.PointFromString(tileID);
-                color = Color.White;
-            }
-            frames = new Animation(minFrameDuration, maxFrameDuration, 0, frameAmount - 1, tileSetCoordinate.Y / 64, tileSetCoordinate.X / 64, 64, 64, AnimationState.cycling);
-            this.hitbox = hitbox;
+            this.tileSet = tileSet;
+            this.tileSetCoordinate = tileSetCoordinate;
+            this.tileMapCoordinate = tileMapCoordinate;
+            this.positionBox = positionBox;
+            this.hitboxes = hitboxes;
+            this.animation = animation;
         }
+        
         /// <summary>
         /// Draws the animated tile.
         /// </summary>
         new public void DrawTile()
         {
-            frames.DrawAnimation(hitbox.GetPointPosition(), tileSet, color);
+            animation.DrawAnimation(Util.GetTopLeftVector(positionBox, true), Color.White);
         }
     }
 }

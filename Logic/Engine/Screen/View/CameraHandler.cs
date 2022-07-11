@@ -24,7 +24,7 @@ namespace Fantasy.Logic.Engine.Screen.View
         /// <summary>
         /// The movement speed of the camera when it is moving freely.
         /// </summary>
-        public static MoveSpeed speed = new MoveSpeed(96, TimeUnits.seconds);
+        public static MoveSpeed speed = new MoveSpeed(200, TimeUnits.seconds);
         /// <summary>
         /// The arguments of the current camera panning task.
         /// </summary>
@@ -187,10 +187,10 @@ namespace Fantasy.Logic.Engine.Screen.View
                     //camera will freely accept forced movements.
                     break;
                 case CameraTasks.following:
-                    Global._currentScene._camera.SetCoordinate(false, Util.GetCenter(followEntity.hitbox.characterArea), true);
+                    //Global._currentScene._camera.SetCoordinate(false, Util.GetCenter(followEntity.hitbox.characterArea), true);
                     break;
                 case CameraTasks.forcedFollowing:
-                    Global._currentScene._camera.SetCoordinate(true, Util.GetCenter(followEntity.hitbox.characterArea), true);
+                    //Global._currentScene._camera.SetCoordinate(true, Util.GetCenter(followEntity.hitbox.characterArea), true);
                     break;
                 case CameraTasks.panning:
                     DoPanningTask();

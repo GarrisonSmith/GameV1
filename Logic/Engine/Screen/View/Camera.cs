@@ -251,7 +251,7 @@ namespace Fantasy.Logic.Engine.Screen.View
         /// <returns>True if the camera has finished its panning operation, False if not.</returns>
         public bool Pan(Point destination, int movementAmount, bool forced)
         {
-            Point lastLocation = Util.GetTopLeft(cameraPosition);
+            Point lastLocation = Util.GetTopLeftPoint(cameraPosition);
             destination = CenterPoint(destination);
 
             if ((movementAllowedVertical && movementAllowedHorizontal) || forced)
@@ -291,7 +291,7 @@ namespace Fantasy.Logic.Engine.Screen.View
                 }
                 Reposition();
 
-                return (lastLocation == Util.GetTopLeft(cameraPosition) && movementAmount != 0);
+                return (lastLocation == Util.GetTopLeftPoint(cameraPosition) && movementAmount != 0);
             }
             else
             {

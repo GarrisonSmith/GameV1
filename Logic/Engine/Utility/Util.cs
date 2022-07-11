@@ -26,13 +26,30 @@ namespace Fantasy.Logic.Engine.Utility
             }
         }
         /// <summary>
-        /// Gets the top left point of the provided rectangle foo.
+        /// Gets the top left point of the provided rectangle foo as a Point.
         /// </summary>
         /// <param name="foo">The rectangle to be used.</param>
         /// <returns>A point containing the top left point of the provided rectangle foo.</returns>
-        public static Point GetTopLeft(Rectangle foo)
+        public static Point GetTopLeftPoint(Rectangle foo)
         {
             return new Point(foo.X, foo.Y);
+        }
+        /// <summary>
+        /// Gets the top left point of the provided rectangle foo as a Vector2.
+        /// </summary>
+        /// <param name="foo">The rectangle to be used.</param>
+        /// <param name="invertY">Determines if the Y value of the returned Vector is inverted.</param>
+        /// <returns>A Vector2 containing the top left point of the provided rectangle foo.</returns>
+        public static Vector2 GetTopLeftVector(Rectangle foo, bool invertY = false)
+        {
+            if (invertY)
+            {
+                return new Vector2(foo.X, -foo.Y);
+            }
+            else
+            {
+                return new Vector2(foo.X, foo.Y);
+            }
         }
         /// <summary>
         /// Gets the center point of the provided rectangle foo.

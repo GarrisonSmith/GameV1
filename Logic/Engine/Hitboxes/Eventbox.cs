@@ -34,15 +34,14 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// <param name="discription">Describes what this Eventbox will do.</param>
         /// <param name="sceneEvent">The SceneEvent that will trigger upon this Eventbox detecting a collision.</param>
         /// <param name="position">Describes the top right position of the rectangles in boundings before any offset.</param>
-        /// <param name="visualArea">Describes the the visual area of the Tilebox. The rectangles X and Y values are used as offsets on positions corrasponding values.</param>
         /// <param name="boundings">The rectangles describing the Eventbox collision area. Each rectangles X and Y values are used as offsets on positions corrasponding values.</param>
         /// <param name="entityCollision">True will result in this Eventbox having collision with Entities, False will not.</param>
-        public Eventbox(string id, string discription, SceneEvent sceneEvent, Point position, Rectangle visualArea, Rectangle[] boundings, bool entityCollision = true)
+        public Eventbox(string id, string discription, SceneEvent sceneEvent, Point position, Rectangle[] boundings, bool entityCollision = true)
         {
             this.id = id;
             this.discription = discription;
             this.sceneEvent = sceneEvent;
-            geometry = new HitboxGeometry(position, visualArea, boundings);
+            geometry = new HitboxGeometry(position, boundings);
             this.entityCollision = entityCollision;
         }
 

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Xml;
 using Fantasy.Logic.Engine.Hitboxes;
 using Fantasy.Logic.Engine.Utility;
-using Fantasy.Logic.Engine.Screen;
 using Fantasy.Logic.XmlDigest;
 
 namespace Fantasy.Logic.Engine.graphics.tilemap
@@ -39,112 +37,54 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// Constructs a TileMapLayer from the provided string.
         /// </summary>
         /// <param name="layer">The layer this TileMapLayer occupies in its TileMap</param>
-        /// <param name="initialize">string to be parsed to describe the Tiles in the TileMapLayer.</param>
-        public TileMapLayer(int layer, string initialize)
+        /// <param name="layerTag">The layers Xml breakdown.</param>
+        public TileMapLayer(int layer, XmlElement layerTag)
         {
             map = new List<Tile>();
             layerEventboxes = new List<Eventbox>();
             this.layer = layer;
-
-            XmlDocument animatedList = new XmlDocument();
-            XmlDocument hitboxList = new XmlDocument();
-            animatedList.Load(@"Content\tile-sets\animated_tiles_config.xml");
-            hitboxList.Load(@"Content\tile-sets\tile_hitboxes_config.xml");
-
-            string[] columnTemp;
-            string[] rowTemp;
-            int row = 1;
-
-            rowTemp = initialize.Split(";");
-            Array.Reverse(rowTemp);
-            for (int i = 0; i < rowTemp.Length; i++)
+            foreach (XmlElement tileTag in layerTag.GetElementsByTagName("Tile"))
             {
-                int column = 1;
-                columnTemp = rowTemp[i].Split("|");
-                if (rowTemp[i] != "")
+                map.Add(TileMapXmlDigest.GetTile(tileTag));
+            }
+            foreach (XmlElement animatedTag in layerTag.GetElementsByTagName("AnimatedTile"))
+            {
+                map.Add(TileMapXmlDigest.GetAnimatedTile(animatedTag));
+            }
+            foreach (XmlElement eventTag in layerTag.GetElementsByTagName("eventBox"))
+            {
+                layerEventboxes.Add(TileMapXmlDigest.GetEventbox(eventTag));
+            }
+
+            CalculateLayerWidth();
+            CalculateLayerHeight();
+        }
+        /// <summary>
+        /// Calculates and sets this TileMapLayers width value.
+        /// </summary>
+        private void CalculateLayerWidth()
+        {
+            width = 0;
+            foreach (Tile i in map)
+            {
+                if (i.tileMapCoordinate.X > width)
                 {
-                    foreach (string j in columnTemp)
-                    {
-                        if (j != "")
-                        {
-                            bool animated = false;
-                            int frames = 1;
-                            int minDuration = 0;
-                            int maxDuration = 0;
-                            foreach (XmlElement foo in animatedList.GetElementsByTagName("tileSet"))
-                            {
-                                foreach (XmlElement bar in foo)
-                                {
-                                    if (j == foo.GetAttribute("name") + bar.GetAttribute("name"))
-                                    {
-                                        animated = true;
-                                        frames = int.Parse(bar.ChildNodes[0].InnerText);
-                                        minDuration = int.Parse(bar.ChildNodes[1].InnerText);
-                                        maxDuration = int.Parse(bar.ChildNodes[2].InnerText);
-                                        break;
-                                    }
-                                }
-                            }
-
-
-                            foreach (XmlElement foo in hitboxList.GetElementsByTagName("tileSet"))
-                            {
-                                foreach (XmlElement bar in foo)
-                                {
-                                    if (j == foo.GetAttribute("name") + bar.GetAttribute("name"))
-                                    {
-                                        Tilebox temp = new Tilebox(foo.GetAttribute("name") + bar.GetAttribute("name"));
-                                        if (foo.ChildNodes[0].InnerText == "FULL")
-                                        {
-                                            temp.geometry = new Rectangle[] { new Rectangle(0, 0, 64, 64) };
-                                        }
-                                        else
-                                        {
-                                            temp.geometry = new Rectangle[foo.ChildNodes.Count - 1];
-                                            for (int index = 1; index < bar.ChildNodes.Count; index++)
-                                            {
-                                                Rectangle hitArea = Util.RectangleFromString(bar.ChildNodes[index].InnerText);
-                                                temp.geometry[index - 1] = hitArea;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (animated)
-                            {
-                                map.Add(new AnimatedTile(j, column, row, frames, minDuration, maxDuration, hitbox));
-                            }
-                            else
-                            {
-                                map.Add(new Tile(j, column, row, hitbox));
-                            }
-
-
-                            if (column > width)
-                            {
-                                width = column;
-                            }
-                            if (row > height)
-                            {
-                                height = row;
-                            }
-                        }
-                        column++;
-                    }
-
-                    row++;
+                    width = i.tileMapCoordinate.X;
                 }
             }
         }
         /// <summary>
-        /// Loads all Eventboxes being used by ths TileMapLayer into layerEventboxes.
+        /// Calculates and sets this TileMapLayers height value.
         /// </summary>
-        public void LoadEventboxes(XmlElement layerTag)
+        private void CalculateLayerHeight()
         {
-            foreach (XmlElement eventboxTag in layerTag.GetElementsByTagName("eventBox"))
+            height = 0;
+            foreach (Tile i in map)
             {
-                layerEventboxes.Add(TileMapXmlDigest.GetEventbox(eventboxTag));
+                if (i.tileMapCoordinate.Y > height)
+                {
+                    height = i.tileMapCoordinate.Y;
+                }
             }
         }
         /// <summary>
@@ -172,7 +112,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             foreach (Tile j in map)
             {
-                j.hitbox.Collision(entityBox);
+                j.TileCollision(entityBox);
             }
 
             foreach (Eventbox foo in layerEventboxes)
@@ -189,7 +129,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             foreach (Tile j in map)
             {
-                j.hitbox.DrawHitbox();
+                j.DrawHitboxes();
             }
 
             foreach (Eventbox foo in layerEventboxes)
@@ -286,7 +226,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             foreach (Tile j in map)
             {
-                if (Util.RectanglesIntersect(drawArea, j.GetTileArea()))
+                if (Util.RectanglesIntersect(drawArea, j.positionBox))
                 {
                     if (j is AnimatedTile)
                     {

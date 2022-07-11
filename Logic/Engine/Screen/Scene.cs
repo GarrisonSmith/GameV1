@@ -9,6 +9,7 @@ using Fantasy.Logic.Engine.graphics.particles;
 using Fantasy.Logic.Controllers;
 using Fantasy.Logic.Engine.Screen.View;
 using Fantasy.Logic.Engine.Physics;
+using Fantasy.Logic.Engine.graphics;
 
 namespace Fantasy.Logic.Engine.Screen
 {
@@ -25,10 +26,10 @@ namespace Fantasy.Logic.Engine.Screen
         public void LoadScene()
         {
             _camera = new Camera(new Point(0, 0), true, false);
-            _character = new Character("character_two", "character", Global._content.Load<Texture2D>(@"character-sets\character_two_spritesheet"),
-                1, new Entitybox("character", new Rectangle(0, 0, 64, 128)), new MoveSpeed(96, TimeUnits.seconds), Orientation.down);
-            CameraHandler.AssignFollowingTask(_character, false);
-            _tileMap.LoadTileHitboxes();
+            //_character = new Character("character_two", "character", Global._content.Load<Texture2D>(@"character-sets\character_two_spritesheet"),
+            //    1, new Entitybox("character", new Rectangle(0, 0, 64, 128)), new MoveSpeed(96, TimeUnits.seconds), Orientation.down);
+            //CameraHandler.AssignFollowingTask(_character, false);
+            CameraHandler.AssignFreeTask(true);
         }
         public void DrawScene()
         {
@@ -41,19 +42,19 @@ namespace Fantasy.Logic.Engine.Screen
                 _camera.GetTransformation());
 
             _tileMap.DrawLayers();
-            //Debug.DebugOnScene(this);
+            Debug.DebugOnScene(this);
             //_tileMap.DrawHitboxes(1);
             //_character.DrawHitbox();
-            _character.DrawCharacter();
+            //_character.DrawCharacter();
             particle.Draw();
 
             Global._spriteBatch.End();
 
-
+            
 
             Global._spriteBatch.Begin();
 
-            //Debug.DebugOverlay(this);
+            Debug.DebugOverlay(this);
             MouseControlHandler.DrawMouse();
 
             Global._spriteBatch.End();
@@ -61,7 +62,6 @@ namespace Fantasy.Logic.Engine.Screen
         public void TransitionScene(string tileMapString)
         {
             _tileMap = new TileMap(tileMapString);
-            _tileMap.LoadTileHitboxes();
             _camera.SetBoundingBox(true);
         }
         public void DoEvent(SceneEvent sceneEvent)
@@ -77,7 +77,7 @@ namespace Fantasy.Logic.Engine.Screen
         {
             CameraHandler.DoActions(actives.Get(ControlContexts.camera));
 
-            _character.DoActions(actives.Get(ControlContexts.character));
+            //_character.DoActions(actives.Get(ControlContexts.character));
 
         }
     }

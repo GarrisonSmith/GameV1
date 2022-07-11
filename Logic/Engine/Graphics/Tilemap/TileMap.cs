@@ -8,7 +8,7 @@ using System.Xml;
 namespace Fantasy.Logic.Engine.graphics.tilemap
 {
     /// <summary>
-    /// Contains a tile maps from a given string description. Tiles are 64 by 64 pixels large.
+    /// Contains a tile maps from a given string description. Tiles are 64 by 64 pixels in size.
     /// </summary>
     public class TileMap
     {
@@ -23,76 +23,12 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <param name="tileMapName">The file name containing the string that desribes the tileMap.</param>
         public TileMap(string tileMapName)
         {
-            string initialize = System.IO.File.ReadAllText(@"Content\tile-maps\" + tileMapName + ".txt");
             map = new List<TileMapLayer>();
-            string[] layerTemp = initialize.Split('<');
-            foreach (string i in layerTemp)
+            XmlDocument tilemap = new XmlDocument();
+            tilemap.Load(@"Content\tile-maps\"+tileMapName+".xml");
+            foreach (XmlElement foo in tilemap.GetElementsByTagName("layer"))
             {
-                if (i != "")
-                {
-                    AddLayer(new TileMapLayer(int.Parse(i.Substring(0, i.IndexOf('>'))), i.Substring(i.IndexOf('>') + 1)));
-                }
-            }
-
-            XmlDocument tileMapConfig = new XmlDocument();
-            tileMapConfig.Load(@"Content\tile-maps\tile_map_config.xml");
-            foreach (XmlElement foo in tileMapConfig.GetElementsByTagName("tileMap"))
-            {
-                if (foo.GetAttribute("name") == tileMapName)
-                {
-                    foreach (XmlElement bar in foo)
-                    {
-                        GetLayer(int.Parse(bar.GetAttribute("name").ToString())).LoadEventboxes(bar);
-                    }
-                }
-            }
-        }
-        /// <summary>
-        /// Loads all Hitboxes being used by ths TileMap from all layers into tileHitboxes.
-        /// </summary>
-        public void LoadTileHitboxes()
-        {
-            XmlDocument hitboxList = new XmlDocument();
-            hitboxList.Load(@"Content\tile-sets\tile_hitboxes_config.xml");
-
-            foreach (TileMapLayer i in map)
-            {
-                foreach (Tile j in i.map)
-                {
-                    //start iterating through tiles
-                    if (j.hasHitbox)
-                    {
-                        foreach (XmlElement foo in hitboxList.GetElementsByTagName("tileSet"))
-                        {
-                            if (foo.GetAttribute("name") == j.tileSet.Name)
-                            {
-                                foreach (XmlElement bar in foo)
-                                {
-                                    if (bar.GetAttribute("name") == j.tileSetCoordinate.ToString() && !tileHitboxes.Exists(x => x.reference == foo.GetAttribute("name") + bar.GetAttribute("name")))
-                                    {
-
-                                        Tilebox temp = new Tilebox(foo.GetAttribute("name") + bar.GetAttribute("name"));
-                                        if (foo.ChildNodes[0].InnerText == "FULL")
-                                        {
-                                            temp.geometry = new Rectangle[] { new Rectangle(0, 0, 64, 64) };
-                                        }
-                                        else
-                                        {
-                                            temp.geometry = new Rectangle[foo.ChildNodes.Count - 1];
-                                            for (int index = 1; index < bar.ChildNodes.Count; index++)
-                                            {
-                                                Rectangle hitArea = Util.RectangleFromString(bar.ChildNodes[index].InnerText);
-                                                temp.geometry[index - 1] = hitArea;
-                                            }
-                                        }
-                                        tileHitboxes.Add(temp);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    //end iterating through tiles
-                }
+                map.Add(new TileMapLayer(int.Parse(foo.GetAttribute("name")), foo));   
             }
         }
         /// <summary>
@@ -107,7 +43,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             {
                 if (i.layer == layer)
                 {
-                    if (i.CheckLayerCollision(box, tileHitboxes))
+                    if (i.CheckLayerCollision(box))
                     {
                         return true;
                     }
@@ -173,8 +109,8 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <returns>Rectangle whose collisionArea contains the TileMap drawing collisionArea.</returns>
         public Rectangle GetTileMapBounding()
         {
-            int widthLargest = 1, widthSmallest = 1;
-            int heightLargest = 1, heightSmallest = 1;
+            int widthLargest = 1, widthSmallest = 0;
+            int heightLargest = 1, heightSmallest = 0;
 
             foreach (TileMapLayer i in map)
             {
@@ -198,10 +134,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             }
 
             return new Rectangle(
-                widthSmallest * 64,
+                (widthSmallest + 1) * 64,
                 (heightLargest + 1) * 64,
-                (widthLargest - widthSmallest + 1) * 64,
-                (heightLargest - heightSmallest + 1) * 64);
+                (widthLargest - widthSmallest) * 64,
+                (heightLargest - heightSmallest) * 64);
         }
         /// <summary>
         /// Returns a rectangle that is the size and location of the provided layers in the TileMap with the provided stretching.
@@ -241,10 +177,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             }
 
             return new Rectangle(
-                widthSmallest * 64,
+                (widthSmallest + 1) * 64,
                 (heightLargest + 1) * 64,
-                (widthLargest - widthSmallest + 1) * 64,
-                (heightLargest - heightSmallest + 1) * 64);
+                (widthLargest - widthSmallest) * 64,
+                (heightLargest - heightSmallest) * 64);
         }
         /// <summary>
         /// Returns a rectangle that is the size and location of the provided layer in the TileMap with the provided Global._baseStretch.
@@ -281,10 +217,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             }
 
             return new Rectangle(
-                widthSmallest * 64,
+                (widthSmallest + 1) * 64,
                 (heightLargest + 1) * 64,
-                (widthLargest - widthSmallest + 1) * 64,
-                (heightLargest - heightSmallest + 1) * 64);
+                (widthLargest - widthSmallest) * 64,
+                (heightLargest - heightSmallest) * 64);
         }
         /// <summary>
         /// Returns a point that is the center of the TileMap with the provided stretching.
@@ -340,7 +276,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             {
                 if (i.layer == layer)
                 {
-                    i.DrawLayerHitboxes(tileHitboxes);
+                    i.DrawLayerHitboxes();
                 }
             }
         }

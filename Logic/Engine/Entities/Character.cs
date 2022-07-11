@@ -21,7 +21,7 @@ namespace Fantasy.Logic.Engine.entities
             this.speed = speed;
             this.orientation = orientation;
             this.hitbox = hitbox;
-            frames = new Animation(400, 400, 0, 3, 0, 0, 64, 128, AnimationState.idle);
+            frames = new Animation(spriteSheet, 400, 400, 0, 3, 0, 0, 64, 128, AnimationState.idle);
         }
 
         public void DrawCharacter()
@@ -37,7 +37,7 @@ namespace Fantasy.Logic.Engine.entities
                 frames.animationState = AnimationState.finishing;
             }
 
-            frames.DrawAnimation(hitbox.GetPosition(), spriteSheet, Color.White);
+            //frames.DrawAnimation(hitbox.GetPosition(), spriteSheet, Color.White);
         }
     }
 }

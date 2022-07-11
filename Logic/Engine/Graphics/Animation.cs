@@ -21,6 +21,10 @@ namespace Fantasy.Logic.Engine.graphics
         /// </summary>
         public bool freezeAnimation = false;
         /// <summary>
+        /// The texture used by this Animation.
+        /// </summary>
+        public Texture2D graphic;
+        /// <summary>
         /// How long (in miliseconds) the current frame will be drawn for. Randomized between minFrameDuration and maxFrameDuration for every new animation frame.
         /// </summary>
         public double frameDuration;
@@ -76,6 +80,7 @@ namespace Fantasy.Logic.Engine.graphics
         /// <summary>
         /// Creates a animation with the provided parameters.
         /// </summary>
+        /// <param name="graphic">The texture this Animation will be using.</param>
         /// <param name="minFrameDuration">The lower bound for how long this animations frames will be drawn for.</param>
         /// <param name="maxFrameDuration">The upper bound for how long this animations frames will be drawn for.</param>
         /// <param name="startingFrame">The first frame from the reference spritesheet this animation will draw.</param>
@@ -85,8 +90,9 @@ namespace Fantasy.Logic.Engine.graphics
         /// <param name="sourceWidth">The width of the animation frame to be drawn by this animation.</param>
         /// <param name="sourceHeight">The height of the animation frame to be drawn by this animation.</param>
         /// <param name="animationState">The starting state of the animation.</param>
-        public Animation(int minFrameDuration, int maxFrameDuration, int startingFrame, int maxFrame, int rowReference, int columnReference, int sourceWidth, int sourceHeight, AnimationState animationState)
+        public Animation(Texture2D graphic, int minFrameDuration, int maxFrameDuration, int startingFrame, int maxFrame, int rowReference, int columnReference, int sourceWidth, int sourceHeight, AnimationState animationState = AnimationState.cycling)
         {
+            this.graphic = graphic;
             this.minFrameDuration = minFrameDuration;
             this.maxFrameDuration = maxFrameDuration;
             frameDuration = new Random().Next(minFrameDuration, maxFrameDuration);
@@ -102,10 +108,9 @@ namespace Fantasy.Logic.Engine.graphics
         /// <summary>
         /// Draws the provided texture using the paremeters of this animation.
         /// </summary>
-        /// <param name="position">Point describing where this aniamtion will be drawn.</param>
-        /// <param name="texture">The referece spritesheet this animations paremeters will be applied to.</param>
+        /// <param name="position">Describes where this aniamtion will be drawn.</param>
         /// <param name="color">The color to be applied to this animation when drawn.</param>
-        public void DrawAnimation(Point position, Texture2D texture, Color color)
+        public void DrawAnimation(Vector2 position, Color color)
         {
             if (!freezeAllAnimations && !freezeAnimation)
             {
@@ -116,7 +121,7 @@ namespace Fantasy.Logic.Engine.graphics
                         {
                             frameDuration = new Random().Next(minFrameDuration, maxFrameDuration);
                             lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
-                            if (currentFrame < maxFrame)
+                            if (currentFrame+1 < maxFrame)
                             {
                                 currentFrame++;
                             }
@@ -157,7 +162,7 @@ namespace Fantasy.Logic.Engine.graphics
                 lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
             }
             Global._spriteBatch.Draw(
-                texture, new Vector2(position.X, -position.Y),
+                graphic, position,
                 new Rectangle(((currentFrame + columnReference) * sourceWidth), (rowReference * sourceHeight), sourceWidth, sourceHeight),
                 color, 0, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), 0);
 

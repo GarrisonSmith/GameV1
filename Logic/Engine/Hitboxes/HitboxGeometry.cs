@@ -14,10 +14,6 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// </summary>
         public Point position;
         /// <summary>
-        /// Describes the the visual area of the Hitbox this RectangleSet belong to.
-        /// </summary>
-        public Rectangle visualArea;
-        /// <summary>
         /// The rectangle in this RectangleSet. Each rectangles X and Y values are used as offsets on positions corrasponding values.
         /// </summary>
         public Rectangle[] boundings;
@@ -26,12 +22,10 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// Creates a RectangleSet with the provided parameters.
         /// </summary>
         /// <param name="position">Describes the top right position of the rectangles in boundings before any offset.</param>
-        /// <param name="visualArea"></param>
         /// <param name="boundings">The rectangles in this RectangleSet. Each rectangles X and Y values are used as offsets on positions corrasponding values.</param>
-        public HitboxGeometry(Point position, Rectangle visualArea, Rectangle[] boundings)
+        public HitboxGeometry(Point position, Rectangle[] boundings)
         {
             this.position = position;
-            this.visualArea = visualArea;
             this.boundings = boundings;
         }
         /// <summary>
@@ -100,14 +94,6 @@ namespace Fantasy.Logic.Engine.Hitboxes
                 }
             }
             return false;
-        }
-        /// <summary>
-        /// Creates a new rectangle that has visualAreas perimeters with the RectangleSets position applied.
-        /// </summary>
-        /// <returns>A new rectnalge that has visualAreas perimeters with the RectangleSets position applied.</returns>
-        public Rectangle GetAbsoluteVisualArea()
-        {
-            return new Rectangle(visualArea.X + position.X, visualArea.Y + position.Y, visualArea.Width, visualArea.Height);
         }
         /// <summary>
         /// Creates a new rectangle array that contains boundings rectangles with the RectangleSets position appplied.

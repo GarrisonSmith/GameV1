@@ -11,6 +11,10 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// Set of rectangles that describes the boxes area.
         /// </summary>
         public HitboxGeometry geometry;
+        /// <summary>
+        /// Describes the the visual area of the Hitbox this RectangleSet belong to.
+        /// </summary>
+        public Rectangle visualArea;
 
         /// <summary>
         /// Generic inherited constructor. 
@@ -40,14 +44,6 @@ namespace Fantasy.Logic.Engine.Hitboxes
             {
                 return new Vector2(geometry.position.X, geometry.position.Y);
             }
-        }
-        /// <summary>
-        /// Gets this Hitboxes visual area.
-        /// </summary>
-        /// <returns>A rectangle describing the visual area of this Hitbox.</returns>
-        public Rectangle GetVisualArea()
-        {
-            return geometry.GetAbsoluteVisualArea();
         }
         /// <summary>
         /// Determines if this Tilebox has collided with the provided Hitbox.
