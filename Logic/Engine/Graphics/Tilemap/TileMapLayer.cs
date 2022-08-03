@@ -112,12 +112,18 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             foreach (Tile j in map)
             {
-                j.TileCollision(entityBox);
+                if (j.TileCollision(entityBox))
+                {
+                    return true;
+                }
             }
 
             foreach (Eventbox foo in layerEventboxes)
             {
-                foo.Collision(entityBox);
+                if (foo.Collision(entityBox))
+                {
+                    return true;
+                }
             }
 
             return false;

@@ -226,27 +226,33 @@ namespace Fantasy.Logic.Engine.entities
         /// <param name="amount">The amount for the entity to be moved by.</param>
         public void MoveEntity(Orientation direction, int amount)
         {
-            Point newCharacterPosition = hitbox.GetPointPosition();
-            do
+            for (int i = 1; i <= amount; i++)
             {
+                Point newCharacterPosition = hitbox.GetPointPosition();
                 switch (direction)
                 {
                     case Orientation.up:
-                        newCharacterPosition.Y += amount;
+                        newCharacterPosition.Y += i;
                         break;
                     case Orientation.right:
-                        newCharacterPosition.X += amount;
+                        newCharacterPosition.X += i;
                         break;
                     case Orientation.left:
-                        newCharacterPosition.X -= amount;
+                        newCharacterPosition.X -= i;
                         break;
                     case Orientation.down:
-                        newCharacterPosition.Y -= amount;
+                        newCharacterPosition.Y -= i;
                         break;
                 }
-                amount--;
-                } while (!hitbox.AttemptMovement(layer, newCharacterPosition) && amount != 0 && !forcedMovement);
-            hitbox.geometry.position = newCharacterPosition;
+                if (hitbox.CheckIfNewPositionIsValid(layer, newCharacterPosition))
+                {
+                    hitbox.geometry.position = newCharacterPosition;
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
         /// <summary>
         /// Sets the characters position to be the provide point.

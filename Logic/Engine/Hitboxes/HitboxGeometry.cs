@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.graphics;
 using Fantasy.Logic.Engine.Utility;
+using System.Collections.Generic;
 
 namespace Fantasy.Logic.Engine.Hitboxes
 {
@@ -114,35 +115,37 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// <param name="drawSegments">True results in overlapping perimeters being drawn, False results in only unique perimeter values being drawn.</param>
         public void Draw(bool drawSegments = false)
         {
-            if (drawSegments)
+            if (false)
             {
                 foreach (Rectangle bounding in boundings)
                 {
-                    Debug.DrawRectangle(new Rectangle(bounding.X + position.X, bounding.Y + position.Y, bounding.Width, bounding.Height));
+                    Debug.DrawRectangle(new Rectangle(bounding.X + position.X, bounding.Y + position.Y, bounding.Width, bounding.Height), Color.White);
                 }
             }
             else 
             {
-                for (int i = 0; i < boundings.Length; i++)
+                List<Point> points = new List<Point>();
+                foreach (Rectangle bounding in boundings)
                 {
-                    Point[] points = Util.RectanglePerimeterPoints(boundings[i]);
-                    foreach (Point point in points)
+                    Point[] boundingPoints = Util.RectanglePerimeterPoints(bounding);
+                    foreach (Point boundingPoint in boundingPoints)
                     {
-                        bool drawPoint = true;
-                        for (int j = 0; j < i; j++)
+                        bool uniquePoint = true;
+                        foreach (Point point in points)
                         {
-                            if (Util.PointInsideRectangle(point, boundings[j]))
+                            if (boundingPoint == point)
                             {
-                                drawPoint = false;
-                                break;
+                                uniquePoint = false;
                             }
                         }
-                        if (drawPoint)
+                        if (uniquePoint)
                         {
-                            Debug.DrawPoint(new Point(point.X + position.X, point.Y + position.Y), false);
+                            points.Add(boundingPoint);
+                            Debug.DrawPoint(new Point(boundingPoint.X + position.X, boundingPoint.Y + position.Y), false, Color.White);
                         }
                     }
                 }
+                Debug.DrawPoint(position, false, Color.Red);
             }
         }
     }

@@ -107,28 +107,18 @@ namespace Fantasy.Logic.Engine.Utility
         /// <returns>Point array containing the points on the provided rectangles perimeter.</returns>
         public static Point[] RectanglePerimeterPoints(Rectangle foo)
         {
-            Point[] arr = new Point[foo.Width * 2 + foo.Height * 2];
+            Point[] arr = new Point[foo.Width * 2 + foo.Height * 2 + 2];
             int index = 0;
 
-            for (int i = foo.X; i < foo.X + foo.Width; i++)
+            for (int i = 0; i <= foo.Width; i++)
             {
-                arr[index] = new Point(i, foo.Y);
-                index++;
+                arr[index] = new Point(foo.X + i, foo.Y); index++;
+                arr[index] = new Point(foo.X + i, foo.Y - foo.Height); index++;
             }
-            for (int i = foo.X; i < foo.X + foo.Width; i++)
+            for (int i = 0; i < foo.Height; i++)
             {
-                arr[index] = new Point(i, foo.Y - foo.Height);
-                index++;
-            }
-            for (int i = foo.Y; i < foo.Y - foo.Height; i--)
-            {
-                arr[index] = new Point(foo.X, i);
-                index++;
-            }
-            for (int i = foo.Y; i < foo.Y - foo.Height; i--)
-            {
-                arr[index] = new Point(foo.X + foo.Width, i);
-                index++;
+                arr[index] = new Point(foo.X, foo.Y - i); index++;
+                arr[index] = new Point(foo.X + foo.Width, foo.Y - i); index++;
             }
 
             return arr;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.Hitboxes
 {
@@ -62,9 +63,12 @@ namespace Fantasy.Logic.Engine.Hitboxes
             return false;
         }
         //TODO implement
-        public bool AttemptMovement(int layer, Point newPosition)
+        public bool CheckIfNewPositionIsValid(int layer, Point newPosition)
         {
-            return true;
+            Entitybox foo = new Entitybox(newPosition, geometry.boundings, entityCollision, tileCollision);
+            foo.geometry.position = newPosition;
+            //System.Diagnostics.Debug.WriteLine(!Global._currentScene._tileMap.Collision(layer, foo));
+            return !Global._currentScene._tileMap.Collision(layer, foo);
         }
     }
 }

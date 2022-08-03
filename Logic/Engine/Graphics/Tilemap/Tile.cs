@@ -59,11 +59,14 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <returns>True if the provided Entitybox collides with a Tiles hitbox, False if not.</returns>
         public bool TileCollision(Entitybox entitybox)
         {
-            foreach (Tilebox foo in hitboxes)
+            if (hitboxes != null)
             {
-                if (foo.Collision(entitybox))
+                foreach (Tilebox foo in hitboxes)
                 {
-                    return true;
+                    if (foo.Collision(entitybox))
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -82,9 +85,12 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// </summary>
         public void DrawHitboxes()
         {
-            foreach (Tilebox foo in hitboxes)
+            if (hitboxes != null)
             {
-                foo.DrawHitbox();
+                foreach (Tilebox foo in hitboxes)
+                {
+                    foo.DrawHitbox();
+                }
             }
         }
     }

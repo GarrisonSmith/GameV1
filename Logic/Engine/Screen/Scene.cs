@@ -26,8 +26,8 @@ namespace Fantasy.Logic.Engine.Screen
         public void LoadScene()
         {
             _camera = new Camera(new Point(0, 0), true, false);
-            _character = new Character("character", "character", Global._content.Load<Texture2D>(@"character-sets\character_three_spritesheet"), 0, new Point(64, 128),
-                new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(0, 0, 64, 128)}), new MoveSpeed(96, TimeUnits.seconds), Orientation.down);
+            _character = new Character("character", "character", Global._content.Load<Texture2D>(@"character-sets\character_three_spritesheet"), 1, new Point(64, 128),
+                new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(16, -104, 32, 24)}), new MoveSpeed(96, TimeUnits.seconds), Orientation.down);
             CameraHandler.AssignFollowingTask(_character, false);
         }
         public void UpdateScene()
@@ -46,8 +46,8 @@ namespace Fantasy.Logic.Engine.Screen
 
             _tileMap.DrawLayers();
             Debug.DebugOnScene(this);
-            //_tileMap.DrawHitboxes(1);
-            //_character.DrawHitbox();
+            _tileMap.DrawHitboxes(1);
+            _character.DrawHitbox();
             _character.DrawCharacter();
             particle.Draw();
 
@@ -78,7 +78,7 @@ namespace Fantasy.Logic.Engine.Screen
         }
         public void ProcessInputs(CurrentActionsList actives)
         {
-            CameraHandler.DoActions(actives.Get(ControlContexts.camera));
+            //CameraHandler.DoActions(actives.Get(ControlContexts.camera));
 
             _character.DoActions(actives.Get(ControlContexts.character));
 
