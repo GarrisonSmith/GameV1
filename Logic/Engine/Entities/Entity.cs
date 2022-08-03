@@ -5,6 +5,7 @@ using Fantasy.Logic.Engine.Hitboxes;
 using Fantasy.Logic.Engine.Physics;
 using Fantasy.Logic.Controllers;
 using System.Collections.Generic;
+using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.entities
 {
@@ -196,6 +197,7 @@ namespace Fantasy.Logic.Engine.entities
             }
             else
             {
+                System.Diagnostics.Debug.WriteLine("foo" + Global._gameTime.TotalGameTime.TotalMilliseconds);
                 SetMovement(EntityMovementState.idle, false);
             }
         }
@@ -220,11 +222,10 @@ namespace Fantasy.Logic.Engine.entities
         /// <param name="amount">The amount for the entity to be moved by.</param>
         public void MoveEntity(Orientation direction, int amount)
         {
-            /*
             Rectangle newCharacterArea;
             do
             {
-                newCharacterArea = hitbox.characterArea;
+                newCharacterArea = hitbox.visualArea;
                 switch (direction)
                 {
                     case Orientation.up:
@@ -241,8 +242,23 @@ namespace Fantasy.Logic.Engine.entities
                         break;
                 }
                 amount--;
-            } while (!hitbox.AttemptMovement(layer, newCharacterArea) && amount != 0 && !forcedMovement);
-            */
+                } while (!hitbox.AttemptMovement(layer, Util.GetTopLeftPoint(newCharacterArea)) && amount != 0 && !forcedMovement);
+            hitbox.visualArea = newCharacterArea;
+            switch (direction)
+            {
+                case Orientation.up:
+                    hitbox.geometry.position.Y += amount;
+                    break;
+                case Orientation.right:
+                    hitbox.geometry.position.X += amount;
+                    break;
+                case Orientation.left:
+                    hitbox.geometry.position.X -= amount;
+                    break;
+                case Orientation.down:
+                    hitbox.geometry.position.Y -= amount;
+                    break;
+            }
         }
         /// <summary>
         /// Sets the characters position to be the provide point.
@@ -250,8 +266,8 @@ namespace Fantasy.Logic.Engine.entities
         /// <param name="posistion">The position for the entity to be moved to.</param>
         public void SetCharacterPosition(Point posistion)
         {
-            //hitbox.characterArea.X = posistion.X;
-            //hitbox.characterArea.Y = posistion.Y;
+            hitbox.geometry.position.X = posistion.X;
+            hitbox.geometry.position.Y = posistion.Y;
         }
         /// <summary>
         /// Draws the collision area of the hitbox of this entity, 

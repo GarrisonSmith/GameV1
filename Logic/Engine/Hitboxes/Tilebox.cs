@@ -21,7 +21,6 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// </summary>
         /// <param name="movementInclusion">Determines what inclusive movement is needed to walk within this Tileboxes collision area.</param>
         /// <param name="position">Describes the top right position of the rectangles in boundings before any offset.</param>
-        /// <param name="visualArea">Describes the the visual area of the Tilebox. The rectangles X and Y values are used as offsets on positions corrasponding values.</param>
         /// <param name="boundings">The rectangles describing the Tileboxes collision area. Each rectangles X and Y values are used as offsets on positions corrasponding values.</param>
         /// <param name="entityCollision">True will result in this Tilebox having collision with Entities, False will not.</param>
         public Tilebox(MovementInclusions movementInclusion, Point position, Rectangle[] boundings, bool entityCollision = true)

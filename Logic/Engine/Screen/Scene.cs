@@ -26,10 +26,13 @@ namespace Fantasy.Logic.Engine.Screen
         public void LoadScene()
         {
             _camera = new Camera(new Point(0, 0), true, false);
-            //_character = new Character("character_two", "character", Global._content.Load<Texture2D>(@"character-sets\character_two_spritesheet"),
-            //    1, new Entitybox("character", new Rectangle(0, 0, 64, 128)), new MoveSpeed(96, TimeUnits.seconds), Orientation.down);
+            _character = new Character("character", "character", Global._content.Load<Texture2D>(@"character-sets\character_three_spritesheet"), 0, new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(0, 0, 64, 128)}), new MoveSpeed(96, TimeUnits.seconds), Orientation.down);
             //CameraHandler.AssignFollowingTask(_character, false);
             CameraHandler.AssignFreeTask(true);
+        }
+        public void UpdateScene()
+        {
+            _character.UpdateEntity();
         }
         public void DrawScene()
         {
@@ -45,7 +48,7 @@ namespace Fantasy.Logic.Engine.Screen
             Debug.DebugOnScene(this);
             //_tileMap.DrawHitboxes(1);
             //_character.DrawHitbox();
-            //_character.DrawCharacter();
+            _character.DrawCharacter();
             particle.Draw();
 
             Global._spriteBatch.End();
@@ -77,7 +80,7 @@ namespace Fantasy.Logic.Engine.Screen
         {
             CameraHandler.DoActions(actives.Get(ControlContexts.camera));
 
-            //_character.DoActions(actives.Get(ControlContexts.character));
+            _character.DoActions(actives.Get(ControlContexts.character));
 
         }
     }

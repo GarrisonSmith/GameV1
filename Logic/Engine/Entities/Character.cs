@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.graphics;
 using Fantasy.Logic.Engine.Hitboxes;
 using Fantasy.Logic.Engine.Physics;
+using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.entities
 {
@@ -21,7 +22,7 @@ namespace Fantasy.Logic.Engine.entities
             this.speed = speed;
             this.orientation = orientation;
             this.hitbox = hitbox;
-            frames = new Animation(spriteSheet, 400, 400, 0, 3, 0, 0, 64, 128, AnimationState.idle);
+            frames = new Animation(spriteSheet, 400, 400, 0, 4, 0, 0, 64, 128, AnimationState.idle);
         }
 
         public void DrawCharacter()
@@ -37,7 +38,7 @@ namespace Fantasy.Logic.Engine.entities
                 frames.animationState = AnimationState.finishing;
             }
 
-            //frames.DrawAnimation(hitbox.GetPosition(), spriteSheet, Color.White);
+            frames.DrawAnimation(hitbox.GetVectorPosition(), Color.White);
         }
     }
 }
