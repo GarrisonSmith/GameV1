@@ -178,7 +178,7 @@ namespace Fantasy.Logic.Engine.Screen.View
             switch (task)
             {
                 case CameraTasks.none:
-                    //camera is static and wont move / accept any inputs.
+                    //camera is static and wont move or accept any inputs.
                     break;
                 case CameraTasks.free:
                     //camera will freely accept non-forced movements.
@@ -187,10 +187,10 @@ namespace Fantasy.Logic.Engine.Screen.View
                     //camera will freely accept forced movements.
                     break;
                 case CameraTasks.following:
-                    //Global._currentScene._camera.SetCoordinate(false, Util.GetCenter(followEntity.hitbox.characterArea), true);
+                    Global._currentScene._camera.SetCoordinate(false, followEntity.GetEntityVisualCenter(), true);
                     break;
                 case CameraTasks.forcedFollowing:
-                    //Global._currentScene._camera.SetCoordinate(true, Util.GetCenter(followEntity.hitbox.characterArea), true);
+                    Global._currentScene._camera.SetCoordinate(true, followEntity.GetEntityVisualCenter(), true);
                     break;
                 case CameraTasks.panning:
                     DoPanningTask();

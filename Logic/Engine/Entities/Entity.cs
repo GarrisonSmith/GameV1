@@ -5,7 +5,6 @@ using Fantasy.Logic.Engine.Hitboxes;
 using Fantasy.Logic.Engine.Physics;
 using Fantasy.Logic.Controllers;
 using System.Collections.Generic;
-using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.entities
 {
@@ -26,6 +25,10 @@ namespace Fantasy.Logic.Engine.entities
         /// The layer this entity currently occupies.
         /// </summary>
         public int layer;
+        /// <summary>
+        /// Describes the visual dimensions of the entity away from the hitbox position.
+        /// </summary>
+        public Point entityVisualDimensions;
         /// <summary>
         /// This entities hitbox for collision on a TileMap or other entities. Also stores the characters location.
         /// </summary>
@@ -62,14 +65,16 @@ namespace Fantasy.Logic.Engine.entities
         /// <param name="type">The type this enity will be.</param>
         /// <param name="spriteSheet">The spritesheet this enity will use when drawing or when animated.</param>
         /// <param name="layer">The layer this entity will occupy.</param>
+        /// <param name="entityVisualDimensions">Describes the visual dimensions of the entity away from the hitbox position.</param>
         /// <param name="hitbox">This entities hitbox for collision on a TileMap or other entities.</param>
         /// <param name="speed">Describes the MoveSpeed of the entity.</param>
-        public Entity(string id, string type, Texture2D spriteSheet, int layer, Entitybox hitbox, MoveSpeed speed)
+        public Entity(string id, string type, Texture2D spriteSheet, int layer, Point entityVisualDimensions, Entitybox hitbox, MoveSpeed speed)
         {
             this.id = id;
             this.type = type;
             this.spriteSheet = spriteSheet;
             this.layer = layer;
+            this.entityVisualDimensions = entityVisualDimensions;
             this.hitbox = hitbox;
             this.speed = speed;
             movement = EntityMovementState.idle;
@@ -197,7 +202,6 @@ namespace Fantasy.Logic.Engine.entities
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("foo" + Global._gameTime.TotalGameTime.TotalMilliseconds);
                 SetMovement(EntityMovementState.idle, false);
             }
         }
@@ -222,43 +226,27 @@ namespace Fantasy.Logic.Engine.entities
         /// <param name="amount">The amount for the entity to be moved by.</param>
         public void MoveEntity(Orientation direction, int amount)
         {
-            Rectangle newCharacterArea;
+            Point newCharacterPosition = hitbox.GetPointPosition();
             do
             {
-                newCharacterArea = hitbox.visualArea;
                 switch (direction)
                 {
                     case Orientation.up:
-                        newCharacterArea.Y += amount;
+                        newCharacterPosition.Y += amount;
                         break;
                     case Orientation.right:
-                        newCharacterArea.X += amount;
+                        newCharacterPosition.X += amount;
                         break;
                     case Orientation.left:
-                        newCharacterArea.X -= amount;
+                        newCharacterPosition.X -= amount;
                         break;
                     case Orientation.down:
-                        newCharacterArea.Y -= amount;
+                        newCharacterPosition.Y -= amount;
                         break;
                 }
                 amount--;
-                } while (!hitbox.AttemptMovement(layer, Util.GetTopLeftPoint(newCharacterArea)) && amount != 0 && !forcedMovement);
-            hitbox.visualArea = newCharacterArea;
-            switch (direction)
-            {
-                case Orientation.up:
-                    hitbox.geometry.position.Y += amount;
-                    break;
-                case Orientation.right:
-                    hitbox.geometry.position.X += amount;
-                    break;
-                case Orientation.left:
-                    hitbox.geometry.position.X -= amount;
-                    break;
-                case Orientation.down:
-                    hitbox.geometry.position.Y -= amount;
-                    break;
-            }
+                } while (!hitbox.AttemptMovement(layer, newCharacterPosition) && amount != 0 && !forcedMovement);
+            hitbox.geometry.position = newCharacterPosition;
         }
         /// <summary>
         /// Sets the characters position to be the provide point.
@@ -268,6 +256,15 @@ namespace Fantasy.Logic.Engine.entities
         {
             hitbox.geometry.position.X = posistion.X;
             hitbox.geometry.position.Y = posistion.Y;
+        }
+        /// <summary>
+        /// Gets the center of the visual area of this entity.
+        /// </summary>
+        /// <returns></returns>
+        public Point GetEntityVisualCenter()
+        {
+            Point foo = hitbox.GetPointPosition();
+            return new Point(foo.X + entityVisualDimensions.X / 2, foo.Y - entityVisualDimensions.Y / 2);
         }
         /// <summary>
         /// Draws the collision area of the hitbox of this entity, 

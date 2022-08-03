@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.Hitboxes
 {
@@ -62,7 +61,7 @@ namespace Fantasy.Logic.Engine.Hitboxes
 
             return false;
         }
-
+        //TODO implement
         public bool AttemptMovement(int layer, Point newPosition)
         {
             return true;

@@ -11,10 +11,6 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// Set of rectangles that describes the boxes area.
         /// </summary>
         public HitboxGeometry geometry;
-        /// <summary>
-        /// Describes the the visual area of the Hitbox this RectangleSet belong to.
-        /// </summary>
-        public Rectangle visualArea;
 
         /// <summary>
         /// Generic inherited constructor. 

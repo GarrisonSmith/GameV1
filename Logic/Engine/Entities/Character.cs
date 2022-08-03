@@ -13,12 +13,13 @@ namespace Fantasy.Logic.Engine.entities
 
         public Character() { }
 
-        public Character(string id, string type, Texture2D spriteSheet, int layer, Entitybox hitbox, MoveSpeed speed, Orientation orientation)
+        public Character(string id, string type, Texture2D spriteSheet, int layer, Point entityVisualDimensions, Entitybox hitbox, MoveSpeed speed, Orientation orientation)
         {
             this.id = id;
             this.type = type;
             this.spriteSheet = spriteSheet;
             this.layer = layer;
+            this.entityVisualDimensions = entityVisualDimensions;
             this.speed = speed;
             this.orientation = orientation;
             this.hitbox = hitbox;
@@ -33,7 +34,7 @@ namespace Fantasy.Logic.Engine.entities
             {
                 frames.animationState = AnimationState.cycling;
             }
-            else if (frames.animationState != AnimationState.idle)
+            else
             {
                 frames.animationState = AnimationState.finishing;
             }

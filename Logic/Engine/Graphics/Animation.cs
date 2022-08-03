@@ -138,7 +138,7 @@ namespace Fantasy.Logic.Engine.graphics
                         {
                             frameDuration = new Random().Next(minFrameDuration, maxFrameDuration);
                             lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
-                            if (currentFrame < maxFrame)
+                            if (currentFrame+1 < maxFrame)
                             {
                                 currentFrame++;
                             }

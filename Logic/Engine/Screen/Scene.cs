@@ -26,9 +26,9 @@ namespace Fantasy.Logic.Engine.Screen
         public void LoadScene()
         {
             _camera = new Camera(new Point(0, 0), true, false);
-            _character = new Character("character", "character", Global._content.Load<Texture2D>(@"character-sets\character_three_spritesheet"), 0, new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(0, 0, 64, 128)}), new MoveSpeed(96, TimeUnits.seconds), Orientation.down);
-            //CameraHandler.AssignFollowingTask(_character, false);
-            CameraHandler.AssignFreeTask(true);
+            _character = new Character("character", "character", Global._content.Load<Texture2D>(@"character-sets\character_three_spritesheet"), 0, new Point(64, 128),
+                new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(0, 0, 64, 128)}), new MoveSpeed(96, TimeUnits.seconds), Orientation.down);
+            CameraHandler.AssignFollowingTask(_character, false);
         }
         public void UpdateScene()
         {
