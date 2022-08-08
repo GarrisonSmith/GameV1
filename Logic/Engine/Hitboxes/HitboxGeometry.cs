@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.graphics;
 using Fantasy.Logic.Engine.Utility;
+using System;
 using System.Collections.Generic;
 
 namespace Fantasy.Logic.Engine.Hitboxes
@@ -115,7 +116,7 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// <param name="drawSegments">True results in overlapping perimeters being drawn, False results in only unique perimeter values being drawn.</param>
         public void Draw(bool drawSegments = false)
         {
-            if (false)
+            if (drawSegments)
             {
                 foreach (Rectangle bounding in boundings)
                 {
@@ -133,7 +134,7 @@ namespace Fantasy.Logic.Engine.Hitboxes
                         bool uniquePoint = true;
                         foreach (Point point in points)
                         {
-                            if (boundingPoint == point)
+                            if (boundingPoint == point || (boundingPoint.Y == point.Y && Math.Abs(boundingPoint.X - point.X) == 1) || (boundingPoint.X == point.X && Math.Abs(boundingPoint.Y - point.Y) == 1))
                             {
                                 uniquePoint = false;
                             }

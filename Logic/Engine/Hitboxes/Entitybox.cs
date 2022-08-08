@@ -67,7 +67,6 @@ namespace Fantasy.Logic.Engine.Hitboxes
         {
             Entitybox foo = new Entitybox(newPosition, geometry.boundings, entityCollision, tileCollision);
             foo.geometry.position = newPosition;
-            //System.Diagnostics.Debug.WriteLine(!Global._currentScene._tileMap.Collision(layer, foo));
             return !Global._currentScene._tileMap.Collision(layer, foo);
         }
     }

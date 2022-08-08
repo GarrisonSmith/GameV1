@@ -107,31 +107,33 @@ namespace Fantasy.Logic.Engine.Utility
         /// <returns>Point array containing the points on the provided rectangles perimeter.</returns>
         public static Point[] RectanglePerimeterPoints(Rectangle foo)
         {
-            Point[] arr = new Point[foo.Width * 2 + foo.Height * 2 + 2];
+            Point[] arr = new Point[foo.Width * 2 + foo.Height * 2];
             int index = 0;
 
-            for (int i = 0; i <= foo.Width; i++)
+            
+
+            for (int i = 0; i < foo.Width; i++)
             {
                 arr[index] = new Point(foo.X + i, foo.Y); index++;
-                arr[index] = new Point(foo.X + i, foo.Y - foo.Height); index++;
+                arr[index] = new Point(foo.X + i, foo.Y - (foo.Height-1)); index++;
             }
             for (int i = 0; i < foo.Height; i++)
             {
                 arr[index] = new Point(foo.X, foo.Y - i); index++;
-                arr[index] = new Point(foo.X + foo.Width, foo.Y - i); index++;
+                arr[index] = new Point(foo.X + (foo.Width-1), foo.Y - i); index++;
             }
 
             return arr;
         }
         /// <summary>
-        /// Determines if two rectangles intersect one another.
+        /// Determines if two rectangles intersect one another. Rectangles only sharing a perimeter edge return false.
         /// </summary>
         /// <param name="foo">The first rectangle to be referenced.</param>
         /// <param name="bar">The second rectangle to be referenced.</param>
         /// <returns>True if the two rectangles intersect anywhere, False if not.</returns>
         public static bool RectanglesIntersect(Rectangle foo, Rectangle bar)
         {
-            return !(foo.X + foo.Width < bar.X || bar.X + bar.Width < foo.X || foo.Y - foo.Height > bar.Y || bar.Y - bar.Height > foo.Y);
+            return !(foo.X + foo.Width <= bar.X || bar.X + bar.Width <= foo.X || foo.Y - foo.Height >= bar.Y || bar.Y - bar.Height >= foo.Y);
         }
     }
 }

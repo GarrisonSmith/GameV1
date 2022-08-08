@@ -41,6 +41,11 @@ namespace Fantasy.Logic.Engine.graphics
 
         public static void DrawRectangle(Rectangle foo, Color color)
         {
+            Global._spriteBatch.Draw(debug,
+                       Util.GetTopLeftVector(foo),
+                       new Rectangle(0, 0, 1, 1), Color.Red, 0, new Vector2(0, 0),
+                       new Vector2(1 / Global._currentStretch, 1 / Global._currentStretch), new SpriteEffects(), 0);
+
             //draws bottom line
             for (int i = foo.X; i <= foo.X + foo.Width - 1; i++)
             {
