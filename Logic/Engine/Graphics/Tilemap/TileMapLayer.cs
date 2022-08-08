@@ -59,6 +59,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             CalculateLayerWidth();
             CalculateLayerHeight();
         }
+        
         /// <summary>
         /// Calculates and sets this TileMapLayers width value.
         /// </summary>

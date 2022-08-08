@@ -62,7 +62,12 @@ namespace Fantasy.Logic.Engine.Hitboxes
 
             return false;
         }
-        //TODO implement
+        /// <summary>
+        /// Checks if the provided position is valid the current scene. Valid positions follow collision rules.
+        /// </summary>
+        /// <param name="layer">The layer to beck investigated.</param>
+        /// <param name="newPosition">The new position to be investigated.</param>
+        /// <returns>True if the new position is valid, False if not.</returns>
         public bool CheckIfNewPositionIsValid(int layer, Point newPosition)
         {
             Entitybox foo = new Entitybox(newPosition, geometry.boundings, entityCollision, tileCollision);

@@ -53,10 +53,9 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// <summary>
         /// Draws all of the rectangles inside of this Hitboxes collision area.
         /// </summary>
-        /// <param name="drawSegments">True results in overlapping perimeters being drawn, False results in only unique perimeter values being drawn.</param>
-        public void DrawHitbox(bool drawSegments = false)
+        public void DrawHitbox()
         {
-            geometry.Draw(drawSegments);
+            geometry.Draw();
         }
     }
 }

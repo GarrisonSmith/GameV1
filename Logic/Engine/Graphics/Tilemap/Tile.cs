@@ -23,11 +23,11 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// </summary>
         public Point tileMapCoordinate;
         /// <summary>
-        /// Describes position of visual area this Tile occupies..
+        /// Describes position of the visual area this Tile occupies..
         /// </summary>
         public Rectangle positionBox;
         /// <summary>
-        /// 
+        /// Array containing the hitboxes for this tile.
         /// </summary>
         public Tilebox[] hitboxes;
 

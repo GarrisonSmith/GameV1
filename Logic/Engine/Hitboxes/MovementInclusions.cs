@@ -3,6 +3,7 @@
     public enum MovementInclusions
     { 
         inassessible,
+        land,
         water
 
     }

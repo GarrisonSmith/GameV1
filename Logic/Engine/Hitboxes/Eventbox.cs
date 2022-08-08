@@ -60,7 +60,12 @@ namespace Fantasy.Logic.Engine.Hitboxes
                 }
             }
 
-            return geometry.Intersection(foo.geometry);
+            if (geometry.Intersection(foo.geometry))
+            {
+                Global._currentScene.DoEvent(sceneEvent);
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -105,7 +105,7 @@ namespace Fantasy.Logic.Engine.Hitboxes
         {
             Rectangle[] foo = new Rectangle[boundings.Length];
             for (int i = 0; i < boundings.Length; i++)
-            { 
+            {
                 foo[i] = new Rectangle(boundings[i].X + position.X, boundings[i].Y + position.Y, boundings[i].Width, boundings[i].Height);
             }
             return foo;
@@ -113,40 +113,11 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// <summary>
         /// Draws the rectangles in this RectangleSet.
         /// </summary>
-        /// <param name="drawSegments">True results in overlapping perimeters being drawn, False results in only unique perimeter values being drawn.</param>
-        public void Draw(bool drawSegments = false)
+        public void Draw()
         {
-            if (drawSegments)
+            foreach (Rectangle bounding in boundings)
             {
-                foreach (Rectangle bounding in boundings)
-                {
-                    Debug.DrawRectangle(new Rectangle(bounding.X + position.X, bounding.Y + position.Y, bounding.Width, bounding.Height), Color.White);
-                }
-            }
-            else 
-            {
-                List<Point> points = new List<Point>();
-                foreach (Rectangle bounding in boundings)
-                {
-                    Point[] boundingPoints = Util.RectanglePerimeterPoints(bounding);
-                    foreach (Point boundingPoint in boundingPoints)
-                    {
-                        bool uniquePoint = true;
-                        foreach (Point point in points)
-                        {
-                            if (boundingPoint == point || (boundingPoint.Y == point.Y && Math.Abs(boundingPoint.X - point.X) == 1) || (boundingPoint.X == point.X && Math.Abs(boundingPoint.Y - point.Y) == 1))
-                            {
-                                uniquePoint = false;
-                            }
-                        }
-                        if (uniquePoint)
-                        {
-                            points.Add(boundingPoint);
-                            Debug.DrawPoint(new Point(boundingPoint.X + position.X, boundingPoint.Y + position.Y), false, Color.White);
-                        }
-                    }
-                }
-                Debug.DrawPoint(position, false, Color.Red);
+                Debug.DrawRectangle(new Rectangle(bounding.X + position.X, bounding.Y + position.Y, bounding.Width, bounding.Height), Color.White);
             }
         }
     }

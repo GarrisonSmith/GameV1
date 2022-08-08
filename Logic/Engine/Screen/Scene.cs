@@ -46,7 +46,7 @@ namespace Fantasy.Logic.Engine.Screen
 
             _tileMap.DrawLayers();
             Debug.DebugOnScene(this);
-            _tileMap.DrawHitboxes(1);
+            _tileMap.DrawHitboxes();
             _character.DrawHitbox();
             _character.DrawCharacter();
             particle.Draw();
@@ -69,7 +69,7 @@ namespace Fantasy.Logic.Engine.Screen
         }
         public void DoEvent(SceneEvent sceneEvent)
         {
-            System.Diagnostics.Debug.WriteLine("Event Recieved" + Global._gameTime.TotalGameTime.TotalMilliseconds);
+            System.Diagnostics.Debug.WriteLine("Event Recieved @: " + Global._gameTime.TotalGameTime.TotalMilliseconds);
             if (sceneEvent.transitionScene)
             {
                 TransitionScene(sceneEvent.transitionTileMap);
@@ -78,7 +78,7 @@ namespace Fantasy.Logic.Engine.Screen
         }
         public void ProcessInputs(CurrentActionsList actives)
         {
-            //CameraHandler.DoActions(actives.Get(ControlContexts.camera));
+            CameraHandler.DoActions(actives.Get(ControlContexts.camera));
 
             _character.DoActions(actives.Get(ControlContexts.character));
 

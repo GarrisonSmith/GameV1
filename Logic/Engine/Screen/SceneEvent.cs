@@ -46,7 +46,7 @@ namespace Fantasy.Logic.Engine.Screen
             transitionScene = true;
             foreach (XmlElement foo in sceneTransitionInfo)
             {
-                if (foo.Name.Equals("tansitionStartLocation"))
+                if (foo.Name.Equals("transitionStartLocation"))
                 {
                     transitionStartLocation = Util.PointFromString(foo.InnerText);
                 }
@@ -56,6 +56,5 @@ namespace Fantasy.Logic.Engine.Screen
                 }
             }
         }
-
     }
 }

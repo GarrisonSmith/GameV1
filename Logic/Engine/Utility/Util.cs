@@ -9,21 +9,14 @@ namespace Fantasy.Logic.Engine.Utility
     static class Util
     {
         /// <summary>
-        /// Determines if the provided point foo is inside of the provided rectangle bar.
+        /// Determines if the provided point foo is inside of the provided rectangle bar. A point on top of a rectangles border is inside that rectangle.
         /// </summary>
         /// <param name="foo">The point to be investigated.</param>
         /// <param name="bar">The rectangle to be investigated</param>
         /// <returns>True if foo is inside of bar, False if not.</returns>
         public static bool PointInsideRectangle(Point foo, Rectangle bar)
         {
-            if ((bar.X <= foo.X && foo.X <= (bar.X + bar.Width)) && (bar.Y >= foo.Y && foo.Y >= (bar.Y - bar.Height)))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return (bar.X <= foo.X && foo.X <= (bar.X + bar.Width)) && (bar.Y >= foo.Y && foo.Y >= (bar.Y - bar.Height));
         }
         /// <summary>
         /// Gets the top left point of the provided rectangle foo as a Point.
@@ -109,8 +102,6 @@ namespace Fantasy.Logic.Engine.Utility
         {
             Point[] arr = new Point[foo.Width * 2 + foo.Height * 2];
             int index = 0;
-
-            
 
             for (int i = 0; i < foo.Width; i++)
             {

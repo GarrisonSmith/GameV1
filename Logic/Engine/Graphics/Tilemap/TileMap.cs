@@ -31,6 +31,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 map.Add(new TileMapLayer(int.Parse(foo.GetAttribute("name")), foo));   
             }
         }
+
         /// <summary>
         /// Checks if the provided Hitbox with the provided position collide with any tiles in the provided layer that have hitboxes in this TileMap.
         /// </summary>
@@ -267,6 +268,16 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             map.Add(mapLayer);
         }
         /// <summary>
+        /// Draws a highlight around all the Hitboxes in all of the layers of the TileMap.
+        /// </summary>
+        public void DrawHitboxes()
+        {
+            foreach (TileMapLayer i in map)
+            {
+                    i.DrawLayerHitboxes();
+            }
+        }
+        /// <summary>
         /// Draws a highlight around all the Hitboxes in the provide layer of the TileMap.
         /// </summary>
         /// <param name="layer">The layer of the tiles to be drawn.</param>
@@ -277,6 +288,23 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 if (i.layer == layer)
                 {
                     i.DrawLayerHitboxes();
+                }
+            }
+        }
+        /// <summary>
+        /// Draws a highlight around all the Hitboxes in the provide layers of the TileMap.
+        /// </summary>
+        /// <param name="layers">The layer of the tiles to be drawn.</param>
+        public void DrawHitboxes(int[] layers)
+        {
+            foreach (int l in layers)
+            {
+                foreach (TileMapLayer i in map)
+                {
+                    if (i.layer == l)
+                    {
+                        i.DrawLayerHitboxes();
+                    }
                 }
             }
         }
@@ -340,7 +368,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             {
                 foreach (TileMapLayer i in map)
                 {
-                    if (0 == l)
+                    if (i.layer == l)
                     {
                         i.DrawTileMapLayer();
                     }
