@@ -6,7 +6,7 @@ namespace Fantasy.Logic.Engine.Utility
     /// <summary>
     /// Static class containg generally useful methods used throughout the project.
     /// </summary>
-    static class Util
+    static public class Util
     {
         /// <summary>
         /// Determines if the provided point foo is inside of the provided rectangle bar. A point on top of a rectangles border is inside that rectangle.

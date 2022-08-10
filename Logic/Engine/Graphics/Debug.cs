@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Screen;
 using Fantasy.Logic.Engine.Utility;
+using System;
 
 namespace Fantasy.Logic.Engine.graphics
 {
@@ -14,14 +15,14 @@ namespace Fantasy.Logic.Engine.graphics
         {
             DrawAxis(_scene, Color.White);
             DrawRectangle(_scene._tileMap.GetTileMapBounding(), Color.White);
-            DrawPoint(_scene._tileMap.GetTileMapCenter(), false, Color.White);
-            DrawPoint(_scene._camera.cameraPosition.Location, false, Color.White);
-            DrawPoint(_scene._camera.cameraCenter, false, Color.White);
+            DrawPoint(_scene._tileMap.GetTileMapCenter(), Color.White);
+            DrawPoint(_scene._camera.cameraPosition.Location, Color.White);
+            DrawPoint(_scene._camera.cameraCenter, Color.White);
         }
 
         public static void DrawAxis(Scene _scene, Color color)
         {
-            //draws x axis
+            //draws x axises
             for (int i = 0; i <= _scene._tileMap.GetTileMapBounding().Width + (64); i++)
             {
                 Global._spriteBatch.Draw(debug,
@@ -29,7 +30,7 @@ namespace Fantasy.Logic.Engine.graphics
                         new Rectangle(0, 0, 1, 1), color, 0, new Vector2(0, 0),
                         new Vector2(1, 1 / Global._currentStretch), new SpriteEffects(), 0);
             }
-            //draws y axis
+            //draws y axises
             for (int i = 0; i <= _scene._tileMap.GetTileMapBounding().Height + +(64); i++)
             {
                 Global._spriteBatch.Draw(debug,
@@ -47,7 +48,7 @@ namespace Fantasy.Logic.Engine.graphics
                 Global._spriteBatch.Draw(debug,
                         new Vector2(i, -(foo.Y - foo.Height + (1 / Global._currentStretch))),
                         new Rectangle(0, 0, 1, 1), color, 0, new Vector2(0, 0),
-                        new Vector2(1 / Global._currentStretch, 1 / Global._currentStretch), new SpriteEffects(), 0);
+                        new Vector2(1, 1 / Global._currentStretch), new SpriteEffects(), 0);
             }
             //draws left line
             for (int i = foo.Y - foo.Height + 1; i <= foo.Y; i++)
@@ -55,7 +56,7 @@ namespace Fantasy.Logic.Engine.graphics
                 Global._spriteBatch.Draw(debug,
                         new Vector2(foo.X, -i),
                         new Rectangle(0, 0, 1, 1), color, 0, new Vector2(0, 0),
-                        new Vector2(1 / Global._currentStretch, 1 / Global._currentStretch), new SpriteEffects(), 0);
+                        new Vector2(1 / Global._currentStretch, 1), new SpriteEffects(), 0);
             }
             //draws top line
             for (int i = foo.X; i <= foo.X + foo.Width - 1; i++)
@@ -63,7 +64,7 @@ namespace Fantasy.Logic.Engine.graphics
                 Global._spriteBatch.Draw(debug,
                         new Vector2(i, -foo.Y),
                         new Rectangle(0, 0, 1, 1), color, 0, new Vector2(0, 0),
-                        new Vector2(1 / Global._currentStretch, 1 / Global._currentStretch), new SpriteEffects(), 0);
+                        new Vector2(1, 1 / Global._currentStretch), new SpriteEffects(), 0);
             }
             //draws right line
             for (int i = foo.Y - foo.Height + 1; i <= foo.Y; i++)
@@ -71,31 +72,21 @@ namespace Fantasy.Logic.Engine.graphics
                 Global._spriteBatch.Draw(debug,
                         new Vector2((foo.X + foo.Width - (1 / Global._currentStretch)), -i),
                         new Rectangle(0, 0, 1, 1), color, 0, new Vector2(0, 0),
-                        new Vector2(1 / Global._currentStretch, 1 / Global._currentStretch), new SpriteEffects(), 0);
+                        new Vector2(1 / Global._currentStretch, 1), new SpriteEffects(), 0);
             }
 
             Global._spriteBatch.Draw(debug,
                        Util.GetTopLeftVector(foo, true),
                        new Rectangle(0, 0, 1, 1), Color.Red, 0, new Vector2(0, 0),
-                       new Vector2(1 / Global._currentStretch, 1 / Global._currentStretch), new SpriteEffects(), 0);
+                       new Vector2(1, 1), new SpriteEffects(), 0);
         }
 
-        public static void DrawPoint(Point foo, bool stretchPosition, Color color)
+        public static void DrawPoint(Point foo, Color color)
         {
-            if (stretchPosition)
-            {
-                Global._spriteBatch.Draw(debug,
-                    new Vector2(foo.X, -foo.Y),
-                    new Rectangle(0, 0, 1, 1), color, 0, new Vector2(0, 0),
-                    new Vector2(1 / Global._currentStretch, 1 / Global._currentStretch), new SpriteEffects(), 0);
-            }
-            else
-            {
-                Global._spriteBatch.Draw(debug,
-                    new Vector2(foo.X, -foo.Y),
-                    new Rectangle(0, 0, 1, 1), color, 0, new Vector2(0, 0),
-                    new Vector2(1 / Global._currentStretch, 1 / Global._currentStretch), new SpriteEffects(), 0);
-            }
+            Global._spriteBatch.Draw(debug,
+                new Vector2(foo.X, -foo.Y),
+                new Rectangle(0, 0, 1, 1), color, 0, new Vector2(0, 0),
+                new Vector2(1, 1), new SpriteEffects(), 0);
         }
 
         //For drawing things that stay static in the view.
