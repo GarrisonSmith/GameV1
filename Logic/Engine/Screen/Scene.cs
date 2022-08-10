@@ -57,7 +57,7 @@ namespace Fantasy.Logic.Engine.Screen
 
             Global._spriteBatch.Begin();
 
-            Debug.DebugOverlay(this);
+            //Debug.DebugOverlay(this);
             MouseControlHandler.DrawMouse();
 
             Global._spriteBatch.End();

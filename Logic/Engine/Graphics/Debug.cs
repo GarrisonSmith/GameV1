@@ -16,8 +16,6 @@ namespace Fantasy.Logic.Engine.graphics
             DrawAxis(_scene, Color.White);
             DrawRectangle(_scene._tileMap.GetTileMapBounding(), Color.White);
             DrawPoint(_scene._tileMap.GetTileMapCenter(), Color.White);
-            DrawPoint(_scene._camera.cameraPosition.Location, Color.White);
-            DrawPoint(_scene._camera.cameraCenter, Color.White);
         }
 
         public static void DrawAxis(Scene _scene, Color color)

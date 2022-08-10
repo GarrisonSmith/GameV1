@@ -25,8 +25,9 @@ namespace Fantasy.Logic.Engine.StringRenderings
                     lastBreak = curBreak;
                     curBreak = i;
 
-                    if ((curBreak - lineStart) * 9 > area.Width)
+                    if ((curBreak - lineStart) * 9 >= area.Width)
                     {
+                        /*
                         if ((i - lineStart) * 9 > area.Width)
                         {
                             //split curBreak up somehow
@@ -47,7 +48,14 @@ namespace Fantasy.Logic.Engine.StringRenderings
                             i += Environment.NewLine.Length;
                             lineStart = i;
                         }
+                        */
+                        text = text.Remove(lastBreak, 1);
+                        text = text.Insert(lastBreak, Environment.NewLine);
+
+                        i += Environment.NewLine.Length-1;
+                        lineStart = i;
                     }
+
                 }
             }
 
