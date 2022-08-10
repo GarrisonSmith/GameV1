@@ -97,7 +97,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             foreach (Tile i in map)
             {
-                if (i.tileMapCoordinate == coordinate)
+                if (Util.PointInsideRectangle(coordinate, i.positionBox))
                 {
                     return i;
                 }
@@ -256,6 +256,15 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             {
                 DrawTileMapLayerArea(a);
             }
+        }
+
+        /// <summary>
+        /// TODO: implement
+        /// </summary>
+        /// <returns></returns>
+        new public string ToString()
+        {
+            return "TileMapLayer.ToString not implemented.";
         }
     }
 }

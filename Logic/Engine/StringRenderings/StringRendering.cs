@@ -11,61 +11,30 @@ namespace Fantasy.Logic.Engine.StringRenderings
     {
         public static string FormatString(string foo, Rectangle area, out bool textFits)
         {
-            StringBuilder text = new StringBuilder(foo);
             int height = 16;
-
-            int lineStart = 0;
-            int lastBreak = 0;
-            int curBreak = 0;
+            StringBuilder text = new StringBuilder();
             foo.Replace(Environment.NewLine, "");
-            for (int i = 0; i < text.Length; i++)
+            string[] parts = foo.Split(' ');
+
+            int lastBreak = 0;
+            foreach (string part in parts)
             {
-                if (text[i] == ' ')
+                if (text.Length == 0)
                 {
-                    lastBreak = curBreak;
-                    curBreak = i;
-
-                    if ((curBreak - lineStart) * 9 >= area.Width)
-                    {
-                        /*
-                        if ((i - lineStart) * 9 > area.Width)
-                        {
-                            //split curBreak up somehow
-                            System.Diagnostics.Debug.WriteLine("fasfa");
-
-                            text = text.Remove(lastBreak, 1);
-                            text = text.Insert(lastBreak, Environment.NewLine);
-
-                            i += Environment.NewLine.Length;
-
-                            lineStart = i;
-                        }
-                        else
-                        {
-                            text = text.Remove(lastBreak, 1);
-                            text = text.Insert(lastBreak, Environment.NewLine);
-
-                            i += Environment.NewLine.Length;
-                            lineStart = i;
-                        }
-                        */
-                        text = text.Remove(lastBreak, 1);
-                        text = text.Insert(lastBreak, Environment.NewLine);
-
-                        i += Environment.NewLine.Length-1;
-                        lineStart = i;
-                    }
-
+                    text.Append(part);
+                }
+                else if (((text.Length - lastBreak) + part.Length + 1) * 9 > area.Width)
+                {
+                    text.Append(Environment.NewLine); height += 16; lastBreak = text.Length - 1;
+                    text.Append(part);
+                }
+                else
+                {
+                    text.Append(' ');
+                    text.Append(part);
                 }
             }
 
-            /*
-            for (int i = area.Width-1; i < foo.Length; i += (area.Width+Environment.NewLine.Length))
-            {
-                foo = foo.Insert(i, Environment.NewLine);
-                height += 16;
-            }
-            */
             textFits = height <= area.Height;
             return text.ToString();
         }

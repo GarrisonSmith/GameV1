@@ -45,8 +45,8 @@ namespace Fantasy.Logic.Engine.Screen
                 _camera.GetTransformation());
 
             _tileMap.DrawLayers();
-            Debug.DebugOnScene(this);
-            _tileMap.DrawHitboxes();
+            Debug.DebugScene(this);
+            //_tileMap.DrawHitboxes();
             _character.DrawHitbox();
             _character.DrawCharacter();
             particle.Draw();
@@ -59,7 +59,7 @@ namespace Fantasy.Logic.Engine.Screen
 
             //Debug.DebugOverlay(this);
             MouseControlHandler.DrawMouse();
-
+            Debug.DebugMouse(this, MouseControlHandler.mousePosition);
             Global._spriteBatch.End();
         }
         public void TransitionScene(string tileMapString)

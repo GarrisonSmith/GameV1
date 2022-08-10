@@ -8,7 +8,7 @@ namespace Fantasy.Logic.Controllers
     /// <summary>
     /// Static class used to proccess and track MouseStates.
     /// </summary>
-    static class MouseControlHandler
+    public static class MouseControlHandler
     {
         /// <summary>
         /// The current mousePosition on the window. X value describe the number of pixel to the left, The Y value describes the number of pixel down.
@@ -142,20 +142,9 @@ namespace Fantasy.Logic.Controllers
         }
         public static void DrawMouse()
         {
-            Global._spriteBatch.Draw(Global._content.Load<Texture2D>("tile-sets/particle"), new Vector2(mousePosition.X, mousePosition.Y),
+            Global._spriteBatch.Draw(Global._content.Load<Texture2D>("tile-sets/particle"), mousePosition.ToVector2(),
                 new Rectangle(0, 0, 2, 2),
                 Color.White, 0f, new Vector2(0, 0), new Vector2(4, 4), new SpriteEffects(), 0);
-
-            Point pixelPosition = new Point(Global._currentScene._camera.cameraPosition.X + (int)(mousePosition.X * 1 / Global._currentScene._camera.stretch),
-                Global._currentScene._camera.cameraPosition.Y - (int)(mousePosition.Y * 1 / Global._currentScene._camera.stretch));
-
-            Texture2D bar = Global._content.Load<Texture2D>("tile-sets/DEBUG");
-            Global._spriteBatch.Draw(bar, new Vector2(mousePosition.X, mousePosition.Y+28), new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
-                        new Vector2(9 * pixelPosition.ToString().Length, 16), new SpriteEffects(), 0);
-
-            SpriteFont foo = Global._content.Load<SpriteFont>("Fonts/ConsolaMono");
-            Global._spriteBatch.DrawString(foo, pixelPosition.ToString(), new Vector2(mousePosition.X, mousePosition.Y + 24), Color.Black);
-            
         }
     }
 }

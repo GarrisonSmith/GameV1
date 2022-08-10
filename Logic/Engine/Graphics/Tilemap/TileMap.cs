@@ -13,6 +13,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
     public class TileMap
     {
         /// <summary>
+        /// Describes the name of the TileMap.
+        /// </summary>
+        public string tileMapName;
+        /// <summary>
         /// List containing the TileMapLayers of this TileMap.
         /// </summary>
         public List<TileMapLayer> map;
@@ -30,6 +34,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             {
                 map.Add(new TileMapLayer(int.Parse(foo.GetAttribute("name")), foo));   
             }
+            this.tileMapName = tileMapName;
         }
 
         /// <summary>
@@ -51,6 +56,23 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 }
             }
             return false;
+        }
+        /// <summary>
+        /// Gets the Tile at the provided layer that occupies the provided position. If no tile is at that position returns null.
+        /// </summary>
+        /// <param name="layer">The layer of the returned Tile.</param>
+        /// <param name="position">The position of the returned Tile.</param>
+        /// <returns>A tile which occupies the provided position and layer.</returns>
+        public Tile GetTile(int layer, Point position)
+        {
+            foreach (TileMapLayer i in map)
+            {
+                if (i.layer == layer)
+                {
+                    return i.GetTile(position);
+                }
+            }
+            return null;
         }
         /// <summary>
         /// Gets the number of TileMapLayers present in the TileMap.
@@ -635,6 +657,15 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                     i.DrawTileMapLayerAreas(drawAreas);
                 }
             }
+        }
+        
+        /// <summary>
+        /// TODO: implement
+        /// </summary>
+        /// <returns></returns>
+        new public string ToString()
+        {
+            return "TileMap.ToString not implemented.";
         }
     }
 }
