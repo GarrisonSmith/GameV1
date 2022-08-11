@@ -7,7 +7,7 @@ using Fantasy.Logic.Engine.Hitboxes;
 
 namespace Fantasy.Logic.Engine.graphics
 {
-    static class Debug
+    public static class Debug
     {
         public static Texture2D debug = Global._content.Load<Texture2D>("tile-sets/DEBUG");
 

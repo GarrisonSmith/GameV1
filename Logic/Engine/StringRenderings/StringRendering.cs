@@ -4,9 +4,6 @@ using Microsoft.Xna.Framework;
 
 namespace Fantasy.Logic.Engine.StringRenderings
 {
-    //a character is 9 pixels wide 16 pixels tall.
-
-
     public static class StringRendering
     {
         public static string FormatString(string foo, Rectangle area, out bool textFits)

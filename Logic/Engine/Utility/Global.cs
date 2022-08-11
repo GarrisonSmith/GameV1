@@ -8,7 +8,7 @@ namespace Fantasy.Logic.Engine.Utility
     /// <summary>
     /// Static class containg members used and referenced throughout the project.
     /// </summary>
-    static public class Global
+    public static class Global
     {
         /// <summary>
         /// Tracks and manages the gametime of the current run time.
