@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Fantasy.Logic.Engine.graphics;
+using System;
 using Fantasy.Logic.Engine.Screen;
 using Fantasy.Logic.Engine.Utility;
 
@@ -66,6 +66,15 @@ namespace Fantasy.Logic.Engine.Hitboxes
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Creates a string describing this Eventbox.
+        /// </summary>
+        /// <returns>A string describing this Eventbox.</returns>
+        new public string ToString()
+        {
+            return "__Eventbox__" + Environment.NewLine + sceneEvent.ToString() + Environment.NewLine + geometry.ToString();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Hitboxes;
@@ -40,6 +42,30 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         new public void DrawTile()
         {
             animation.DrawAnimation(Util.GetTopLeftVector(positionBox, true), Color.White);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        new public string ToString()
+        {
+            StringBuilder text = new StringBuilder("TileName: " + tileSet.Name + tileSetCoordinate + Environment.NewLine
+                + "Row&Column: " + tileMapCoordinate + " Location:" + Util.GetTopLeftPoint(positionBox));
+
+            if (hitboxes != null)
+            {
+                int i = 0;
+                foreach (Tilebox box in hitboxes)
+                {
+                    text.Append(Environment.NewLine + "__Hitbox " + i + "__" + Environment.NewLine + box.ToString());
+                    i++;
+                }
+            }
+
+            text.Append(Environment.NewLine + animation.ToString());
+
+            return text.ToString();
         }
     }
 }

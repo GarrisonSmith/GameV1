@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace Fantasy.Logic.Engine.Hitboxes
 {
@@ -46,6 +47,34 @@ namespace Fantasy.Logic.Engine.Hitboxes
             }
             
             return geometry.Intersection(foo.geometry);
+        }
+        /// <summary>
+        /// Draws all of the rectangles inside of this Tilebox collision area.
+        /// Black rectangles are inassessible. GreenYellow rectangles have land assessiblity. DarkBlue rectangles have water assessibility.
+        /// </summary>
+        new public void DrawHitbox()
+        {
+            switch (movementInclusion)
+            {
+                case MovementInclusions.inassessible:
+                    geometry.Draw(Color.Black);
+                    break;
+                case MovementInclusions.land:
+                    geometry.Draw(Color.GreenYellow);
+                    break;
+                case MovementInclusions.water:
+                    geometry.Draw(Color.DarkBlue);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Creates a string describing this Tilebox.
+        /// </summary>
+        /// <returns>A string describing this Tilebox.</returns>
+        new public string ToString()
+        {
+            return "Movement Inclusion: " + movementInclusion + Environment.NewLine + geometry.ToString();
         }
     }
 }

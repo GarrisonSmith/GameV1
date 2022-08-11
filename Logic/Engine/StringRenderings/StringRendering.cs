@@ -38,5 +38,20 @@ namespace Fantasy.Logic.Engine.StringRenderings
             textFits = height <= area.Height;
             return text.ToString();
         }
+
+        public static Point EncaseString(string foo)
+        {
+            string[] parts = foo.Split(Environment.NewLine);
+            int width = 0;
+            foreach (string part in parts)
+            {
+                if (part.Length * 9 > width)
+                {
+                    width = part.Length * 9;
+                }
+            }
+
+            return new Point(width, parts.Length * 22);
+        }
     }
 }

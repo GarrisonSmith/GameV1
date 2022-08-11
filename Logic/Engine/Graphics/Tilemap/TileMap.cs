@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
@@ -29,10 +30,10 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             map = new List<TileMapLayer>();
             XmlDocument tilemap = new XmlDocument();
-            tilemap.Load(@"Content\tile-maps\"+tileMapName+".xml");
+            tilemap.Load(@"Content\tile-maps\" + tileMapName + ".xml");
             foreach (XmlElement foo in tilemap.GetElementsByTagName("layer"))
             {
-                map.Add(new TileMapLayer(int.Parse(foo.GetAttribute("name")), foo));   
+                map.Add(new TileMapLayer(int.Parse(foo.GetAttribute("name")), foo));
             }
             this.tileMapName = tileMapName;
         }
@@ -58,11 +59,11 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             return false;
         }
         /// <summary>
-        /// Gets the Tile at the provided layer that occupies the provided position. If no tile is at that position returns null.
+        /// Gets the Tile at the provided layer that occupies the provided position. If no Tile is at that position returns null.
         /// </summary>
         /// <param name="layer">The layer of the returned Tile.</param>
         /// <param name="position">The position of the returned Tile.</param>
-        /// <returns>A tile which occupies the provided position and layer.</returns>
+        /// <returns>A Tile which occupies the provided position and layer.</returns>
         public Tile GetTile(int layer, Point position)
         {
             foreach (TileMapLayer i in map)
@@ -70,6 +71,23 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 if (i.layer == layer)
                 {
                     return i.GetTile(position);
+                }
+            }
+            return null;
+        }
+        /// <summary>
+        /// Gets the Eventbox at the provided layer that occupies the provided position. If no Eventbox is at that position returns null.
+        /// </summary>
+        /// <param name="layer">The layer of the returned Eventbox.</param>
+        /// <param name="position">The position of the returned Eventbox.</param>
+        /// <returns>A Eventbox which occupies the provided position and layer.</returns>
+        public Eventbox GetEventbox(int layer, Point position)
+        {
+            foreach (TileMapLayer i in map)
+            {
+                if (i.layer == layer)
+                {
+                    return i.GetEventbox(position);
                 }
             }
             return null;
@@ -127,7 +145,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             return tempList;
         }
         /// <summary>
-        /// Returns a rectangle that is the size and location of the TileMap with the provided stretching.
+        /// Returns a rectangle that is the size and location of the TileMap.
         /// </summary>
         /// <returns>Rectangle whose collisionArea contains the TileMap drawing collisionArea.</returns>
         public Rectangle GetTileMapBounding()
@@ -163,7 +181,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 (heightLargest - heightSmallest) * 64);
         }
         /// <summary>
-        /// Returns a rectangle that is the size and location of the provided layers in the TileMap with the provided stretching.
+        /// Returns a rectangle that is the size and location of the provided layers in the TileMap.
         /// </summary>
         /// <param name="layers">Array containing the layers to calculate the TileMapBounding from.</param>
         /// <returns>Rectangle whose collisionArea contains the corrasponding layers of the TileMap drawing collisionArea.</returns>
@@ -206,7 +224,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 (heightLargest - heightSmallest) * 64);
         }
         /// <summary>
-        /// Returns a rectangle that is the size and location of the provided layer in the TileMap with the provided Global._baseStretch.
+        /// Returns a rectangle that is the size and location of the provided layer in the TileMap.
         /// </summary>
         /// <param name="layer">Integer containing the layer to calculate the TileMapBounding from.</param>
         /// <returns>Rectangle whose collisionArea contains the corrasponding layer of the TileMap drawing collisionArea.</returns>
@@ -246,7 +264,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 (heightLargest - heightSmallest) * 64);
         }
         /// <summary>
-        /// Returns a point that is the center of the TileMap with the provided stretching.
+        /// Returns a point that is the center of the TileMap.
         /// </summary>
         /// <returns>Point containing the center of the TileMap drawing collisionArea.</returns>
         public Point GetTileMapCenter()
@@ -255,7 +273,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
 
         }
         /// <summary>
-        /// Returns a point that is the center of the TileMap of the provided layers in the TileMap with the provided stretching.
+        /// Returns a point that is the center of the TileMap of the provided layers in the TileMap.
         /// </summary>
         /// <param name="layers">Array containing the layers to calculate the TileMapCenter from.</param>
         /// <returns>Point containing the center of the corrasponding layers of theTileMap drawing collisionArea.</returns>
@@ -264,7 +282,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             return Util.GetCenter(GetTileMapBounding(layers));
         }
         /// <summary>
-        /// Returns a point that is the center of the TileMap of the provided layer in the TileMap with the provided Global._baseStretch.
+        /// Returns a point that is the center of the TileMap of the provided layer in the TileMap.
         /// </summary>
         /// <param name="layer">Array containing the layer to calculate the TileMapCenter from.</param>
         /// <returns>Point containing the center of the corrasponding layer of theTileMap drawing collisionArea.</returns>
@@ -296,7 +314,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         {
             foreach (TileMapLayer i in map)
             {
-                    i.DrawLayerHitboxes();
+                i.DrawLayerHitboxes();
             }
         }
         /// <summary>
@@ -658,14 +676,15 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 }
             }
         }
-        
+
         /// <summary>
-        /// TODO: implement
+        /// Creates a string describing this TileMap.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string describing this Tilemap.</returns>
         new public string ToString()
         {
-            return "TileMap.ToString not implemented.";
+            return "TileMap Name: " + tileMapName + Environment.NewLine
+                + "Layers: " + map.Count;
         }
     }
 }

@@ -36,6 +36,7 @@ namespace Fantasy.Logic.Engine.Screen
         }
         public void DrawScene()
         {
+            //drawing with movement matrix applied.
             Global._spriteBatch.Begin(SpriteSortMode.Deferred, //first things drawn on bottom, last things on top
                 BlendState.AlphaBlend,
                 SamplerState.PointWrap,
@@ -47,19 +48,21 @@ namespace Fantasy.Logic.Engine.Screen
             _tileMap.DrawLayers();
             Debug.DebugScene(this);
             //_tileMap.DrawHitboxes();
-            _character.DrawHitbox();
+            Debug.DrawTileHitboxesUnderMouse(this, MouseControlHandler.mousePosition);
+            Debug.DrawEventboxUnderMouse(this, MouseControlHandler.mousePosition);
+            _character.DrawHitbox(Color.White);
             _character.DrawCharacter();
             particle.Draw();
 
             Global._spriteBatch.End();
 
-            
-
+            //static drawing.
             Global._spriteBatch.Begin();
 
             //Debug.DebugOverlay(this);
             MouseControlHandler.DrawMouse();
             Debug.DebugMouse(this, MouseControlHandler.mousePosition);
+
             Global._spriteBatch.End();
         }
         public void TransitionScene(string tileMapString)

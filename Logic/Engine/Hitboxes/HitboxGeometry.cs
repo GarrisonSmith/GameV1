@@ -2,7 +2,7 @@
 using Fantasy.Logic.Engine.graphics;
 using Fantasy.Logic.Engine.Utility;
 using System;
-using System.Collections.Generic;
+using System.Text;
 
 namespace Fantasy.Logic.Engine.Hitboxes
 {
@@ -37,8 +37,9 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// <returns>True if the point foo is inside of the RectangelSets boundings, False if not.</returns>
         public bool PointInsideRectangleSet(Point foo)
         {
-            foreach (Rectangle bar in boundings)
+            foreach (Rectangle bounding in boundings)
             {
+                Rectangle bar = new Rectangle(bounding.X + position.X, bounding.Y + position.Y, bounding.Width, bounding.Height);
                 if (Util.PointInsideRectangle(foo, bar))
                 {
                     return true;
@@ -112,13 +113,29 @@ namespace Fantasy.Logic.Engine.Hitboxes
         }
         /// <summary>
         /// Draws the rectangles in this RectangleSet.
+        /// <param name="color">The color the geometry will be drawn with.</param>
         /// </summary>
-        public void Draw()
+        public void Draw(Color color)
         {
             foreach (Rectangle bounding in boundings)
             {
-                Debug.DrawRectangle(new Rectangle(bounding.X + position.X, bounding.Y + position.Y, bounding.Width, bounding.Height), Color.White);
+                Debug.DrawRectangle(new Rectangle(bounding.X + position.X, bounding.Y + position.Y, bounding.Width, bounding.Height), color);
             }
+        }
+
+        /// <summary>
+        /// Creates a string describing this HitboxGeometry.
+        /// </summary>
+        /// <returns>A string describing this HitboxGeometry.</returns>
+        new public string ToString()
+        {
+            StringBuilder text = new StringBuilder("__Geometry__");
+            foreach (Rectangle bounding in boundings)
+            {
+                text.Append(Environment.NewLine + new Rectangle(bounding.X + position.X, bounding.Y + position.Y, bounding.Width, bounding.Height));
+            }
+
+            return text.ToString();
         }
     }
 }

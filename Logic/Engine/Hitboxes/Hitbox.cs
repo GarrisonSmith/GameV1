@@ -53,9 +53,10 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// <summary>
         /// Draws all of the rectangles inside of this Hitboxes collision area.
         /// </summary>
-        public void DrawHitbox()
+        /// <param name="color">The color for the hitbox to be drawn with.</param>
+        public void DrawHitbox(Color color)
         {
-            geometry.Draw();
+            geometry.Draw(color);
         }
     }
 }

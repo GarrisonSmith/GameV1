@@ -190,6 +190,18 @@ namespace Fantasy.Logic.Engine.graphics
             }
             this.orientation = orientation;
         }
+
+        /// <summary>
+        /// Creates a string describing this animation.
+        /// </summary>
+        /// <returns>A string describing this animation.</returns>
+        new public string ToString()
+        {
+            return "__Animation__" + Environment.NewLine
+                + "Current Frame/Max Frame: " + currentFrame + '/' + (maxFrame - 1) + Environment.NewLine
+                + "Min/Max Frame Duration: " + minFrameDuration + '/' + maxFrameDuration + Environment.NewLine
+                + "AnimationState: " + animationState;
+        }
     }
 
     /// <summary>

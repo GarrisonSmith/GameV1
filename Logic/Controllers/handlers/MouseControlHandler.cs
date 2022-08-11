@@ -140,6 +140,9 @@ namespace Fantasy.Logic.Controllers
                 Global._currentScene._camera.cameraPosition.X + (int)(mousePosition.X * 1 / Global._currentScene._camera.stretch),
                 Global._currentScene._camera.cameraPosition.Y - (int)(mousePosition.Y * 1 / Global._currentScene._camera.stretch));
         }
+        /// <summary>
+        /// Draws in-game mouse cursor.
+        /// </summary>
         public static void DrawMouse()
         {
             Global._spriteBatch.Draw(Global._content.Load<Texture2D>("tile-sets/particle"), mousePosition.ToVector2(),

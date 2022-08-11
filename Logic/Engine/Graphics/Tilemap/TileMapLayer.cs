@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Xml;
 using Fantasy.Logic.Engine.Hitboxes;
@@ -19,7 +20,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <summary>
         /// List containing the Eventboxes used by this TileMapLayer.
         /// </summary>
-        public List<Eventbox> layerEventboxes;
+        public List<Eventbox> eventboxes;
         /// <summary>
         /// The layer this TileMapLayer will be drawn on.
         /// </summary>
@@ -41,7 +42,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         public TileMapLayer(int layer, XmlElement layerTag)
         {
             map = new List<Tile>();
-            layerEventboxes = new List<Eventbox>();
+            eventboxes = new List<Eventbox>();
             this.layer = layer;
             foreach (XmlElement tileTag in layerTag.GetElementsByTagName("Tile"))
             {
@@ -53,7 +54,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             }
             foreach (XmlElement eventTag in layerTag.GetElementsByTagName("eventBox"))
             {
-                layerEventboxes.Add(TileMapXmlDigest.GetEventbox(eventTag));
+                eventboxes.Add(TileMapXmlDigest.GetEventbox(eventTag));
             }
 
             CalculateLayerWidth();
@@ -89,17 +90,33 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             }
         }
         /// <summary>
-        /// Returns the tile with the given coordinate from the TileMaplayer. If the coordiante is invalid returns null.
+        /// Returns the Tile that contains the coordinate from the TileMaplayer. If no tile contains the coordinate then returns null.
         /// </summary>
-        /// <param name="coordinate">The coordinate of the tile to be returned. coordinate.X is the column and coordinate.Y is the row the tile occupies in the TileMapLayer.</param>
-        /// <returns></returns>
-        public Tile GetTile(Point coordinate)
+        /// <param name="position">The coordiante the returned Tile will contain.</param>
+        /// <returns>A Tile containing the provided coordinate. Null if no such Tile exists.</returns>
+        public Tile GetTile(Point position)
         {
             foreach (Tile i in map)
             {
-                if (Util.PointInsideRectangle(coordinate, i.positionBox))
+                if (Util.PointInsideRectangle(position, i.positionBox))
                 {
                     return i;
+                }
+            }
+            return null;
+        }
+        /// <summary>
+        /// Returns the Eventbox that contains the coordiante form the TileMapLayer. If no eventbox contains the coordinate then returns null.
+        /// </summary>
+        /// <param name="position">The coordiante the returned Eventbox will contain.</param>
+        /// <returns>A Eventbox containing the provided coordinate. Null if no such Eventbox exists.</returns>
+        public Eventbox GetEventbox(Point position)
+        {
+            foreach (Eventbox box in eventboxes)
+            {
+                if (box.geometry.PointInsideRectangleSet(position))
+                {
+                    return box;
                 }
             }
             return null;
@@ -119,7 +136,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 }
             }
 
-            foreach (Eventbox foo in layerEventboxes)
+            foreach (Eventbox foo in eventboxes)
             {
                 if (foo.Collision(entityBox))
                 {
@@ -139,9 +156,9 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 j.DrawHitboxes();
             }
 
-            foreach (Eventbox foo in layerEventboxes)
+            foreach (Eventbox foo in eventboxes)
             {
-                foo.DrawHitbox();
+                foo.DrawHitbox(Color.Purple);
             }
         }
         /// <summary>
@@ -259,12 +276,14 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         }
 
         /// <summary>
-        /// TODO: implement
+        /// Creates a string describing this TileMapLayer.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string describing this TileMapLayer.</returns>
         new public string ToString()
         {
-            return "TileMapLayer.ToString not implemented.";
+            return "Layer: " + layer + Environment.NewLine 
+                + "Tiles/Eventboxes: " + map.Count + '/' + eventboxes.Count + Environment.NewLine
+                + "Dimension: (" + width + ',' + height + ')';
         }
     }
 }

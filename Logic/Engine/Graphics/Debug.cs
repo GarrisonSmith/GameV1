@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Screen;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.graphics.tilemap;
-using System;
+using Fantasy.Logic.Engine.Hitboxes;
 
 namespace Fantasy.Logic.Engine.graphics
 {
@@ -91,6 +91,31 @@ namespace Fantasy.Logic.Engine.graphics
                 new Vector2(1, 1), new SpriteEffects(), 0);
         }
 
+        public static void DrawTileHitboxesUnderMouse(Scene _scene, Point mousePosition)
+        {
+            Point mouseRelativePosition = new Point(_scene._camera.cameraPosition.X + (int)(mousePosition.X * 1 / _scene._camera.stretch),
+                _scene._camera.cameraPosition.Y - (int)(mousePosition.Y * 1 / _scene._camera.stretch));
+            Tile foo = _scene._tileMap.GetTile(1, mouseRelativePosition);
+
+            if (foo != null)
+            {
+                DrawRectangle(foo.positionBox, Color.White);
+                foo.DrawHitboxes();
+            }
+        }
+
+        public static void DrawEventboxUnderMouse(Scene _scene, Point mousePosition)
+        {
+            Point mouseRelativePosition = new Point(_scene._camera.cameraPosition.X + (int)(mousePosition.X * 1 / _scene._camera.stretch),
+                _scene._camera.cameraPosition.Y - (int)(mousePosition.Y * 1 / _scene._camera.stretch));
+            Eventbox foo = _scene._tileMap.GetEventbox(1, mouseRelativePosition);
+
+            if (foo != null)
+            {
+                foo.DrawHitbox(Color.MonoGameOrange);
+            }
+        }
+
         //For drawing things that stay static in the view.
         public static void DebugOverlay(Scene _scene)
         {
@@ -125,25 +150,51 @@ namespace Fantasy.Logic.Engine.graphics
                 _scene._camera.cameraPosition.Y - (int)(mousePosition.Y * 1 / _scene._camera.stretch));
 
             DrawMousePosition(_scene, mousePosition);
+            InterrogateEventboxUnderMouse(_scene, mousePosition, mouseRelativePosition);
             InterrogateTileUnderMouse(_scene, mousePosition, mouseRelativePosition);
         }
 
         public static void DrawMousePosition(Scene _scene, Point mousePosition)
         {
-            Global._spriteBatch.Draw(debug, new Vector2(mousePosition.X+15, mousePosition.Y - 16), new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
+            Global._spriteBatch.Draw(debug, new Vector2(mousePosition.X, mousePosition.Y + 25), new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
                         new Vector2(9 * mousePosition.ToString().Length, 16), new SpriteEffects(), 0);
-
-            Global._spriteBatch.DrawString(basic_font, mousePosition.ToString(), new Vector2(mousePosition.X+15, mousePosition.Y - 20), Color.Black);
+            Global._spriteBatch.DrawString(basic_font, mousePosition.ToString(), new Vector2(mousePosition.X, mousePosition.Y + 21), Color.Black);
         }
 
-        public static void InterrogateTileUnderMouse(Scene _scene, Point mousePosition, Point mouseRelativePosition) 
+        public static void InterrogateTileUnderMouse(Scene _scene, Point mousePosition, Point mouseRelativePosition)
         {
             Tile foo = _scene._tileMap.GetTile(1, mouseRelativePosition);
 
             if (foo != null)
             {
-                Global._spriteBatch.DrawString(basic_font, foo.ToString(), new Vector2(mousePosition.X, mousePosition.Y+20), Color.Black);
-                foo.DrawHitboxes();
+                string bar;
+                if (foo is AnimatedTile)
+                {
+                    bar = ((AnimatedTile)foo).ToString();
+                }
+                else
+                {
+                    bar = foo.ToString();
+                }
+
+                Global._spriteBatch.Draw(debug, new Vector2(mousePosition.X, mousePosition.Y + 41), new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
+                        StringRenderings.StringRendering.EncaseString(bar).ToVector2(), new SpriteEffects(), 0);
+                Global._spriteBatch.DrawString(basic_font, bar, new Vector2(mousePosition.X, mousePosition.Y + 41), Color.Black);
+            }
+        }
+
+        public static void InterrogateEventboxUnderMouse(Scene _scene, Point mousePosition, Point mouseRelativePosition)
+        {
+            Eventbox foo = _scene._tileMap.GetEventbox(1, mouseRelativePosition);
+
+            if (foo != null)
+            {
+                string bar = foo.ToString();
+                Vector2 baz = StringRenderings.StringRendering.EncaseString(bar).ToVector2();
+
+                Global._spriteBatch.Draw(debug, new Vector2(mousePosition.X - baz.X, mousePosition.Y + 41), new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
+                        StringRenderings.StringRendering.EncaseString(bar).ToVector2(), new SpriteEffects(), 0);
+                Global._spriteBatch.DrawString(basic_font, bar, new Vector2(mousePosition.X - baz.X, mousePosition.Y + 41), Color.Black);
             }
         }
     }

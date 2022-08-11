@@ -1,4 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
+using System.Text;
 using System.Xml;
 using Fantasy.Logic.Engine.Utility;
 
@@ -37,6 +39,7 @@ namespace Fantasy.Logic.Engine.Screen
                 }
             }
         }
+
         /// <summary>
         /// Creates a scene transition for this SceneEvent.
         /// </summary>
@@ -55,6 +58,22 @@ namespace Fantasy.Logic.Engine.Screen
                     transitionTileMap = foo.InnerText;
                 }
             }
+        }
+
+        /// <summary>
+        /// Creates a string describing this SceneEvent.
+        /// </summary>
+        /// <returns>A string describing this SceneEvent.</returns>
+        new public string ToString()
+        {
+            StringBuilder text = new StringBuilder();
+            if (transitionScene)
+            {
+                text.Append("Scene Transition: True"
+                    + Environment.NewLine + "Transition Map: " + transitionTileMap
+                    + Environment.NewLine + "Start Location: " + transitionStartLocation);
+            }
+            return text.ToString();
         }
     }
 }

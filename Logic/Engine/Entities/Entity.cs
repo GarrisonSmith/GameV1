@@ -275,9 +275,10 @@ namespace Fantasy.Logic.Engine.entities
         /// <summary>
         /// Draws the collision area of the hitbox of this entity, 
         /// </summary>
-        public void DrawHitbox()
+        /// <param name="color">The color for the hitbox to be drawn with.</param>
+        public void DrawHitbox(Color color)
         {
-            hitbox.DrawHitbox();
+            hitbox.DrawHitbox(color);
         }
     }
 }
