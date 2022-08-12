@@ -52,7 +52,7 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// Draws all of the rectangles inside of this Tilebox collision area.
         /// Black rectangles are inassessible. GreenYellow rectangles have land assessiblity. DarkBlue rectangles have water assessibility.
         /// </summary>
-        new public void DrawHitbox()
+        public void DrawHitbox()
         {
             switch (movementInclusion)
             {

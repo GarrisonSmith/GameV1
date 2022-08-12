@@ -10,6 +10,7 @@ using Fantasy.Logic.Controllers;
 using Fantasy.Logic.Engine.Screen.View;
 using Fantasy.Logic.Engine.Physics;
 using Fantasy.Logic.Engine.graphics;
+using Fantasy.Logic.Engine.Graphics.Drawing;
 
 namespace Fantasy.Logic.Engine.Screen
 {
@@ -45,7 +46,7 @@ namespace Fantasy.Logic.Engine.Screen
                 null,
                 _camera.GetTransformation());
 
-            _tileMap.DrawLayers();
+            _tileMap.DrawArea(_camera.cameraPosition);
             Debug.DebugScene(this);
             _character.DrawHitbox(Color.White);
             _character.DrawCharacter();
@@ -53,7 +54,23 @@ namespace Fantasy.Logic.Engine.Screen
 
             Global._spriteBatch.End();
 
-            //drawing with just movement effects.
+            //drawing with movement matrix and effects applied. Used for lighting system.
+            Global._spriteBatch.Begin(SpriteSortMode.Immediate, //first things drawn on bottom, last things on top
+                BlendState.AlphaBlend,
+                SamplerState.PointWrap,
+                null,
+                null,
+                null,
+                _camera.GetTransformation());
+
+            //Debug.DrawRectangle(new Rectangle(128, 192, 64, 64), Color.Yellow, true);
+            Debug.DrawRectangle(new Rectangle(128, 192, 128, 128), new Color (255, 255, 255) * 0.5f, true);
+            Debug.DrawRectangle(new Rectangle(64, 192, 128, 64), new Color(0 , 0, 0), true);
+            Debug.DrawRectangle(new Rectangle(64, 128, 128, 64), new Color(100, 100, 1) * 0.5f, true);
+
+            Global._spriteBatch.End();
+
+            //drawing with just movement effects. Used for some debug functions.
             Global._spriteBatch.Begin(SpriteSortMode.Deferred, //first things drawn on bottom, last things on top
                 BlendState.AlphaBlend,
                 SamplerState.PointWrap,
@@ -72,6 +89,7 @@ namespace Fantasy.Logic.Engine.Screen
 
             //Debug.DebugOverlay(this);
             MouseControlHandler.DrawMouse();
+
             Debug.DebugMouse(this, MouseControlHandler.mousePosition);
 
             Global._spriteBatch.End();

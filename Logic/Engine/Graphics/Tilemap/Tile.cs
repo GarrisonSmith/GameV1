@@ -53,7 +53,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             this.positionBox = positionBox;
             this.hitboxes = hitboxes;
         }
-        
+
         /// <summary>
         /// Determines if the provided Entitybox collides with any of the Tiles hitboxes.
         /// </summary>
