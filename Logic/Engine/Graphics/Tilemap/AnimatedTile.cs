@@ -18,7 +18,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         public Animation animation;
 
         /// <summary>
-        /// Creates a Tile with the provided perameters.
+        /// Creates a AnimatedTile with the provided perameters.
         /// </summary>
         /// <param name="tileSet">The tileSet this Tile will use.</param>
         /// <param name="tileSetCoordinate">The coordinate of the tileSet this tiles graphic is located at.</param>
@@ -37,17 +37,17 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         }
         
         /// <summary>
-        /// Draws the animated tile.
+        /// Draws the AnimatedTile.
         /// </summary>
-        new public void DrawTile()
+        new public void Draw()
         {
             animation.DrawAnimation(Util.GetTopLeftVector(positionBox, true), Color.White);
         }
 
         /// <summary>
-        /// 
+        /// Creates a string describing this AnimatedTile.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string describing this AnimatedTile.</returns>
         new public string ToString()
         {
             StringBuilder text = new StringBuilder("TileName: " + tileSet.Name + tileSetCoordinate + Environment.NewLine

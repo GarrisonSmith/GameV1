@@ -170,11 +170,11 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             {
                 if (i is AnimatedTile)
                 {
-                    ((AnimatedTile)i).DrawTile();
+                    ((AnimatedTile)i).Draw();
                 }
                 else
                 {
-                    i.DrawTile();
+                    i.Draw();
                 }
             }
         }
@@ -190,11 +190,11 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 {
                     if (i is AnimatedTile)
                     {
-                        ((AnimatedTile)i).DrawTile();
+                        ((AnimatedTile)i).Draw();
                     }
                     else
                     {
-                        i.DrawTile();
+                        i.Draw();
                     }
                 }
             }
@@ -222,11 +222,11 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 {
                     if (i is AnimatedTile)
                     {
-                        ((AnimatedTile)i).DrawTile();
+                        ((AnimatedTile)i).Draw();
                     }
                     else
                     {
-                        i.DrawTile();
+                        i.Draw();
                     }
                 }
             }
@@ -254,11 +254,11 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
                 {
                     if (j is AnimatedTile)
                     {
-                        ((AnimatedTile)j).DrawTile();
+                        ((AnimatedTile)j).Draw();
                     }
                     else
                     {
-                        j.DrawTile();
+                        j.Draw();
                     }
                 }
             }

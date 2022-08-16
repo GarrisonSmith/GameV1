@@ -76,7 +76,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// <summary>
         /// Draws the tile.
         /// </summary>
-        public void DrawTile()
+        public void Draw()
         {
             Global._spriteBatch.Draw(tileSet, Util.GetTopLeftVector(positionBox, true),
                 new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64),

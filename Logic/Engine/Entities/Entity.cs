@@ -5,6 +5,7 @@ using Fantasy.Logic.Engine.Hitboxes;
 using Fantasy.Logic.Engine.Physics;
 using Fantasy.Logic.Controllers;
 using System.Collections.Generic;
+using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.entities
 {
@@ -271,6 +272,15 @@ namespace Fantasy.Logic.Engine.entities
         {
             Point foo = hitbox.GetPointPosition();
             return new Point(foo.X + entityVisualDimensions.X / 2, foo.Y - entityVisualDimensions.Y / 2);
+        }
+        /// <summary>
+        /// Draws the entity.
+        /// </summary>
+        virtual public void Draw()
+        {
+            Global._spriteBatch.Draw(spriteSheet,
+                hitbox.GetVectorPosition(),
+                Color.White);
         }
         /// <summary>
         /// Draws the collision area of the hitbox of this entity, 

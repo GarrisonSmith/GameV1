@@ -49,7 +49,7 @@ namespace Fantasy.Logic.Engine.Screen
             _tileMap.DrawArea(_camera.cameraPosition);
             Debug.DebugScene(this);
             _character.DrawHitbox(Color.White);
-            _character.DrawCharacter();
+            _character.Draw();
             particle.Draw();
 
             Global._spriteBatch.End();

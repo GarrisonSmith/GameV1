@@ -48,7 +48,7 @@ namespace Fantasy.Logic.Engine.entities
         /// <summary>
         /// Draws the current frame of the characters animation.
         /// </summary>
-        public void DrawCharacter()
+        override public void Draw()
         {
             frames.ChangeOrientation(orientation);
 

@@ -30,8 +30,9 @@ namespace Fantasy.Logic.Engine.Hitboxes
             this.position = position;
             this.boundings = boundings;
         }
+        
         /// <summary>
-        /// Determines if the provided point inside of the RectangleSets boundings.
+        /// Determines if the provided point is inside of the HitboxGeometries boundings.
         /// </summary>
         /// <param name="foo">The point to be investigated.</param>
         /// <returns>True if the point foo is inside of the RectangelSets boundings, False if not.</returns>
