@@ -10,6 +10,10 @@ namespace Fantasy.Logic.Engine.entities
     public class EntitySet
     {
         /// <summary>
+        /// The entity the player is currently controlling.
+        /// </summary>
+        public Entity player;
+        /// <summary>
         /// List containing all entities in the EntitySet.
         /// </summary>
         public List<Entity> entitySet;
@@ -33,12 +37,46 @@ namespace Fantasy.Logic.Engine.entities
             }
             entitySet = foo;
         }
+
+        /// <summary>
+        /// Updates all entities inside of this EntitySet.
+        /// </summary>
+        public void UpdateEntitySet()
+        {
+            foreach (Entity e in entitySet)
+            {
+                e.UpdateEntity();
+            }
+        }
+        /// <summary>
+        /// Sets the sets player entity to the entity with the provided id if it is also in the EntitySet.
+        /// </summary>
+        /// <param name="id">The id to be looked for.</param>
+        /// <returns>True if the entity was found in the EntitySet and made the player, False if not.</returns>
+        public bool MakeEntityPlayer(string id)
+        {
+            foreach (Entity e in entitySet)
+            {
+                if (e.id == id)
+                {
+                    player = e;
+                    return true;
+                }
+            }
+            return false;
+        }
         /// <summary>
         /// Adds the provided entity to the EntitySet.
         /// </summary>
         /// <param name="entity">The entity to be added to the EntitySet.</param>
-        public void AddEntity(Entity entity)
+        /// <param name="makePlayer">Determines if the added entity is made the player.</param>
+        public void AddEntity(Entity entity, bool makePlayer = false)
         {
+            if (makePlayer)
+            {
+                player = entity;
+            }
+
             entitySet.Add(entity);
         }
         /// <summary>
@@ -165,6 +203,7 @@ namespace Fantasy.Logic.Engine.entities
                 return foo;
             }
         }
+        
         /// <summary>
         /// Draws all entities on all layers in this EntitySet.
         /// </summary>

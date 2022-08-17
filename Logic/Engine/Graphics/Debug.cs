@@ -16,10 +16,10 @@ namespace Fantasy.Logic.Engine.graphics
         //For drawing things that move in the scene
         public static void DebugScene(Scene _scene)
         {
-            Rectangle foo = _scene._spriteManager._tileMap.GetTileMapBounding();
+            Rectangle foo = _scene._tileMap.GetTileMapBounding();
             DrawAxis(foo, Color.White);
             DrawRectangle(foo, Color.White);
-            DrawPoint(_scene._spriteManager._tileMap.GetTileMapCenter(), Color.White);
+            DrawPoint(_scene._tileMap.GetTileMapCenter(), Color.White);
         }
 
         public static void DrawAxis(Rectangle foo, Color color)
@@ -104,7 +104,7 @@ namespace Fantasy.Logic.Engine.graphics
         {
             Point mouseRelativePosition = new Point(_scene._camera.cameraPosition.X + (int)(mousePosition.X * 1 / _scene._camera.stretch),
                 _scene._camera.cameraPosition.Y - (int)(mousePosition.Y * 1 / _scene._camera.stretch));
-            Tile foo = _scene._spriteManager._tileMap.GetTile(1, mouseRelativePosition);
+            Tile foo = _scene._tileMap.GetTile(1, mouseRelativePosition);
 
             if (foo != null)
             {
@@ -126,7 +126,7 @@ namespace Fantasy.Logic.Engine.graphics
         }
 
         //For drawing things that stay static in the view.
-        public static void DebugOverlay(Scene _scene)
+        public static void DebugOverlay()
         {
             DrawCameraCenterAxis(Color.White);
         }
@@ -158,16 +158,16 @@ namespace Fantasy.Logic.Engine.graphics
             Point mouseRelativePosition = new Point(_scene._camera.cameraPosition.X + (int)(mousePosition.X * 1 / _scene._camera.stretch),
                 _scene._camera.cameraPosition.Y - (int)(mousePosition.Y * 1 / _scene._camera.stretch));
 
-            DrawMousePosition(_scene, mousePosition);
+            DrawMousePosition(_scene, mousePosition, mouseRelativePosition);
             InterrogateEventboxUnderMouse(_scene, mousePosition, mouseRelativePosition);
             InterrogateTileUnderMouse(_scene, mousePosition, mouseRelativePosition);
         }
 
-        public static void DrawMousePosition(Scene _scene, Point mousePosition)
+        public static void DrawMousePosition(Scene _scene, Point mousePosition, Point mouseRelativePosition)
         {
             Global._spriteBatch.Draw(debug, new Vector2(mousePosition.X, mousePosition.Y + 25), new Rectangle(0, 0, 1, 1), Color.White, 0, new Vector2(0, 0),
-                        new Vector2(9 * mousePosition.ToString().Length, 16), new SpriteEffects(), 0);
-            Global._spriteBatch.DrawString(basic_font, mousePosition.ToString(), new Vector2(mousePosition.X, mousePosition.Y + 21), Color.Black);
+                        new Vector2(9 * mouseRelativePosition.ToString().Length, 16), new SpriteEffects(), 0);
+            Global._spriteBatch.DrawString(basic_font, mouseRelativePosition.ToString(), new Vector2(mousePosition.X, mousePosition.Y + 21), Color.Black);
         }
 
         public static void InterrogateTileUnderMouse(Scene _scene, Point mousePosition, Point mouseRelativePosition)

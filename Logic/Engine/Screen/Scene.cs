@@ -20,24 +20,30 @@ namespace Fantasy.Logic.Engine.Screen
 
         public Camera _camera;
 
+        public TileMap _tileMap;
+
+        public EntitySet _entitySet;
+
         public Particle particle = new Particle(new Point(0, 0), Color.CornflowerBlue, 1, 10000);
         
 
         public Scene()
         {
-            _spriteManager = new SpriteManager(new TileMap("water_grass_map"),
-            new EntitySet());
-            _spriteManager._entitySet.AddEntity(new Character("character", "character", Global._content.Load<Texture2D>(@"character-sets\character_three_spritesheet"), 1, new Point(64, 128),
-                new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(16, -104, 32, 24) }), new MoveSpeed(96, TimeUnits.seconds), Orientation.down));
+            _tileMap = new TileMap("water_grass_map");
+            _entitySet = new EntitySet();
+            _entitySet.AddEntity(new Character("character", "character", Global._content.Load<Texture2D>(@"character-sets\character_three_spritesheet"), 1, new Point(64, 128),
+                new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(16, -104, 32, 24) }), new MoveSpeed(96, TimeUnits.seconds), Orientation.down), true);
+
+            _spriteManager = new SpriteManager(_tileMap, _entitySet);
         }
         public void LoadScene()
         {
             _camera = new Camera(new Point(0, 0), true, false);
-            CameraHandler.AssignFollowingTask(_spriteManager._entitySet.GetEntity("character"), false);
+            CameraHandler.AssignFollowingTask(_entitySet.player, false);
         }
         public void UpdateScene()
         {
-            _spriteManager._entitySet.GetEntity("character").UpdateEntity();
+            _entitySet.UpdateEntitySet();
         }
         public void DrawScene()
         {
@@ -53,23 +59,9 @@ namespace Fantasy.Logic.Engine.Screen
             //_tileMap.DrawArea(_camera.cameraPosition);
             Debug.DebugScene(this);
             _spriteManager.DrawArea(_camera.cameraPosition);
+            Debug.DrawRectangle(_tileMap.GetTileMapBounding(), Color.Black * .1f, true);
+            Debug.DrawRectangle(_tileMap.GetTileMapBounding(), new Color(200, 200, 90) * 0.5f, true);
             particle.Draw();
-
-            Global._spriteBatch.End();
-
-            //drawing with movement matrix and effects applied. Used for lighting system.
-            Global._spriteBatch.Begin(SpriteSortMode.Immediate, //first things drawn on bottom, last things on top
-                BlendState.AlphaBlend,
-                SamplerState.PointWrap,
-                null,
-                null,
-                null,
-                _camera.GetTransformation());
-
-            //Debug.DrawRectangle(new Rectangle(128, 192, 64, 64), Color.Yellow, true);
-            Debug.DrawRectangle(new Rectangle(128, 192, 128, 128), new Color (255, 255, 255) * 0.5f, true);
-            Debug.DrawRectangle(new Rectangle(64, 192, 128, 64), new Color(0 , 0, 0), true);
-            Debug.DrawRectangle(new Rectangle(64, 128, 128, 64), new Color(100, 100, 1) * 0.5f, true);
 
             Global._spriteBatch.End();
 
@@ -90,16 +82,14 @@ namespace Fantasy.Logic.Engine.Screen
             //static drawing.
             Global._spriteBatch.Begin();
 
-            //Debug.DebugOverlay(this);
             MouseControlHandler.DrawMouse();
-
             Debug.DebugMouse(this, MouseControlHandler.mousePosition);
 
             Global._spriteBatch.End();
         }
         public void TransitionScene(string tileMapString)
         {
-            _spriteManager._tileMap = new TileMap(tileMapString);
+            _tileMap = new TileMap(tileMapString);
             _camera.SetBoundingBox(true);
         }
         public void DoEvent(SceneEvent sceneEvent)
@@ -108,14 +98,14 @@ namespace Fantasy.Logic.Engine.Screen
             if (sceneEvent.transitionScene)
             {
                 TransitionScene(sceneEvent.transitionTileMap);
-                _spriteManager._entitySet.GetEntity("character").SetCharacterPosition(sceneEvent.transitionStartLocation);
+                _entitySet.GetEntity("character").SetCharacterPosition(sceneEvent.transitionStartLocation);
             }
         }
         public void ProcessInputs(CurrentActionsList actives)
         {
             CameraHandler.DoActions(actives.Get(ControlContexts.camera));
 
-            _spriteManager._entitySet.GetEntity("character").DoActions(actives.Get(ControlContexts.character));
+            _entitySet.GetEntity("character").DoActions(actives.Get(ControlContexts.character));
 
         }
     }

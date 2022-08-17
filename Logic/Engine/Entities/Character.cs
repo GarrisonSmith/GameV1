@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.graphics;
 using Fantasy.Logic.Engine.Hitboxes;
 using Fantasy.Logic.Engine.Physics;
-using Fantasy.Logic.Engine.Utility;
 
 namespace Fantasy.Logic.Engine.entities
 {

@@ -273,6 +273,7 @@ namespace Fantasy.Logic.Engine.entities
             Point foo = hitbox.GetPointPosition();
             return new Point(foo.X + entityVisualDimensions.X / 2, foo.Y - entityVisualDimensions.Y / 2);
         }
+        
         /// <summary>
         /// Draws the entity.
         /// </summary>
