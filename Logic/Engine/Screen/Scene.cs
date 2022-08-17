@@ -16,24 +16,28 @@ namespace Fantasy.Logic.Engine.Screen
 {
     public class Scene
     {
+        public SpriteManager _spriteManager;
+
         public Camera _camera;
-        public TileMap _tileMap;
-        public Character _character;
+
         public Particle particle = new Particle(new Point(0, 0), Color.CornflowerBlue, 1, 10000);
-        public Scene(TileMap _tileMap)
+        
+
+        public Scene()
         {
-            this._tileMap = _tileMap;
+            _spriteManager = new SpriteManager(new TileMap("water_grass_map"),
+            new EntitySet());
+            _spriteManager._entitySet.AddEntity(new Character("character", "character", Global._content.Load<Texture2D>(@"character-sets\character_three_spritesheet"), 1, new Point(64, 128),
+                new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(16, -104, 32, 24) }), new MoveSpeed(96, TimeUnits.seconds), Orientation.down));
         }
         public void LoadScene()
         {
             _camera = new Camera(new Point(0, 0), true, false);
-            _character = new Character("character", "character", Global._content.Load<Texture2D>(@"character-sets\character_three_spritesheet"), 1, new Point(64, 128),
-                new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(16, -104, 32, 24)}), new MoveSpeed(96, TimeUnits.seconds), Orientation.down);
-            CameraHandler.AssignFollowingTask(_character, false);
+            CameraHandler.AssignFollowingTask(_spriteManager._entitySet.GetEntity("character"), false);
         }
         public void UpdateScene()
         {
-            _character.UpdateEntity();
+            _spriteManager._entitySet.GetEntity("character").UpdateEntity();
         }
         public void DrawScene()
         {
@@ -46,10 +50,9 @@ namespace Fantasy.Logic.Engine.Screen
                 null,
                 _camera.GetTransformation());
 
-            _tileMap.DrawArea(_camera.cameraPosition);
+            //_tileMap.DrawArea(_camera.cameraPosition);
             Debug.DebugScene(this);
-            _character.DrawHitbox(Color.White);
-            _character.Draw();
+            _spriteManager.DrawArea(_camera.cameraPosition);
             particle.Draw();
 
             Global._spriteBatch.End();
@@ -96,7 +99,7 @@ namespace Fantasy.Logic.Engine.Screen
         }
         public void TransitionScene(string tileMapString)
         {
-            _tileMap = new TileMap(tileMapString);
+            _spriteManager._tileMap = new TileMap(tileMapString);
             _camera.SetBoundingBox(true);
         }
         public void DoEvent(SceneEvent sceneEvent)
@@ -105,14 +108,14 @@ namespace Fantasy.Logic.Engine.Screen
             if (sceneEvent.transitionScene)
             {
                 TransitionScene(sceneEvent.transitionTileMap);
-                _character.SetCharacterPosition(sceneEvent.transitionStartLocation);
+                _spriteManager._entitySet.GetEntity("character").SetCharacterPosition(sceneEvent.transitionStartLocation);
             }
         }
         public void ProcessInputs(CurrentActionsList actives)
         {
             CameraHandler.DoActions(actives.Get(ControlContexts.camera));
 
-            _character.DoActions(actives.Get(ControlContexts.character));
+            _spriteManager._entitySet.GetEntity("character").DoActions(actives.Get(ControlContexts.character));
 
         }
     }

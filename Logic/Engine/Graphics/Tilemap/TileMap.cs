@@ -110,6 +110,38 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
             return null;
         }
         /// <summary>
+        /// Gets the value of the highest layer in this TileMapLayer.
+        /// </summary>
+        /// <returns>The value of the highest layer.</returns>
+        public int GetMaxLayer()
+        {
+            int heighest = int.MinValue;
+            foreach (TileMapLayer i in map)
+            {
+                if (i.layer > heighest)
+                {
+                    heighest = i.layer;
+                }
+            }
+            return heighest;
+        }
+        /// <summary>
+        /// Gets the value of the lowest layer in this TileMapLayer.
+        /// </summary>
+        /// <returns>The value of the lowest layer.</returns>
+        public int GetMinLayer()
+        {
+            int lowest = int.MaxValue;
+            foreach (TileMapLayer i in map)
+            {
+                if (i.layer < lowest)
+                {
+                    lowest = i.layer;
+                }
+            }
+            return lowest;
+        }
+        /// <summary>
         /// Gets the number of TileMapLayers present in the TileMap.
         /// </summary>
         /// <returns>The number of TileMapLayers in the TileMap that are not null.</returns>

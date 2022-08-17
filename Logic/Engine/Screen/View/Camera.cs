@@ -205,8 +205,8 @@ namespace Fantasy.Logic.Engine.Screen.View
         /// <param name="allowCentering">If true, allows Camera movement to be restricted with the Camera being centered on the TileMap if the TileMap boundingBox is smaller than Camera view.</param>
         public void SetBoundingBox(bool allowCentering)
         {
-            Point mapCenter = Global._currentScene._tileMap.GetTileMapCenter();
-            Rectangle mapBounding = Global._currentScene._tileMap.GetTileMapBounding();
+            Point mapCenter = Global._currentScene._spriteManager._tileMap.GetTileMapCenter();
+            Rectangle mapBounding = Global._currentScene._spriteManager._tileMap.GetTileMapBounding();
             if (mapBounding.Width <= cameraPosition.Width && allowCentering)
             {
                 movementAllowedHorizontal = false;

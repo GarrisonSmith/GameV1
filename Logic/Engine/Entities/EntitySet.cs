@@ -67,6 +67,54 @@ namespace Fantasy.Logic.Engine.entities
             return null;
         }
         /// <summary>
+        /// Gets the value of the highest layer in this EntitySet.
+        /// </summary>
+        /// <returns>The value of the highest layer.</returns>
+        public int GetMaxLayer()
+        {
+            int heighest = int.MinValue;
+            foreach (Entity e in entitySet)
+            {
+                if (e.layer > heighest)
+                {
+                    heighest = e.layer;
+                }
+            }
+            return heighest;
+        }
+        /// <summary>
+        /// Gets the value of the lowest layer in this EntitySet.
+        /// </summary>
+        /// <returns>The value of the lowest layer.</returns>
+        public int GetMinLayer()
+        {
+            int lowest = int.MaxValue;
+            foreach (Entity e in entitySet)
+            {
+                if (e.layer < lowest)
+                {
+                    lowest = e.layer;
+                }
+            }
+            return lowest;
+        }
+        /// <summary>
+        /// Gets the number of entities present in the EntitySet.
+        /// </summary>
+        /// <returns>The number of entities in the EntitySet that are not null.</returns>
+        public int GetNumberOfLayer()
+        {
+            int count = 0;
+            foreach (Entity e in entitySet)
+            {
+                if (e != null)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+        /// <summary>
         /// Creates and returns a list containing the entities on the provided layer.
         /// </summary>
         /// <param name="layer">The layer to be used.</param>
