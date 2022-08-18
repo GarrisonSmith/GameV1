@@ -25,7 +25,8 @@ namespace Fantasy.Logic.Engine.Screen
         public EntitySet _entitySet;
 
         public Particle particle = new Particle(new Point(0, 0), Color.CornflowerBlue, 1, 10000);
-        
+
+        public Circle foo;
 
         public Scene()
         {
@@ -35,6 +36,8 @@ namespace Fantasy.Logic.Engine.Screen
                 new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(16, -104, 32, 24) }), new MoveSpeed(96, TimeUnits.seconds), Orientation.down), true);
 
             _spriteManager = new SpriteManager(_tileMap, _entitySet);
+
+            foo = new Circle(100, new Point(0, 0));
         }
         public void LoadScene()
         {
@@ -60,8 +63,13 @@ namespace Fantasy.Logic.Engine.Screen
             Debug.DebugScene(this);
             _spriteManager.DrawArea(_camera.cameraPosition);
             Debug.DrawRectangle(_tileMap.GetTileMapBounding(), Color.Black * .1f, true);
-            Debug.DrawRectangle(_tileMap.GetTileMapBounding(), new Color(200, 200, 90) * 0.5f, true);
+            Debug.DrawRectangle(_tileMap.GetTileMapBounding(), new Color(255, 255, 255) * 0.5f, true);
             particle.Draw();
+
+            foreach (Point p in foo.GetPointsInsideCircle())
+            {
+                Debug.DrawPoint(p, Color.Black);
+            }
 
             Global._spriteBatch.End();
 
