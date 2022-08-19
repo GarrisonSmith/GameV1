@@ -36,13 +36,12 @@ namespace Fantasy.Logic.Engine.Screen
                 new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(16, -104, 32, 24) }), new MoveSpeed(96, TimeUnits.seconds), Orientation.down), true);
 
             _spriteManager = new SpriteManager(_tileMap, _entitySet);
-
-            foo = new Circle(100, new Point(0, 0));
+            foo = new Circle(100, new Point(0, -101));
         }
         public void LoadScene()
         {
             _camera = new Camera(new Point(0, 0), true, false);
-            CameraHandler.AssignFollowingTask(_entitySet.player, false);
+            CameraHandler.AssignFollowingTask(_entitySet.player, true);
         }
         public void UpdateScene()
         {
@@ -66,10 +65,7 @@ namespace Fantasy.Logic.Engine.Screen
             Debug.DrawRectangle(_tileMap.GetTileMapBounding(), new Color(255, 255, 255) * 0.5f, true);
             particle.Draw();
 
-            foreach (Point p in foo.GetPointsInsideCircle())
-            {
-                Debug.DrawPoint(p, Color.Black);
-            }
+            Global._spriteBatch.Draw(foo.texture, foo.texture.Bounds, Color.Black) ;
 
             Global._spriteBatch.End();
 
