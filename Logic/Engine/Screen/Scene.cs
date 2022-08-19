@@ -28,6 +28,9 @@ namespace Fantasy.Logic.Engine.Screen
 
         public Circle foo;
 
+        public Color[] bar;
+        int index = 0;
+
         public Scene()
         {
             _tileMap = new TileMap("water_grass_map");
@@ -36,7 +39,8 @@ namespace Fantasy.Logic.Engine.Screen
                 new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(16, -104, 32, 24) }), new MoveSpeed(96, TimeUnits.seconds), Orientation.down), true);
 
             _spriteManager = new SpriteManager(_tileMap, _entitySet);
-            foo = new Circle(100, new Point(0, -101));
+            foo = new Circle(100, new Point(0, 0));
+            bar = new Color[] { new Color(255, 220, 26), new Color(255, 228, 77), new Color(255, 236, 128) };
         }
         public void LoadScene()
         {
@@ -61,11 +65,23 @@ namespace Fantasy.Logic.Engine.Screen
             //_tileMap.DrawArea(_camera.cameraPosition);
             Debug.DebugScene(this);
             _spriteManager.DrawArea(_camera.cameraPosition);
-            Debug.DrawRectangle(_tileMap.GetTileMapBounding(), Color.Black * .1f, true);
-            Debug.DrawRectangle(_tileMap.GetTileMapBounding(), new Color(255, 255, 255) * 0.5f, true);
+            Debug.DrawRectangle(_tileMap.GetTileMapBounding(), Color.Black * .9f, true);
+            //Debug.DrawRectangle(_tileMap.GetTileMapBounding(), new Color(255, 255, 255) * 0.5f, true);
             particle.Draw();
 
-            Global._spriteBatch.Draw(foo.texture, foo.texture.Bounds, Color.Black) ;
+
+            Global._spriteBatch.Draw(foo.texture, new Rectangle(200, -200, 201, 201), bar[index] * 0.5f) ;
+            if (Global._gameTime.TotalGameTime.Milliseconds % 1000 < 22)
+            {
+                if (index == 2)
+                {
+                    index = 0;
+                }
+                else
+                {
+                    index++;
+                }
+            }
 
             Global._spriteBatch.End();
 
