@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
-using Fantasy.Logic.Engine.graphics;
+using Fantasy.Logic.Engine.Graphics;
 using Fantasy.Logic.Engine.Utility;
 using System;
 using System.Text;
+using Fantasy.Logic.Engine.Physics;
 
 namespace Fantasy.Logic.Engine.Hitboxes
 {
@@ -84,7 +85,7 @@ namespace Fantasy.Logic.Engine.Hitboxes
             return false;
         }
         /// <summary>
-        /// Determines if this RectangleSet intersects with any rectanlge in the provided rectangle array.
+        /// Determines if this RectangleSet intersects with any rectangle in the provided rectangle array.
         /// </summary>
         /// <param name="foo">The rectangle array to be investigated.</param>
         /// <returns>True if the provided rectangle array intersects with this RectangleSet, False if not.</returns>
@@ -93,6 +94,22 @@ namespace Fantasy.Logic.Engine.Hitboxes
             foreach (Rectangle bar in foo)
             {
                 if (Intersection(bar))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// Determines if this RectangleSet intersects with the provided Circle.
+        /// </summary>
+        /// <param name="foo">The circle to be investigated.</param>
+        /// <returns>True if the provided circle intersects with this RectangleSet, False if not.</returns>
+        public bool Intersection(Circle foo)
+        {
+            foreach (Rectangle bar in boundings)
+            {
+                if (foo.Intersection(bar))
                 {
                     return true;
                 }

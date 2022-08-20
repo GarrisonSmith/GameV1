@@ -2,10 +2,10 @@
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Screen;
 using Fantasy.Logic.Engine.Utility;
-using Fantasy.Logic.Engine.graphics.tilemap;
+using Fantasy.Logic.Engine.Graphics.tilemap;
 using Fantasy.Logic.Engine.Hitboxes;
 
-namespace Fantasy.Logic.Engine.graphics
+namespace Fantasy.Logic.Engine.Graphics
 {
     public static class Debug
     {

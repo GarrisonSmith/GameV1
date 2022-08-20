@@ -140,7 +140,7 @@ namespace Fantasy.Logic.Engine.entities
         /// Gets the number of entities present in the EntitySet.
         /// </summary>
         /// <returns>The number of entities in the EntitySet that are not null.</returns>
-        public int GetNumberOfLayer()
+        public int GetNumberOfEntities()
         {
             int count = 0;
             foreach (Entity e in entitySet)

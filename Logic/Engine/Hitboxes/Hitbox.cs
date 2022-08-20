@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Fantasy.Logic.Engine.Physics;
 
 namespace Fantasy.Logic.Engine.Hitboxes
 {
@@ -42,13 +43,22 @@ namespace Fantasy.Logic.Engine.Hitboxes
             }
         }
         /// <summary>
-        /// Determines if this Tilebox has collided with the provided Hitbox.
+        /// Determines if this Hitbox has collided with the provided Hitbox.
         /// </summary>
         /// <param name="foo">The Hitbox to be investigated.</param>
-        /// <returns>True if this Tilebox collides with the provided Hitbox, False if not.</returns>
+        /// <returns>True if this Hitbox collides with the provided Hitbox, False if not.</returns>
         public bool Collision(Hitbox foo)
         {
             return geometry.Intersection(foo.geometry);
+        }
+        /// <summary>
+        /// Determines if this Hitbox has collided with the provided circle.
+        /// </summary>
+        /// <param name="foo">The Circle to be investigated.</param>
+        /// <returns>True if this Hitbox collides with the provided Circle, False if not.</returns>
+        public bool Collision(Circle foo)
+        {
+            return geometry.Intersection(foo);
         }
         /// <summary>
         /// Draws all of the rectangles inside of this Hitboxes collision area.

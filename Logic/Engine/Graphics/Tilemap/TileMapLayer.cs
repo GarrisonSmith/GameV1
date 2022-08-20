@@ -6,7 +6,7 @@ using Fantasy.Logic.Engine.Hitboxes;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.XmlDigest;
 
-namespace Fantasy.Logic.Engine.graphics.tilemap
+namespace Fantasy.Logic.Engine.Graphics.tilemap
 {
     /// <summary>
     /// Desribes a layer of tiles in a given TileMap.

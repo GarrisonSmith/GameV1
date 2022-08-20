@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
 
-namespace Fantasy.Logic.Engine.graphics.particles
+namespace Fantasy.Logic.Engine.Graphics.particles
 {
     public class Particle
     {

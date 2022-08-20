@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Hitboxes;
 
-namespace Fantasy.Logic.Engine.graphics.tilemap
+namespace Fantasy.Logic.Engine.Graphics.tilemap
 {
     /// <summary>
     /// Describes a Tile in a given TileMapLayer.

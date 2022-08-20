@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Hitboxes;
 
-namespace Fantasy.Logic.Engine.graphics.tilemap
+namespace Fantasy.Logic.Engine.Graphics.tilemap
 {
     /// <summary>
     /// Describes a AnimatedTile in a given TileMapLayer.
@@ -41,7 +41,7 @@ namespace Fantasy.Logic.Engine.graphics.tilemap
         /// </summary>
         new public void Draw()
         {
-            animation.DrawAnimation(Util.GetTopLeftVector(positionBox, true), Color.White);
+            animation.Draw(Util.GetTopLeftVector(positionBox, true), Color.White);
         }
 
         /// <summary>

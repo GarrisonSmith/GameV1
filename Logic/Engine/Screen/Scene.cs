@@ -2,21 +2,22 @@
 using Fantasy.Logic.Engine.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Fantasy.Logic.Engine.graphics.tilemap;
+using Fantasy.Logic.Engine.Graphics.tilemap;
 using Fantasy.Logic.Engine.entities;
 using Fantasy.Logic.Engine.Hitboxes;
-using Fantasy.Logic.Engine.graphics.particles;
+using Fantasy.Logic.Engine.Graphics.particles;
 using Fantasy.Logic.Controllers;
 using Fantasy.Logic.Engine.Screen.View;
 using Fantasy.Logic.Engine.Physics;
-using Fantasy.Logic.Engine.graphics;
+using Fantasy.Logic.Engine.Graphics;
 using Fantasy.Logic.Engine.Graphics.Drawing;
+using Fantasy.Logic.Engine.Graphics.Lighting;
 
 namespace Fantasy.Logic.Engine.Screen
 {
     public class Scene
     {
-        public SpriteManager _spriteManager;
+        public SceneContentManager _spriteManager;
 
         public Camera _camera;
 
@@ -26,10 +27,9 @@ namespace Fantasy.Logic.Engine.Screen
 
         public Particle particle = new Particle(new Point(0, 0), Color.CornflowerBlue, 1, 10000);
 
-        public Circle foo;
+        public LightSource foo;
 
         public Color[] bar;
-        int index = 0;
 
         public Scene()
         {
@@ -38,9 +38,10 @@ namespace Fantasy.Logic.Engine.Screen
             _entitySet.AddEntity(new Character("character", "character", Global._content.Load<Texture2D>(@"character-sets\character_three_spritesheet"), 1, new Point(64, 128),
                 new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(16, -104, 32, 24) }), new MoveSpeed(96, TimeUnits.seconds), Orientation.down), true);
 
-            _spriteManager = new SpriteManager(_tileMap, _entitySet);
-            foo = new Circle(100, new Point(0, 0));
+            _spriteManager = new SceneContentManager(_tileMap, _entitySet);
+
             bar = new Color[] { new Color(255, 220, 26), new Color(255, 228, 77), new Color(255, 236, 128) };
+            foo = new LightSource(new Point(500, 500), new float[] { .05f, .05f, .05f }, new int[][] { new int[] { 256, 266 }, new int[] { 192, 202 }, new int[]{ 128, 138 } }, bar);
         }
         public void LoadScene()
         {
@@ -69,19 +70,7 @@ namespace Fantasy.Logic.Engine.Screen
             //Debug.DrawRectangle(_tileMap.GetTileMapBounding(), new Color(255, 255, 255) * 0.5f, true);
             particle.Draw();
 
-
-            Global._spriteBatch.Draw(foo.texture, new Rectangle(200, -200, 201, 201), bar[index] * 0.5f) ;
-            if (Global._gameTime.TotalGameTime.Milliseconds % 1000 < 22)
-            {
-                if (index == 2)
-                {
-                    index = 0;
-                }
-                else
-                {
-                    index++;
-                }
-            }
+            foo.Draw();
 
             Global._spriteBatch.End();
 
@@ -96,7 +85,7 @@ namespace Fantasy.Logic.Engine.Screen
 
             Debug.DrawTileHitboxesUnderMouse(this, MouseControlHandler.mousePosition);
             Debug.DrawEventboxUnderMouse(this, MouseControlHandler.mousePosition);
-            
+
             Global._spriteBatch.End();
 
             //static drawing.

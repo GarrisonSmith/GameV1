@@ -4,8 +4,8 @@ using Fantasy.Logic.Engine.Screen;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
-using Fantasy.Logic.Engine.graphics.tilemap;
-using Fantasy.Logic.Engine.graphics;
+using Fantasy.Logic.Engine.Graphics.tilemap;
+using Fantasy.Logic.Engine.Graphics;
 using System;
 
 namespace Fantasy.Logic.XmlDigest

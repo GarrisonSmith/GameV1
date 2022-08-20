@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Physics;
 using Fantasy.Logic.Engine.Utility;
 
-namespace Fantasy.Logic.Engine.graphics
+namespace Fantasy.Logic.Engine.Graphics
 {
     /// <summary>
     /// Defines and manages a sprites animations.
@@ -15,7 +15,7 @@ namespace Fantasy.Logic.Engine.graphics
         /// Freezes any and all animations on whatever current frame they are drawing.
         /// </summary>
         public static bool freezeAllAnimations = false;
-        
+
         /// <summary>
         /// Freeze this animation on whatever current frame is being drawn.
         /// </summary>
@@ -105,12 +105,21 @@ namespace Fantasy.Logic.Engine.graphics
             orientation = Orientation.down;
             this.animationState = animationState;
         }
+
+        /// <summary>
+        /// Determines if the frame will change upon the next draw call.
+        /// </summary>
+        /// <returns>True if the frame will change on the next draw call, False if not.</returns>
+        public bool FrameChanging()
+        {
+            return (animationState == AnimationState.cycling || animationState == AnimationState.finishing) && (Global._gameTime.TotalGameTime.TotalMilliseconds - lastFrameGameTime >= frameDuration) && (!freezeAllAnimations && !freezeAnimation);
+        }
         /// <summary>
         /// Draws the provided texture using the paremeters of this animation.
         /// </summary>
         /// <param name="position">Describes where this aniamtion will be drawn.</param>
         /// <param name="color">The color to be applied to this animation when drawn.</param>
-        public void DrawAnimation(Vector2 position, Color color)
+        public void Draw(Vector2 position, Color color)
         {
             if (!freezeAllAnimations && !freezeAnimation)
             {
@@ -121,7 +130,7 @@ namespace Fantasy.Logic.Engine.graphics
                         {
                             frameDuration = new Random().Next(minFrameDuration, maxFrameDuration);
                             lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
-                            if (currentFrame+1 < maxFrame)
+                            if (currentFrame + 1 < maxFrame)
                             {
                                 currentFrame++;
                             }
@@ -138,7 +147,7 @@ namespace Fantasy.Logic.Engine.graphics
                         {
                             frameDuration = new Random().Next(minFrameDuration, maxFrameDuration);
                             lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
-                            if (currentFrame+1 < maxFrame)
+                            if (currentFrame + 1 < maxFrame)
                             {
                                 currentFrame++;
                             }
@@ -157,7 +166,7 @@ namespace Fantasy.Logic.Engine.graphics
                         break;
                 }
             }
-            else 
+            else
             {
                 lastFrameGameTime = Global._gameTime.TotalGameTime.TotalMilliseconds;
             }

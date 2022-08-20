@@ -6,7 +6,7 @@ using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Hitboxes;
 using System.Xml;
 
-namespace Fantasy.Logic.Engine.graphics.tilemap
+namespace Fantasy.Logic.Engine.Graphics.tilemap
 {
     /// <summary>
     /// Contains a tile maps from a given string description. Tiles are 64 by 64 pixels in size.
