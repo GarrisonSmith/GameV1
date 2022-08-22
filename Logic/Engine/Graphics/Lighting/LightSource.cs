@@ -3,16 +3,33 @@ using Fantasy.Logic.Engine.Graphics.tilemap;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Physics;
+using Fantasy.Logic.Engine.Hitboxes;
+using System.Collections.Generic;
 
 namespace Fantasy.Logic.Engine.Graphics.Lighting
 {
     public class LightSource
     {
-        public static Texture2D CastCircleOnLayer(Circle foo, TileMapLayer bar)
-        { 
-        
-        }
+        public static Texture2D CastCircleOnLayer(Circle foo, int layer)
+        {
+            List<Hitbox> collisions = new List<Hitbox>();
+            
+            Hitbox[] bar = Global._currentScene._spriteManager.GetLayerHitboxes(layer);
+            foreach (Hitbox h in bar)
+            {
+                if (h.Collision(foo))
+                {
+                    collisions.Add(h);
+                }
+            }
 
+
+            return null;
+        }
+        private static Texture2D CreateLightShadowTexture(Circle foo, Hitbox[] bar)
+        {
+            return null;
+        }
         
         public Point position;
 
@@ -23,6 +40,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
         public Color[] color;
 
         private double lastGametime;
+
         private int frame;
 
         public LightSource(Point position, float[] transparency, int[][] intensity, Color[] color)
