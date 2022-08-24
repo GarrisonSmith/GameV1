@@ -143,7 +143,7 @@ namespace Fantasy.Logic.Engine.Physics
         /// <summary>
         /// The texture of the circle.
         /// </summary>
-        public Texture2D texture;
+        private Texture2D texture;
 
         /// <summary>
         /// Creates a circle with the provided parameters.
@@ -179,6 +179,38 @@ namespace Fantasy.Logic.Engine.Physics
         public bool PointInsideCircle(Point point)
         {
             return (Util.DistanceBetweenPoints(point, center) <= radius) && (Util.DistanceBetweenPoints(point, center) >= emptyCoreRadius);
+        }
+        /// <summary>
+        /// Gets the top left position corrasponding to the circle center and radius.
+        /// </summary>
+        /// <param name="invertY">True will multiply the Y value of the returned point by -1, False will not.</param>
+        /// <returns>A point describing the top left position of the circle.</returns>
+        public Point GetTopLeftPointPosition(bool invertY = false)
+        {
+            if (invertY)
+            {
+                return new Point(center.X - radius, -(center.Y + radius));
+            }
+            else
+            {
+                return new Point(center.X - radius, center.Y + radius);
+            }
+        }
+        /// <summary>
+        /// Gets the top left position corrasponding to the circle center and radius.
+        /// </summary>
+        /// <param name="invertY">True will multiply the Y value of the returned Vector2 by -1, False will not.</param>
+        /// <returns>A Vector2 describing the top left position of the circle.</returns>
+        public Vector2 GetTopLeftVectorPosition(bool invertY = false)
+        {
+            if (invertY)
+            {
+                return new Vector2(center.X - radius, -(center.Y + radius));
+            }
+            else
+            {
+                return new Vector2(center.X - radius, center.Y + radius);
+            }
         }
         /// <summary>
         /// Creates a array containing all points on the circumference of this circle.
@@ -357,7 +389,7 @@ namespace Fantasy.Logic.Engine.Physics
             }
 
             bar = new Texture2D(Global._graphics.GraphicsDevice, 2 * radius + 1, 2 * radius + 1); bar.SetData(foo);
-            _circleTextures.Add(new Tuple<int, int>(radius, emptyCoreRadius), bar);
+            _circleTextures.Add(new Tuple<int, int>(radius, emptyCoreRadius), bar); texture = bar;
             return bar;
         }
         /// <summary>
@@ -382,6 +414,17 @@ namespace Fantasy.Logic.Engine.Physics
             double SQCornerDistance = (XDistance - foo.Width / 2) ^ 2 + (YDistance - foo.Height / 2) ^ 2;
 
             return (SQCornerDistance <= (radius ^ 2));
+        }
+
+        /// <summary>
+        /// Draws this circles texture.
+        /// </summary>
+        /// <param name="color">The color to be used when drawing.</param>
+        public void Draw(Color color)
+        {
+            Global._spriteBatch.Draw(GetCircleTexture(), GetTopLeftVectorPosition(true),
+                new Rectangle(0, 0, 2 * radius + 1, 2 * radius + 1),
+                color, 0f, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), 0);
         }
     }
 }

@@ -27,9 +27,7 @@ namespace Fantasy.Logic.Engine.Screen
 
         public Particle particle = new Particle(new Point(0, 0), Color.CornflowerBlue, 1, 10000);
 
-        public LightSource foo;
-
-        public Color[] bar;
+        Circle foo = new Circle(100, new Point());
 
         public Scene()
         {
@@ -39,9 +37,6 @@ namespace Fantasy.Logic.Engine.Screen
                 new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(16, -104, 32, 24) }), new MoveSpeed(96, TimeUnits.seconds), Orientation.down), true);
 
             _spriteManager = new SceneContentManager(_tileMap, _entitySet);
-
-            bar = new Color[] { new Color(255, 220, 26), new Color(255, 228, 77), new Color(255, 236, 128) };
-            foo = new LightSource(new Point(500, 500), new float[] { .05f, .05f, .05f }, new int[][] { new int[] { 256, 266 }, new int[] { 192, 202 }, new int[]{ 128, 138 } }, bar);
         }
         public void LoadScene()
         {
@@ -69,8 +64,7 @@ namespace Fantasy.Logic.Engine.Screen
             Debug.DrawRectangle(_tileMap.GetTileMapBounding(), Color.Black * .9f, true);
             //Debug.DrawRectangle(_tileMap.GetTileMapBounding(), new Color(255, 255, 255) * 0.5f, true);
             particle.Draw();
-
-            foo.Draw();
+            foo.Draw(Color.White);
 
             Global._spriteBatch.End();
 

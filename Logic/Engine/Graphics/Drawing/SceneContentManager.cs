@@ -45,9 +45,12 @@ namespace Fantasy.Logic.Engine.Graphics.Drawing
             List<Hitbox> foo = new List<Hitbox>();
             foreach (Tile t in tiles)
             {
-                foreach (Hitbox h in t.hitboxes)
+                if (t.hitboxes != null)
                 {
-                    foo.Add(h);
+                    foreach (Hitbox h in t.hitboxes)
+                    {
+                        foo.Add(h);
+                    }
                 }
             }
             foreach (Entity e in entities)

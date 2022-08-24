@@ -15,22 +15,72 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
             List<Hitbox> collisions = new List<Hitbox>();
             
             Hitbox[] bar = Global._currentScene._spriteManager.GetLayerHitboxes(layer);
-            foreach (Hitbox h in bar)
+            foreach (Hitbox box in bar)
             {
-                if (h.Collision(foo))
+                if (box.Collision(foo))
                 {
-                    collisions.Add(h);
+                    collisions.Add(box);
                 }
             }
-
 
             return null;
         }
         private static Texture2D CreateLightShadowTexture(Circle foo, Hitbox[] bar)
         {
+            Color[] textureArray = new Color[foo.GetCircleTexture().Width * foo.GetCircleTexture().Height];
+            foo.GetCircleTexture().GetData(textureArray);
+
+            foreach (Hitbox box in bar)
+            {
+                bool[,] lightPhysics = box.lightPhysics;
+                foreach (Rectangle rec in box.geometry.boundings)
+                {
+                    if (Util.PointInsideRectangle(foo.center, rec)) //circle center is inside of rectangle.
+                    { 
+                    
+                    }
+                    else if (rec.X <= foo.center.X && rec.X + rec.Width >= foo.center.X) //circle center is vertically aligned with rectangle side.
+                    {
+                        if (rec.Y < foo.center.Y) //rectangle is below circle center.
+                        {
+                            Point topLeft = new Point(rec.X, rec.Y); Point topRight = new Point(rec.X + rec.Width, rec.Y);
+
+                        }
+                        else //rectanlge is above circle center.
+                        { 
+                        
+                        }
+                    }
+                    else if (rec.Y >= foo.center.Y && rec.Y - rec.Height <= foo.center.Y) //circle center is horizontally aligned with rectangle side.
+                    {
+                        if (rec.X > foo.center.X) //rectangle is right of circle center.
+                        {
+
+                        }
+                        else //rectanlge is left of circle center.
+                        {
+
+                        }
+                    }
+                    else //no side is aligned with circle center.
+                    {
+
+                    }
+                }
+            }
+
             return null;
         }
-        
+
+        public static Color[] ReplaceSlice(Color[] data, int length, int width, Point origin, Point pointOne, Point pointTwo, Color replacementColor)
+        {
+            int xChange_One = pointOne.X - origin.X; int yChange_one = pointOne.Y - origin.Y;
+            int xChange_Two = pointTwo.X - origin.X; int yChange_two = pointTwo.Y - origin.Y;
+            double change_One = xChange_One / yChange_one; double change_two = xChange_Two / yChange_two;
+
+            
+        }
+
         public Point position;
 
         public float[] transparency;
