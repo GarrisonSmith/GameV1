@@ -150,12 +150,16 @@ namespace Fantasy.Logic.Engine.Physics
         /// </summary>
         /// <param name="radius">The radius the circle will use.</param>
         /// <param name="center">The center the circle will use.</param>
-        public Circle(int radius, Point center)
+        /// <param name="createTexture">Determines if the circles texture is generated immediately.</param>
+        public Circle(int radius, Point center, bool createTexture = true)
         {
             this.radius = radius;
             emptyCoreRadius = 0;
             this.center = center;
-            GetCircleTexture();
+            if (createTexture)
+            {
+                GetTexture();
+            }
         }
         /// <summary>
         /// Creates a circle with the provided parameters.
@@ -163,12 +167,16 @@ namespace Fantasy.Logic.Engine.Physics
         /// <param name="radius">The radius the circle will use.</param>
         /// <param name="emptyCoreRadius">the radius of the empty core the circle will use.</param>
         /// <param name="center">The center the circle will use.</param>
-        public Circle(int radius, int emptyCoreRadius, Point center)
+        /// <param name="createTexture">Determines if the circles texture is generated immediately.</param>
+        public Circle(int radius, int emptyCoreRadius, Point center, bool createTexture = true)
         {
             this.radius = radius;
             this.emptyCoreRadius = emptyCoreRadius;
             this.center = center;
-            GetCircleTexture();
+            if (createTexture)
+            {
+                GetTexture();
+            }
         }
 
         /// <summary>
@@ -215,7 +223,8 @@ namespace Fantasy.Logic.Engine.Physics
         /// <summary>
         /// Creates a array containing all points on the circumference of this circle.
         /// </summary>
-        /// <param name="getEmptyCoreCircumference">True will returns the points on the empty cores circumference in addition to the outer circumference, False will only return the outer circumference.</param>
+        /// <param name="getEmptyCoreCircumference">True will returns the points on the empty cores circumference in addition to the outer circumference, 
+        /// False will only return the outer circumference.</param>
         /// <returns>A array containing all the points on the circumference of this circle.</returns>
         public Point[] GetCircumferencePoints(bool getEmptyCoreCircumference = true)
         {
@@ -363,10 +372,11 @@ namespace Fantasy.Logic.Engine.Physics
         }
         /// <summary>
         /// Creates a Texture2D from this circle. The circle is white and its surroundings are transparent.
+        /// If the circle texture already exists then it returns it.
         /// </summary>
         /// <remarks>Can be very slow for larger circles that havent already been generated.</remarks>
         /// <returns>A Texture2D of this circle.</returns>
-        public Texture2D GetCircleTexture()
+        public Texture2D GetTexture()
         {
             if (texture != null)
             {
@@ -376,6 +386,7 @@ namespace Fantasy.Logic.Engine.Physics
             Texture2D bar;
             if (_circleTextures.TryGetValue(new Tuple<int, int>(radius, emptyCoreRadius), out bar))
             {
+                texture = bar;
                 return bar;
             }
 
@@ -389,8 +400,20 @@ namespace Fantasy.Logic.Engine.Physics
             }
 
             bar = new Texture2D(Global._graphics.GraphicsDevice, 2 * radius + 1, 2 * radius + 1); bar.SetData(foo);
-            _circleTextures.Add(new Tuple<int, int>(radius, emptyCoreRadius), bar); texture = bar;
+            _circleTextures.Add(new Tuple<int, int>(radius, emptyCoreRadius), bar);
+            texture = bar;
             return bar;
+        }
+        /// <summary>
+        /// Creates a Color array from this circles texture. 
+        /// </summary>
+        /// <returns>A Color array describing this circles texture.</returns>
+        public Color[] GetTextureData()
+        {
+            Texture2D foo = GetTexture();
+            Color[] textureArray = new Color[foo.Width * foo.Height];
+            foo.GetData(textureArray);
+            return textureArray;
         }
         /// <summary>
         /// Determines if this circle intersects with the provided rectangle.
@@ -415,6 +438,14 @@ namespace Fantasy.Logic.Engine.Physics
 
             return (SQCornerDistance <= (radius ^ 2));
         }
+        /// <summary>
+        /// Sets this circles texture to the provided texture.
+        /// </summary>
+        /// <param name="foo">The texture to be made this circles texture.</param>
+        public void SetTexture(Texture2D foo)
+        {
+            texture = foo;
+        }
 
         /// <summary>
         /// Draws this circles texture.
@@ -422,7 +453,7 @@ namespace Fantasy.Logic.Engine.Physics
         /// <param name="color">The color to be used when drawing.</param>
         public void Draw(Color color)
         {
-            Global._spriteBatch.Draw(GetCircleTexture(), GetTopLeftVectorPosition(true),
+            Global._spriteBatch.Draw(GetTexture(), GetTopLeftVectorPosition(true),
                 new Rectangle(0, 0, 2 * radius + 1, 2 * radius + 1),
                 color, 0f, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), 0);
         }

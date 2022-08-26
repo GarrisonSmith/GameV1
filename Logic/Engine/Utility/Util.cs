@@ -106,12 +106,12 @@ namespace Fantasy.Logic.Engine.Utility
             for (int i = 0; i < foo.Width; i++)
             {
                 arr[index] = new Point(foo.X + i, foo.Y); index++;
-                arr[index] = new Point(foo.X + i, foo.Y - (foo.Height-1)); index++;
+                arr[index] = new Point(foo.X + i, foo.Y - (foo.Height - 1)); index++;
             }
             for (int i = 0; i < foo.Height; i++)
             {
                 arr[index] = new Point(foo.X, foo.Y - i); index++;
-                arr[index] = new Point(foo.X + (foo.Width-1), foo.Y - i); index++;
+                arr[index] = new Point(foo.X + (foo.Width - 1), foo.Y - i); index++;
             }
 
             return arr;
@@ -125,6 +125,19 @@ namespace Fantasy.Logic.Engine.Utility
         public static bool RectanglesIntersect(Rectangle foo, Rectangle bar)
         {
             return !(foo.X + foo.Width <= bar.X || bar.X + bar.Width <= foo.X || foo.Y - foo.Height >= bar.Y || bar.Y - bar.Height >= foo.Y);
+        }
+        /// <summary>
+        /// Calculates a line formula in the form of y=m*x+b from the provided two points.
+        /// </summary>
+        /// <param name="foo">The first point to be referenced.</param>
+        /// <param name="bar">The second point to be referenced.</param>
+        /// <returns>Double tuple containing m (the line slope) in its first index and b (the y intercept) in the second index.</returns>
+        public static Tuple<double, double> LineFormula(Point foo, Point bar)
+        {
+            double m = (double)(foo.Y - bar.Y) / (foo.X - bar.X);
+            double b = -((foo.X * m) - foo.Y);
+
+            return new Tuple<double, double>(m, b);
         }
     }
 }

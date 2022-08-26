@@ -5,6 +5,7 @@ using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Physics;
 using Fantasy.Logic.Engine.Hitboxes;
 using System.Collections.Generic;
+using System;
 
 namespace Fantasy.Logic.Engine.Graphics.Lighting
 {
@@ -23,12 +24,11 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 }
             }
 
-            return null;
+            return CreateLightShadowTexture(foo, bar);
         }
         private static Texture2D CreateLightShadowTexture(Circle foo, Hitbox[] bar)
         {
-            Color[] textureArray = new Color[foo.GetCircleTexture().Width * foo.GetCircleTexture().Height];
-            foo.GetCircleTexture().GetData(textureArray);
+            Color[] textureArray = foo.GetTextureData();
 
             foreach (Hitbox box in bar)
             {
@@ -44,7 +44,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                         if (rec.Y < foo.center.Y) //rectangle is below circle center.
                         {
                             Point topLeft = new Point(rec.X, rec.Y); Point topRight = new Point(rec.X + rec.Width, rec.Y);
-
+                            textureArray = ReplaceSlice(foo, foo.center, topLeft, topRight, Color.Transparent);
                         }
                         else //rectanlge is above circle center.
                         { 
@@ -69,16 +69,73 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 }
             }
 
-            return null;
+            Texture2D texture = new Texture2D(Global._graphics.GraphicsDevice, foo.radius * 2 + 1, foo.radius * 2 + 1);
+            texture.SetData(textureArray);
+            return texture;
         }
 
-        public static Color[] ReplaceSlice(Color[] data, int length, int width, Point origin, Point pointOne, Point pointTwo, Color replacementColor)
+        public static Color[] ReplaceSlice(Circle foo, Point origin, Point pointOne, Point pointTwo, Color replacementColor)
         {
-            int xChange_One = pointOne.X - origin.X; int yChange_one = pointOne.Y - origin.Y;
-            int xChange_Two = pointTwo.X - origin.X; int yChange_two = pointTwo.Y - origin.Y;
-            double change_One = xChange_One / yChange_one; double change_two = xChange_Two / yChange_two;
+            int textureWidth = foo.GetTexture().Width;
+            Tuple<double, double> slopeOne = Util.LineFormula(pointOne, origin);
+            Tuple<double, double> slopeTwo = Util.LineFormula(pointTwo, origin);
 
-            
+            sbyte directionOne, directionTwo;
+            if (pointOne.X >= origin.X)
+            {
+                directionOne = 1;
+            }
+            else
+            {
+                directionOne = -1;
+            }
+            if (pointTwo.X >= origin.X)
+            {
+                directionTwo = 1;
+            }
+            else
+            {
+                directionTwo = -1;
+            }
+
+            Point topLeft = new Point(foo.center.X - foo.radius, foo.center.Y + foo.radius), progOne = pointOne, progTwo = pointTwo; 
+            int y, indexOne = -1, indexTwo = -1; 
+            bool insideOne = true, insideTwo = true;
+            Color[] curData = foo.GetTextureData();
+            while (insideOne && insideTwo)
+            {
+                y = (int)Math.Round(slopeOne.Item1 * (progOne.X + directionOne) + slopeOne.Item2);
+                progOne = new Point(progOne.X + directionOne, y);
+                if (foo.PointInsideCircle(progOne))
+                {
+                    indexOne = (progOne.X - topLeft.X) + textureWidth * (progOne.Y - topLeft.Y);
+                }
+                else
+                {
+                    insideOne = false;
+                }
+
+                y = (int)Math.Round(slopeTwo.Item1 * (progTwo.X + directionTwo) + slopeTwo.Item2);
+                progTwo = new Point(progTwo.X + directionTwo, y);
+                if (foo.PointInsideCircle(progTwo))
+                {
+                    indexTwo = (progTwo.X - topLeft.X) + textureWidth * (progTwo.Y - topLeft.Y);
+                }
+                else
+                {
+                    insideTwo = false;
+                }
+
+                if (0 <= indexOne && indexOne < curData.Length && insideOne)
+                {
+                    curData[indexOne] = replacementColor;
+                }
+                if (0 <= indexTwo && indexTwo < curData.Length && insideTwo)
+                {
+                    curData[indexTwo] = replacementColor;
+                }
+            }
+            return curData;
         }
 
         public Point position;
