@@ -55,7 +55,7 @@ namespace Fantasy.Logic.Engine.Graphics.Drawing
             }
             foreach (Entity e in entities)
             {
-                foo.Add(e.hitbox);
+                //foo.Add(e.hitbox);
             }
             return foo.ToArray();
         }

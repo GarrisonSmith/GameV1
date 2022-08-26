@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.Utility;
 using Microsoft.Xna.Framework.Graphics;
+using Fantasy.Logic.Engine.Graphics;
 
 namespace Fantasy.Logic.Engine.Physics
 {
@@ -456,6 +457,7 @@ namespace Fantasy.Logic.Engine.Physics
             Global._spriteBatch.Draw(GetTexture(), GetTopLeftVectorPosition(true),
                 new Rectangle(0, 0, 2 * radius + 1, 2 * radius + 1),
                 color, 0f, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), 0);
+            Debug.DrawPoint(center, Color.Red);
         }
     }
 }

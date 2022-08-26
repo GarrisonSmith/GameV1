@@ -107,7 +107,7 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// <returns>True if the provided circle intersects with this RectangleSet, False if not.</returns>
         public bool Intersection(Circle foo)
         {
-            foreach (Rectangle bar in boundings)
+            foreach (Rectangle bar in GetAbsoluteBoundings())
             {
                 if (foo.Intersection(bar))
                 {

@@ -27,14 +27,14 @@ namespace Fantasy.Logic.Engine.Screen
 
         public Particle particle = new Particle(new Point(0, 0), Color.CornflowerBlue, 1, 10000);
 
-        Circle foo = new Circle(100, new Point());
+        Circle foo = new Circle(100, new Point(300,728));
 
         public Scene()
         {
             _tileMap = new TileMap("water_grass_map");
             _entitySet = new EntitySet();
             _entitySet.AddEntity(new Character("character", "character", Global._content.Load<Texture2D>(@"character-sets\character_three_spritesheet"), 1, new Point(64, 128),
-                new Entitybox(new Point(0, 0), new Rectangle[] { new Rectangle(16, -104, 32, 24) }), new MoveSpeed(96, TimeUnits.seconds), Orientation.down), true);
+                new Entitybox(new Point(0, 700), new Rectangle[] { new Rectangle(16, -104, 32, 24) }), new MoveSpeed(96, TimeUnits.seconds), Orientation.down), true);
 
             _spriteManager = new SceneContentManager(_tileMap, _entitySet);
         }
@@ -46,6 +46,7 @@ namespace Fantasy.Logic.Engine.Screen
         public void UpdateScene()
         {
             _entitySet.UpdateEntitySet();
+            foo.SetTexture(LightSource.CastCircleOnLayer(foo, 1));
         }
         public void DrawScene()
         {

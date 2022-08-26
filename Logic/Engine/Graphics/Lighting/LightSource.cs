@@ -23,8 +23,8 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                     collisions.Add(box);
                 }
             }
-
-            return CreateLightShadowTexture(foo, bar);
+            foo.SetTexture(CreateLightShadowTexture(foo, collisions.ToArray()));
+            return foo.GetTexture();
         }
         private static Texture2D CreateLightShadowTexture(Circle foo, Hitbox[] bar)
         {
@@ -33,7 +33,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
             foreach (Hitbox box in bar)
             {
                 bool[,] lightPhysics = box.lightPhysics;
-                foreach (Rectangle rec in box.geometry.boundings)
+                foreach (Rectangle rec in box.geometry.GetAbsoluteBoundings())
                 {
                     if (Util.PointInsideRectangle(foo.center, rec)) //circle center is inside of rectangle.
                     { 
@@ -98,7 +98,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 directionTwo = -1;
             }
 
-            Point topLeft = new Point(foo.center.X - foo.radius, foo.center.Y + foo.radius), progOne = pointOne, progTwo = pointTwo; 
+            Point topLeft = new Point(foo.center.X - foo.radius, foo.center.Y + foo.radius), progOne = origin, progTwo = origin;//progOne = pointOne, progTwo = pointTwo; 
             int y, indexOne = -1, indexTwo = -1; 
             bool insideOne = true, insideTwo = true;
             Color[] curData = foo.GetTextureData();
@@ -108,7 +108,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 progOne = new Point(progOne.X + directionOne, y);
                 if (foo.PointInsideCircle(progOne))
                 {
-                    indexOne = (progOne.X - topLeft.X) + textureWidth * (progOne.Y - topLeft.Y);
+                    indexOne = (progOne.X - topLeft.X) + textureWidth * (topLeft.Y - progOne.Y);
                 }
                 else
                 {
@@ -119,7 +119,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 progTwo = new Point(progTwo.X + directionTwo, y);
                 if (foo.PointInsideCircle(progTwo))
                 {
-                    indexTwo = (progTwo.X - topLeft.X) + textureWidth * (progTwo.Y - topLeft.Y);
+                    indexTwo = (progTwo.X - topLeft.X) + textureWidth * (topLeft.Y - progTwo.Y);
                 }
                 else
                 {
