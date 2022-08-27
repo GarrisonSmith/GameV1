@@ -27,7 +27,8 @@ namespace Fantasy.Logic.Engine.Screen
 
         public Particle particle = new Particle(new Point(0, 0), Color.CornflowerBlue, 1, 10000);
 
-        Circle foo = new Circle(100, new Point(300,728));
+        Circle foo = new Circle(100, new Point(300, 555));
+        Circle boo = new Circle(100, new Point(300, 555));
 
         public Scene()
         {
@@ -46,10 +47,9 @@ namespace Fantasy.Logic.Engine.Screen
         public void UpdateScene()
         {
             _entitySet.UpdateEntitySet();
-            foo.SetTexture(LightSource.CastCircleOnLayer(foo, 1));
         }
         public void DrawScene()
-        {
+        { 
             //drawing with movement matrix and effects applied.
             Global._spriteBatch.Begin(SpriteSortMode.Deferred, //first things drawn on bottom, last things on top
                 BlendState.AlphaBlend,
@@ -59,13 +59,13 @@ namespace Fantasy.Logic.Engine.Screen
                 null,
                 _camera.GetTransformation());
 
-            //_tileMap.DrawArea(_camera.cameraPosition);
             Debug.DebugScene(this);
             _spriteManager.DrawArea(_camera.cameraPosition);
-            Debug.DrawRectangle(_tileMap.GetTileMapBounding(), Color.Black * .9f, true);
-            //Debug.DrawRectangle(_tileMap.GetTileMapBounding(), new Color(255, 255, 255) * 0.5f, true);
+            //Debug.DrawRectangle(_tileMap.GetTileMapBounding(), Color.Black * .9f, true);
             particle.Draw();
+            boo.Draw(Color.Black);
             foo.Draw(Color.White);
+            foo.SetTexture(LightSource.CastCircleOnLayer(foo, 1));
 
             Global._spriteBatch.End();
 

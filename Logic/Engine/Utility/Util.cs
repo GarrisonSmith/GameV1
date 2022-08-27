@@ -182,7 +182,7 @@ namespace Fantasy.Logic.Engine.Utility
             return (lineFormula.Item1 * x) + lineFormula.Item2;
         }
         /// <summary>
-        /// Calculates a corrasponding y value for a provided x value and line formula. 
+        /// Calculates a corrasponding x value for a provided y value and line formula. 
         /// </summary>
         /// <param name="lineFormula">Double tuple containing m (the line slope) in its first item and b (the y intercept) in the second item.
         /// If it is a vertical line then the first item should be double.NaN and the second item should be the x intercept.</param>
@@ -198,7 +198,7 @@ namespace Fantasy.Logic.Engine.Utility
             return (int)Math.Round((y - lineFormula.Item2) / lineFormula.Item1);
         }
         /// <summary>
-        /// Calculates a corrasponding y value for a provided x value and line formula. 
+        /// Calculates a corrasponding x value for a provided y value and line formula. 
         /// </summary>
         /// <param name="lineFormula">Double tuple containing m (the line slope) in its first item and b (the y intercept) in the second item.
         /// If it is a vertical line then the first item should be double.NaN and the second item should be the x intercept.</param>

@@ -28,11 +28,13 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
         }
         private static Texture2D CreateLightShadowTexture(Circle foo, Hitbox[] bar)
         {
-            Color[] textureArray = foo.GetTextureData();
+            Texture2D texture = new Texture2D(Global._graphics.GraphicsDevice, foo.radius * 2 + 1, foo.radius * 2 + 1);
+            texture.SetData(foo.GetTextureData());
 
             foreach (Hitbox box in bar)
             {
                 bool[,] lightPhysics = box.lightPhysics;
+
                 foreach (Rectangle rec in box.geometry.GetAbsoluteBoundings())
                 {
                     if (Util.PointInsideRectangle(foo.center, rec)) //circle center is inside of rectangle.
@@ -44,43 +46,59 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                         if (rec.Y < foo.center.Y) //rectangle is below circle center.
                         {
                             Point topLeft = new Point(rec.X, rec.Y); Point topRight = new Point(rec.X + rec.Width - 1, rec.Y);
-                            textureArray = ReplaceSlice(foo, topLeft, topRight, Color.Transparent);
+                            texture.SetData(ReplaceSlice(foo, topLeft, topRight, Color.Transparent));
                         }
                         else //rectanlge is above circle center.
                         {
-
+                            Point bottomLeft = new Point(rec.X, rec.Y - rec.Height + 1); Point bottomRight = new Point(rec.X + rec.Width - 1, rec.Y - rec.Height + 1);
+                            texture.SetData(ReplaceSlice(foo, bottomLeft, bottomRight, Color.Transparent));
                         }
                     }
                     else if (rec.Y >= foo.center.Y && rec.Y - rec.Height <= foo.center.Y) //circle center is horizontally aligned with rectangle side.
                     {
                         if (rec.X > foo.center.X) //rectangle is right of circle center.
                         {
-
+                            Point top = new Point(rec.X, rec.Y); Point bottom = new Point(rec.X, rec.Y - rec.Height + 1);
+                            texture.SetData(ReplaceSlice(foo, top, bottom, Color.Transparent));
                         }
                         else //rectanlge is left of circle center.
                         {
-
+                            Point top = new Point(rec.X + rec.Width - 1, rec.Y); Point bottom = new Point(rec.X + rec.Width - 1, rec.Y - rec.Height + 1);
+                            texture.SetData(ReplaceSlice(foo, top, bottom, Color.Transparent));
                         }
                     }
                     else //no side is aligned with circle center.
                     {
 
                     }
+                    foo.SetTexture(texture);
                 }
             }
 
-            Texture2D texture = new Texture2D(Global._graphics.GraphicsDevice, foo.radius * 2 + 1, foo.radius * 2 + 1);
-            texture.SetData(textureArray);
             return texture;
         }
-
+        /// <summary>
+        /// Replaces a slice of the circle foos texture with the provided replacement color. pointOne and pointTwo act as clamp points for casting the replacement area.
+        /// </summary>
+        /// <remarks>pontOne and pointTwo must be in either a vertical or horizontal line.</remarks>
+        /// <param name="foo">The circle to be used.</param>
+        /// <param name="pointOne">The first clamp point.</param>
+        /// <param name="pointTwo">The second clamp point.</param>
+        /// <param name="replacementColor">The color that will replace all points inside of the slice.</param>
+        /// <returns>A color array describing foos texture with the slice replaced with the replacementColor.</returns>
         public static Color[] ReplaceSlice(Circle foo, Point pointOne, Point pointTwo, Color replacementColor)
         {
+            if (pointOne.X != pointTwo.X && pointOne.Y != pointTwo.Y)
+            {
+                return foo.GetTextureData();
+            }
+            
             int textureWidth = foo.GetTexture().Width;
             Tuple<double, double> lineOne = Util.LineFormula(pointOne, foo.center);
             Tuple<double, double> lineTwo = Util.LineFormula(pointTwo, foo.center);
 
-            sbyte directionOne, directionTwo; //determines which direction pointOne and pointTwo need to move towards.
+            //determines which direction pointOne and pointTwo need to move towards.
+            sbyte directionOne, directionTwo;
             if (pointOne.X >= foo.center.X)
             {
                 directionOne = 1;
@@ -98,68 +116,114 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 directionTwo = -1;
             }
 
+            //generates the points on the lines from pointOne and pointTwo.
             Point topLeft = new Point(foo.center.X - foo.radius, foo.center.Y + foo.radius), progOne = foo.center, progTwo = foo.center, progOneLast = foo.center, progTwoLast = foo.center;
             int pIndex;
-            bool insideOne = true, insideTwo = true;
+            bool doneOne = false, doneTwo = false;
             Color[] curData = foo.GetTextureData();
-            List<Point> replacementPoints;
-            while (insideOne || insideTwo)
+            List<Point> linePointsOne = new List<Point>(), linePointsTwo = new List<Point>();
+            linePointsOne.Add(progOne); linePointsTwo.Add(progTwo);
+            while (!doneOne || !doneTwo)
             {
-                replacementPoints = new List<Point>(); //contains this iterations points to be replaced.
-
                 //Generates the points of a ray from foo's center toward pointOne that are inside of foo and beyond pointOne.
                 progOne = new Point(progOne.X + directionOne, Util.XOnLine(lineOne, progOne.X + directionOne));
-                for (int y = Math.Min(progOne.Y, progOneLast.Y); y < Math.Max(progOne.Y, progOneLast.Y); y++)
+                if (directionOne != directionTwo)
                 {
-                    replacementPoints.Add(new Point(progOne.X, y));
+                    for (int y = Math.Min(progOne.Y, progOneLast.Y); y < Math.Max(progOne.Y, progOneLast.Y); y++)
+                    {
+                        linePointsOne.Add(new Point(progOne.X, y));
+                    }
                 }
-
-                replacementPoints.Add(progOne);
-
-                if (insideOne! && !foo.PointInsideCircle(progOneLast))
-                {
-                    insideOne = false;
-                }
+                linePointsOne.Add(progOne);
+                progOneLast = progOne;
+                doneOne = ((directionOne != directionTwo && Math.Abs(progOne.Y - foo.center.Y) > foo.radius) || (directionOne == directionTwo && Math.Abs(progOne.X - foo.center.X) > foo.radius));
 
                 //Generates the points of a ray from foo's center toward pointTwo that are inside of foo and beyond pointTwo.
                 progTwo = new Point(progTwo.X + directionTwo, Util.XOnLine(lineTwo, progTwo.X + directionTwo));
-                for (int y = Math.Min(progTwo.Y, progTwoLast.Y); y < Math.Max(progTwo.Y, progTwoLast.Y); y++)
+                if (directionOne != directionTwo)
                 {
-                    replacementPoints.Add(new Point(progTwo.X, y));
-                }
-
-                replacementPoints.Add(progTwo);
-
-                if (insideTwo! && !foo.PointInsideCircle(progTwoLast))
-                {
-                    insideTwo = false;
-                }
-
-                //Gets the points between progOne and progTwo.
-                if (directionOne == directionTwo) //lines opening horizontally < or > from center.
-                {
-                    for (int y = Math.Min(progOne.Y, progTwo.Y) + 1; y < Math.Max(progOne.Y, progTwo.Y); y++)
+                    for (int y = Math.Min(progTwo.Y, progTwoLast.Y); y < Math.Max(progTwo.Y, progTwoLast.Y); y++)
                     {
-                        replacementPoints.Add(new Point(progOne.X, y));
+                        linePointsTwo.Add(new Point(progTwo.X, y));
                     }
                 }
-                else //lines opening vertically ^ or v from center.
-                {
-                    for (int x = progTwo.X + 1; x < progTwo.X + 100; x++)
-                    {
-                        replacementPoints.Add(new Point(x , progOne.Y));
-                    }
-                }
-
-                progOneLast = progOne;
+                linePointsTwo.Add(progTwo);
                 progTwoLast = progTwo;
-                //replaces the determines points
-                foreach (Point p in replacementPoints)
+                doneTwo = ((directionOne != directionTwo && Math.Abs(progTwo.Y - foo.center.Y) > foo.radius) || (directionOne == directionTwo && Math.Abs(progTwo.X - foo.center.X) > foo.radius)); ;
+            }
+
+            //Gets the points between progOne and progTwo and replaces their colors.
+            if (directionOne == directionTwo) //lines opening horizontally > or < from center.
+            {
+                if (pointOne.X > foo.center.X && pointTwo.X > foo.center.X) // < from center
                 {
-                    pIndex = (p.X - topLeft.X) + textureWidth * (topLeft.Y - p.Y);
-                    if (0 <= pIndex && pIndex < curData.Length && foo.PointInsideCircle(p))
+                    for (int x = Math.Min(pointOne.X, pointTwo.X); x <= foo.center.X + foo.radius; x++)
                     {
-                        curData[pIndex] = replacementColor;
+                        int yOne = linePointsOne.Find(p => p.X == x).Y;
+                        int yTwo = linePointsTwo.Find(p => p.X == x).Y;
+                        for (int y = Math.Min(yOne, yTwo); y <= Math.Max(yOne, yTwo); y++)
+                        {
+                            Point p = new Point(x, y);
+                            pIndex = (p.X - topLeft.X) + textureWidth * (topLeft.Y - p.Y);
+                            if (0 <= pIndex && pIndex < curData.Length && foo.PointInsideCircle(p))
+                            {
+                                curData[pIndex] = replacementColor;
+                            }
+                        }
+                    }
+                }
+                else if (pointOne.X < foo.center.X && pointTwo.X < foo.center.X) // > from center
+                {
+                    for (int x = Math.Max(pointOne.X, pointTwo.X); x >= foo.center.X - foo.radius; x--)
+                    {
+                        int yOne = linePointsOne.Find(p => p.X == x).Y;
+                        int yTwo = linePointsTwo.Find(p => p.X == x).Y;
+                        for (int y = Math.Min(yOne, yTwo); y <= Math.Max(yOne, yTwo); y++)
+                        {
+                            Point p = new Point(x, y);
+                            pIndex = (p.X - topLeft.X) + textureWidth * (topLeft.Y - p.Y);
+                            if (0 <= pIndex && pIndex < curData.Length && foo.PointInsideCircle(p))
+                            {
+                                curData[pIndex] = replacementColor;
+                            }
+                        }
+                    }
+                }
+            }
+            else //lines opening vertically ^ or v or / or \ from center.
+            {
+                if (pointOne.Y > foo.center.Y && pointTwo.Y > foo.center.Y) // v from center
+                {
+                    for (int y = Math.Min(pointOne.Y, pointTwo.Y); y <= foo.center.Y + foo.radius; y++)
+                    {
+                        int xOne = linePointsOne.Find(p => p.Y == y).X;
+                        int xTwo = linePointsTwo.Find(p => p.Y == y).X;
+                        for (int x = Math.Min(xOne, xTwo); x <= Math.Max(xOne, xTwo); x++)
+                        {
+                            Point p = new Point(x, y);
+                            pIndex = (p.X - topLeft.X) + textureWidth * (topLeft.Y - p.Y);
+                            if (0 <= pIndex && pIndex < curData.Length && foo.PointInsideCircle(p))
+                            {
+                                curData[pIndex] = replacementColor;
+                            }
+                        }
+                    }
+                }
+                else if (pointOne.Y < foo.center.Y && pointTwo.Y < foo.center.Y) // ^ from center
+                {
+                    for (int y = Math.Max(pointOne.Y, pointTwo.Y); y >= foo.center.Y - foo.radius; y--)
+                    {
+                        int xOne = linePointsOne.Find(p => p.Y == y).X;
+                        int xTwo = linePointsTwo.Find(p => p.Y == y).X;
+                        for (int x = Math.Min(xOne, xTwo); x <= Math.Max(xOne, xTwo); x++)
+                        {
+                            Point p = new Point(x, y);
+                            pIndex = (p.X - topLeft.X) + textureWidth * (topLeft.Y - p.Y);
+                            if (0 <= pIndex && pIndex < curData.Length && foo.PointInsideCircle(p))
+                            {
+                                curData[pIndex] = replacementColor;
+                            }
+                        }
                     }
                 }
             }

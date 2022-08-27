@@ -187,7 +187,7 @@ namespace Fantasy.Logic.Engine.Physics
         /// <returns>True if the point is inside of this circle, False if not.</returns>
         public bool PointInsideCircle(Point point)
         {
-            return (Util.DistanceBetweenPoints(point, center) <= radius) && (Util.DistanceBetweenPoints(point, center) >= emptyCoreRadius);
+            return (Math.Round(Util.DistanceBetweenPoints(point, center)) <= radius) && (Math.Round(Util.DistanceBetweenPoints(point, center)) >= emptyCoreRadius);
         }
         /// <summary>
         /// Gets the top left position corrasponding to the circle center and radius.
