@@ -14,7 +14,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
         public static Texture2D CastCircleOnLayer(Circle foo, int layer)
         {
             List<Hitbox> collisions = new List<Hitbox>();
-            
+
             Hitbox[] bar = Global._currentScene._spriteManager.GetLayerHitboxes(layer);
             foreach (Hitbox box in bar)
             {
@@ -36,19 +36,19 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 foreach (Rectangle rec in box.geometry.GetAbsoluteBoundings())
                 {
                     if (Util.PointInsideRectangle(foo.center, rec)) //circle center is inside of rectangle.
-                    { 
-                    
+                    {
+
                     }
                     else if (rec.X <= foo.center.X && rec.X + rec.Width >= foo.center.X) //circle center is vertically aligned with rectangle side.
                     {
                         if (rec.Y < foo.center.Y) //rectangle is below circle center.
                         {
-                            Point topLeft = new Point(rec.X, rec.Y); Point topRight = new Point(rec.X + rec.Width, rec.Y);
-                            textureArray = ReplaceSlice(foo, foo.center, topLeft, topRight, Color.Transparent);
+                            Point topLeft = new Point(rec.X, rec.Y); Point topRight = new Point(rec.X + rec.Width - 1, rec.Y);
+                            textureArray = ReplaceSlice(foo, topLeft, topRight, Color.Transparent);
                         }
                         else //rectanlge is above circle center.
-                        { 
-                        
+                        {
+
                         }
                     }
                     else if (rec.Y >= foo.center.Y && rec.Y - rec.Height <= foo.center.Y) //circle center is horizontally aligned with rectangle side.
@@ -74,14 +74,14 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
             return texture;
         }
 
-        public static Color[] ReplaceSlice(Circle foo, Point origin, Point pointOne, Point pointTwo, Color replacementColor)
+        public static Color[] ReplaceSlice(Circle foo, Point pointOne, Point pointTwo, Color replacementColor)
         {
             int textureWidth = foo.GetTexture().Width;
-            Tuple<double, double> slopeOne = Util.LineFormula(pointOne, origin);
-            Tuple<double, double> slopeTwo = Util.LineFormula(pointTwo, origin);
+            Tuple<double, double> lineOne = Util.LineFormula(pointOne, foo.center);
+            Tuple<double, double> lineTwo = Util.LineFormula(pointTwo, foo.center);
 
-            sbyte directionOne, directionTwo;
-            if (pointOne.X >= origin.X)
+            sbyte directionOne, directionTwo; //determines which direction pointOne and pointTwo need to move towards.
+            if (pointOne.X >= foo.center.X)
             {
                 directionOne = 1;
             }
@@ -89,7 +89,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
             {
                 directionOne = -1;
             }
-            if (pointTwo.X >= origin.X)
+            if (pointTwo.X >= foo.center.X)
             {
                 directionTwo = 1;
             }
@@ -98,43 +98,72 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 directionTwo = -1;
             }
 
-            Point topLeft = new Point(foo.center.X - foo.radius, foo.center.Y + foo.radius), progOne = origin, progTwo = origin;//progOne = pointOne, progTwo = pointTwo; 
-            int y, indexOne = -1, indexTwo = -1; 
+            Point topLeft = new Point(foo.center.X - foo.radius, foo.center.Y + foo.radius), progOne = foo.center, progTwo = foo.center, progOneLast = foo.center, progTwoLast = foo.center;
+            int pIndex;
             bool insideOne = true, insideTwo = true;
             Color[] curData = foo.GetTextureData();
-            while (insideOne && insideTwo)
+            List<Point> replacementPoints;
+            while (insideOne || insideTwo)
             {
-                y = (int)Math.Round(slopeOne.Item1 * (progOne.X + directionOne) + slopeOne.Item2);
-                progOne = new Point(progOne.X + directionOne, y);
-                if (foo.PointInsideCircle(progOne))
+                replacementPoints = new List<Point>(); //contains this iterations points to be replaced.
+
+                //Generates the points of a ray from foo's center toward pointOne that are inside of foo and beyond pointOne.
+                progOne = new Point(progOne.X + directionOne, Util.XOnLine(lineOne, progOne.X + directionOne));
+                for (int y = Math.Min(progOne.Y, progOneLast.Y); y < Math.Max(progOne.Y, progOneLast.Y); y++)
                 {
-                    indexOne = (progOne.X - topLeft.X) + textureWidth * (topLeft.Y - progOne.Y);
+                    replacementPoints.Add(new Point(progOne.X, y));
                 }
-                else
+
+                replacementPoints.Add(progOne);
+
+                if (insideOne! && !foo.PointInsideCircle(progOneLast))
                 {
                     insideOne = false;
                 }
 
-                y = (int)Math.Round(slopeTwo.Item1 * (progTwo.X + directionTwo) + slopeTwo.Item2);
-                progTwo = new Point(progTwo.X + directionTwo, y);
-                if (foo.PointInsideCircle(progTwo))
+                //Generates the points of a ray from foo's center toward pointTwo that are inside of foo and beyond pointTwo.
+                progTwo = new Point(progTwo.X + directionTwo, Util.XOnLine(lineTwo, progTwo.X + directionTwo));
+                for (int y = Math.Min(progTwo.Y, progTwoLast.Y); y < Math.Max(progTwo.Y, progTwoLast.Y); y++)
                 {
-                    indexTwo = (progTwo.X - topLeft.X) + textureWidth * (topLeft.Y - progTwo.Y);
+                    replacementPoints.Add(new Point(progTwo.X, y));
                 }
-                else
+
+                replacementPoints.Add(progTwo);
+
+                if (insideTwo! && !foo.PointInsideCircle(progTwoLast))
                 {
                     insideTwo = false;
                 }
 
-                if (0 <= indexOne && indexOne < curData.Length && insideOne)
+                //Gets the points between progOne and progTwo.
+                if (directionOne == directionTwo) //lines opening horizontally < or > from center.
                 {
-                    curData[indexOne] = replacementColor;
+                    for (int y = Math.Min(progOne.Y, progTwo.Y) + 1; y < Math.Max(progOne.Y, progTwo.Y); y++)
+                    {
+                        replacementPoints.Add(new Point(progOne.X, y));
+                    }
                 }
-                if (0 <= indexTwo && indexTwo < curData.Length && insideTwo)
+                else //lines opening vertically ^ or v from center.
                 {
-                    curData[indexTwo] = replacementColor;
+                    for (int x = progTwo.X + 1; x < progTwo.X + 100; x++)
+                    {
+                        replacementPoints.Add(new Point(x , progOne.Y));
+                    }
+                }
+
+                progOneLast = progOne;
+                progTwoLast = progTwo;
+                //replaces the determines points
+                foreach (Point p in replacementPoints)
+                {
+                    pIndex = (p.X - topLeft.X) + textureWidth * (topLeft.Y - p.Y);
+                    if (0 <= pIndex && pIndex < curData.Length && foo.PointInsideCircle(p))
+                    {
+                        curData[pIndex] = replacementColor;
+                    }
                 }
             }
+
             return curData;
         }
 
@@ -160,7 +189,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
         }
 
         public void Draw()
-        { 
+        {
             if (Global._gameTime.TotalGameTime.TotalMilliseconds - lastGametime >= 400)
             {
                 lastGametime = Global._gameTime.TotalGameTime.TotalMilliseconds;

@@ -131,13 +131,89 @@ namespace Fantasy.Logic.Engine.Utility
         /// </summary>
         /// <param name="foo">The first point to be referenced.</param>
         /// <param name="bar">The second point to be referenced.</param>
-        /// <returns>Double tuple containing m (the line slope) in its first index and b (the y intercept) in the second index.</returns>
+        /// <returns>Double tuple containing m (the line slope) in its first item and b (the y intercept) in the second item.
+        /// If the points form a vertical line then m is equal to double.NaN and b is the x intercept.</returns>
         public static Tuple<double, double> LineFormula(Point foo, Point bar)
         {
-            double m = (double)(foo.Y - bar.Y) / (foo.X - bar.X);
-            double b = -((foo.X * m) - foo.Y);
-
+            double m;
+            double b;
+            if (foo.X != bar.X)
+            {
+                m = (double)(foo.Y - bar.Y) / (foo.X - bar.X);
+                b = -((foo.X * m) - foo.Y);
+            }
+            else
+            {
+                m = double.NaN;
+                b = foo.X;
+            }
             return new Tuple<double, double>(m, b);
         }
+        /// <summary>
+        /// Calculates a corrasponding y value for a provided x value and line formula. 
+        /// </summary>
+        /// <param name="lineFormula">Double tuple containing m (the line slope) in its first item and b (the y intercept) in the second item.
+        /// If it is a vertical line then the first item should be double.NaN and the second item should be the x intercept.</param>
+        /// <param name="x">The x value to be used on the line.</param>
+        /// <returns>The closest integer y value on the provided line for the provided x value.</returns>
+        public static int XOnLine(Tuple<double, double> lineFormula, int x)
+        {
+            if (lineFormula.Item1 == double.NaN) //vertical line.
+            {
+                return (int)Math.Round(lineFormula.Item2);
+            }
+
+            return (int)Math.Round((lineFormula.Item1 * x) + lineFormula.Item2);
+        }
+        /// <summary>
+        /// Calculates a corrasponding y value for a provided x value and line formula. 
+        /// </summary>
+        /// <param name="lineFormula">Double tuple containing m (the line slope) in its first item and b (the y intercept) in the second item.
+        /// If it is a vertical line then the first item should be double.NaN and the second item should be the x intercept.</param>
+        /// <param name="x">The x value to be used on the line.</param>
+        /// <returns>The y value on the provided line for the provided x value.</returns>
+        public static double XOnLine(Tuple<double, double> lineFormula, double x)
+        {
+            if (lineFormula.Item1 == double.NaN) //vertical line.
+            {
+                return lineFormula.Item2;
+            }
+
+            return (lineFormula.Item1 * x) + lineFormula.Item2;
+        }
+        /// <summary>
+        /// Calculates a corrasponding y value for a provided x value and line formula. 
+        /// </summary>
+        /// <param name="lineFormula">Double tuple containing m (the line slope) in its first item and b (the y intercept) in the second item.
+        /// If it is a vertical line then the first item should be double.NaN and the second item should be the x intercept.</param>
+        /// <param name="y">The y value on the line.</param>
+        /// <returns>The closest integer x value on the provided line for the provided y value. If the provided line is vertical then returns 0.</returns>
+        public static int YOnLine(Tuple<double, double> lineFormula, int y)
+        {
+            if (lineFormula.Item1 == double.NaN) //vertical line.
+            {
+                return 0;
+            }
+
+            return (int)Math.Round((y - lineFormula.Item2) / lineFormula.Item1);
+        }
+        /// <summary>
+        /// Calculates a corrasponding y value for a provided x value and line formula. 
+        /// </summary>
+        /// <param name="lineFormula">Double tuple containing m (the line slope) in its first item and b (the y intercept) in the second item.
+        /// If it is a vertical line then the first item should be double.NaN and the second item should be the x intercept.</param>
+        /// <param name="y">The y value on the line.</param>
+        /// <returns>The closest integer x value on the provided line for the provided y value. If the provided line is vertical then returns double.NaN.</returns>
+        public static double YOnLine(Tuple<double, double> lineFormula, double y)
+        {
+            if (lineFormula.Item1 == double.NaN) //vertical line.
+            {
+                return double.NaN;
+            }
+
+            return (y - lineFormula.Item2) / lineFormula.Item1;
+        }
+
+
     }
 }
