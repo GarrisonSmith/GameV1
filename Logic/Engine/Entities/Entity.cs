@@ -289,7 +289,7 @@ namespace Fantasy.Logic.Engine.entities
         /// <param name="color">The color for the hitbox to be drawn with.</param>
         public void DrawHitbox(Color color)
         {
-            hitbox.DrawHitbox(color);
+            hitbox.Draw(color);
         }
     }
 }

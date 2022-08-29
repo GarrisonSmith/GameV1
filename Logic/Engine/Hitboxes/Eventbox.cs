@@ -41,7 +41,7 @@ namespace Fantasy.Logic.Engine.Hitboxes
             this.id = id;
             this.discription = discription;
             this.sceneEvent = sceneEvent;
-            geometry = new HitboxGeometry(position, boundings);
+            geometry = new RectangleSet(position, boundings);
             this.entityCollision = entityCollision;
         }
 

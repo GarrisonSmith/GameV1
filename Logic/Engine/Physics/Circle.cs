@@ -417,6 +417,22 @@ namespace Fantasy.Logic.Engine.Physics
             return textureArray;
         }
         /// <summary>
+        /// Sets this circles texture to the provided texture.
+        /// </summary>
+        /// <param name="foo">The texture to be made this circles texture.</param>
+        public void SetTexture(Texture2D foo)
+        {
+            texture = foo;
+        }
+
+        public void SetTexture(Color[] foo)
+        {
+            Texture2D newTexure = new Texture2D(Global._graphics.GraphicsDevice, radius * 2 + 1, radius * 2 + 1);
+            newTexure.SetData(foo);
+            texture = newTexure;
+        }
+
+        /// <summary>
         /// Determines if this circle intersects with the provided rectangle.
         /// </summary>
         /// <param name="foo">The rectangle to be investigated.</param>
@@ -440,12 +456,21 @@ namespace Fantasy.Logic.Engine.Physics
             return (SQCornerDistance <= (radius ^ 2));
         }
         /// <summary>
-        /// Sets this circles texture to the provided texture.
+        /// Determines if this circle intersects with the provided rectangle array.
         /// </summary>
-        /// <param name="foo">The texture to be made this circles texture.</param>
-        public void SetTexture(Texture2D foo)
+        /// <param name="foo">The rectangle array to be investigated.</param>
+        /// <returns>True if any rectangle in the array interesects this circle, False if not. 
+        /// A rectangle completely inside a hollow inner circle is still inside the circle.</returns>
+        public bool Intersection(Rectangle[] foo)
         {
-            texture = foo;
+            foreach (Rectangle rec in foo)
+            {
+                if (Intersection(rec))
+                { 
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>

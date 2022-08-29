@@ -3,7 +3,6 @@ using Fantasy.Logic.Engine.Graphics.tilemap;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Physics;
-using Fantasy.Logic.Engine.Hitboxes;
 using System.Collections.Generic;
 using System;
 
@@ -11,71 +10,25 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
 {
     public class LightSource
     {
-        public static Texture2D CastCircleOnLayer(Circle foo, int layer)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="foo"></param>
+        /// <param name="layer"></param>
+        public static void CastCircleOnLayer(Circle foo, int layer)
         {
-            List<Hitbox> collisions = new List<Hitbox>();
-
-            Hitbox[] bar = Global._currentScene._spriteManager.GetLayerHitboxes(layer);
-            foreach (Hitbox box in bar)
+            Lightbox[] bar = Global._currentScene._spriteManager.GetLayerLightboxes(layer);
+            foreach (Lightbox box in bar)
             {
-                if (box.Collision(foo))
+                if (foo.Intersection(box.GetAbsoluteBoundings()))
                 {
-                    collisions.Add(box);
-                }
-            }
-            foo.SetTexture(CreateLightShadowTexture(foo, collisions.ToArray()));
-            return foo.GetTexture();
-        }
-        private static Texture2D CreateLightShadowTexture(Circle foo, Hitbox[] bar)
-        {
-            Texture2D texture = new Texture2D(Global._graphics.GraphicsDevice, foo.radius * 2 + 1, foo.radius * 2 + 1);
-            texture.SetData(foo.GetTextureData());
-
-            foreach (Hitbox box in bar)
-            {
-                bool[,] lightPhysics = box.lightPhysics;
-
-                foreach (Rectangle rec in box.geometry.GetAbsoluteBoundings())
-                {
-                    if (Util.PointInsideRectangle(foo.center, rec)) //circle center is inside of rectangle.
+                    foreach (Tuple<Point, Point> l in box.GetLightCollisionLines(foo.center))
                     {
-
+                        ReplaceSlice(foo, l.Item1, l.Item2, Color.Transparent);
                     }
-                    else if (rec.X <= foo.center.X && rec.X + rec.Width >= foo.center.X) //circle center is vertically aligned with rectangle side.
-                    {
-                        if (rec.Y < foo.center.Y) //rectangle is below circle center.
-                        {
-                            Point topLeft = new Point(rec.X, rec.Y); Point topRight = new Point(rec.X + rec.Width - 1, rec.Y);
-                            texture.SetData(ReplaceSlice(foo, topLeft, topRight, Color.Transparent));
-                        }
-                        else //rectanlge is above circle center.
-                        {
-                            Point bottomLeft = new Point(rec.X, rec.Y - rec.Height + 1); Point bottomRight = new Point(rec.X + rec.Width - 1, rec.Y - rec.Height + 1);
-                            texture.SetData(ReplaceSlice(foo, bottomLeft, bottomRight, Color.Transparent));
-                        }
-                    }
-                    else if (rec.Y >= foo.center.Y && rec.Y - rec.Height <= foo.center.Y) //circle center is horizontally aligned with rectangle side.
-                    {
-                        if (rec.X > foo.center.X) //rectangle is right of circle center.
-                        {
-                            Point top = new Point(rec.X, rec.Y); Point bottom = new Point(rec.X, rec.Y - rec.Height + 1);
-                            texture.SetData(ReplaceSlice(foo, top, bottom, Color.Transparent));
-                        }
-                        else //rectanlge is left of circle center.
-                        {
-                            Point top = new Point(rec.X + rec.Width - 1, rec.Y); Point bottom = new Point(rec.X + rec.Width - 1, rec.Y - rec.Height + 1);
-                            texture.SetData(ReplaceSlice(foo, top, bottom, Color.Transparent));
-                        }
-                    }
-                    else //no side is aligned with circle center.
-                    {
-
-                    }
-                    foo.SetTexture(texture);
                 }
             }
 
-            return texture;
         }
         /// <summary>
         /// Replaces a slice of the circle foos texture with the provided replacement color. pointOne and pointTwo act as clamp points for casting the replacement area.
@@ -85,17 +38,16 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
         /// <param name="pointOne">The first clamp point.</param>
         /// <param name="pointTwo">The second clamp point.</param>
         /// <param name="replacementColor">The color that will replace all points inside of the slice.</param>
-        /// <returns>A color array describing foos texture with the slice replaced with the replacementColor.</returns>
-        public static Color[] ReplaceSlice(Circle foo, Point pointOne, Point pointTwo, Color replacementColor)
+        public static void ReplaceSlice(Circle foo, Point pointOne, Point pointTwo, Color replacementColor)
         {
             if (pointOne.X != pointTwo.X && pointOne.Y != pointTwo.Y)
             {
-                return foo.GetTextureData();
+                return;
             }
             
             int textureWidth = foo.GetTexture().Width;
-            Tuple<double, double> lineOne = Util.LineFormula(pointOne, foo.center);
-            Tuple<double, double> lineTwo = Util.LineFormula(pointTwo, foo.center);
+            Tuple<double, double> lineOne = Lines.LineFormula(pointOne, foo.center);
+            Tuple<double, double> lineTwo = Lines.LineFormula(pointTwo, foo.center);
 
             //determines which direction pointOne and pointTwo need to move towards.
             sbyte directionOne, directionTwo;
@@ -117,7 +69,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
             }
 
             //generates the points on the lines from pointOne and pointTwo.
-            Point topLeft = new Point(foo.center.X - foo.radius, foo.center.Y + foo.radius), progOne = foo.center, progTwo = foo.center, progOneLast = foo.center, progTwoLast = foo.center;
+            Point topLeft = new Point(foo.center.X - foo.radius, foo.center.Y + foo.radius), progOne = pointOne, progTwo = pointTwo, progOneLast = pointOne, progTwoLast = pointTwo;
             int pIndex;
             bool doneOne = false, doneTwo = false;
             Color[] curData = foo.GetTextureData();
@@ -126,7 +78,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
             while (!doneOne || !doneTwo)
             {
                 //Generates the points of a ray from foo's center toward pointOne that are inside of foo and beyond pointOne.
-                progOne = new Point(progOne.X + directionOne, Util.XOnLine(lineOne, progOne.X + directionOne));
+                progOne = new Point(progOne.X + directionOne, Lines.GetY(lineOne, progOne.X + directionOne));
                 if (directionOne != directionTwo)
                 {
                     for (int y = Math.Min(progOne.Y, progOneLast.Y); y < Math.Max(progOne.Y, progOneLast.Y); y++)
@@ -139,7 +91,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 doneOne = ((directionOne != directionTwo && Math.Abs(progOne.Y - foo.center.Y) > foo.radius) || (directionOne == directionTwo && Math.Abs(progOne.X - foo.center.X) > foo.radius));
 
                 //Generates the points of a ray from foo's center toward pointTwo that are inside of foo and beyond pointTwo.
-                progTwo = new Point(progTwo.X + directionTwo, Util.XOnLine(lineTwo, progTwo.X + directionTwo));
+                progTwo = new Point(progTwo.X + directionTwo, Lines.GetY(lineTwo, progTwo.X + directionTwo));
                 if (directionOne != directionTwo)
                 {
                     for (int y = Math.Min(progTwo.Y, progTwoLast.Y); y < Math.Max(progTwo.Y, progTwoLast.Y); y++)
@@ -228,9 +180,12 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 }
             }
 
-            return curData;
+            foo.SetTexture(curData);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Point position;
 
         public float[] transparency;

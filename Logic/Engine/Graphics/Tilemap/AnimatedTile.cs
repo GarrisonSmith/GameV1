@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Hitboxes;
+using Fantasy.Logic.Engine.Graphics.Lighting;
 
 namespace Fantasy.Logic.Engine.Graphics.tilemap
 {
@@ -34,8 +35,9 @@ namespace Fantasy.Logic.Engine.Graphics.tilemap
             this.positionBox = positionBox;
             this.hitboxes = hitboxes;
             this.animation = animation;
+            lightboxes = new Lightbox[] { new Lightbox(Util.GetTopLeftPoint(positionBox), new Rectangle[] { new Rectangle(0, 0, 64, 64) }, new bool[,] { { false, true, false, false }, { false, true, false, false } }) };
         }
-        
+
         /// <summary>
         /// Draws the AnimatedTile.
         /// </summary>

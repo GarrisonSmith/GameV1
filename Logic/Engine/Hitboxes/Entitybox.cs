@@ -31,7 +31,7 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// <param name="tileCollision">True will result in this Entitybox having collision with Tiles, False will not.</param>
         public Entitybox(Point position, Rectangle[] boundings, bool eventCollision = true, bool entityCollision = true, bool tileCollision = true)
         {
-            geometry = new HitboxGeometry(position, boundings);
+            geometry = new RectangleSet(position, boundings);
             this.eventCollision = eventCollision;
             this.entityCollision = entityCollision;
             this.tileCollision = tileCollision;

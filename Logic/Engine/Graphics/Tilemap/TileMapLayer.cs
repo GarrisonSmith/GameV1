@@ -158,7 +158,7 @@ namespace Fantasy.Logic.Engine.Graphics.tilemap
 
             foreach (Eventbox foo in eventboxes)
             {
-                foo.DrawHitbox(Color.Purple);
+                foo.Draw(Color.Purple);
             }
         }
         /// <summary>

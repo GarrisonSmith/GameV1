@@ -27,7 +27,7 @@ namespace Fantasy.Logic.Engine.Hitboxes
         public Tilebox(MovementInclusions movementInclusion, Point position, Rectangle[] boundings, bool entityCollision = true)
         {
             this.movementInclusion = movementInclusion;
-            geometry = new HitboxGeometry(position, boundings);
+            geometry = new RectangleSet(position, boundings);
             this.entityCollision = entityCollision;
         }
 

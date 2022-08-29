@@ -11,13 +11,7 @@ namespace Fantasy.Logic.Engine.Hitboxes
         /// <summary>
         /// Set of rectangles that describes the boxes area.
         /// </summary>
-        public HitboxGeometry geometry;
-        /// <summary>
-        /// Two-dimensional array that determines how light pass through and out of this hitbox.
-        /// The first index of outer array is for light pass through logic, The second index of the out array is for light pass out logic.
-        /// The first, second, third, and forth indexes of the inner array determines the logic for the top, right, bottom, and left sides of the hitbox.
-        /// </summary>
-        public bool[,] lightPhysics = new bool[2, 4];
+        public RectangleSet geometry;
 
         /// <summary>
         /// Generic inherited constructor. 
@@ -66,11 +60,12 @@ namespace Fantasy.Logic.Engine.Hitboxes
         {
             return geometry.Intersection(foo);
         }
+        
         /// <summary>
         /// Draws all of the rectangles inside of this Hitboxes collision area.
         /// </summary>
         /// <param name="color">The color for the hitbox to be drawn with.</param>
-        public void DrawHitbox(Color color)
+        public void Draw(Color color)
         {
             geometry.Draw(color);
         }

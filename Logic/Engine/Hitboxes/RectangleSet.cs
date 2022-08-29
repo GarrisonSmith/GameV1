@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
-using Fantasy.Logic.Engine.graphics;
+using Fantasy.Logic.Engine.Graphics;
 using Fantasy.Logic.Engine.Utility;
+using System;
+using System.Text;
+using Fantasy.Logic.Engine.Physics;
 
 namespace Fantasy.Logic.Engine.Hitboxes
 {
@@ -19,6 +22,13 @@ namespace Fantasy.Logic.Engine.Hitboxes
         public Rectangle[] boundings;
 
         /// <summary>
+        /// Generic inherited constructor. 
+        /// </summary>
+        public RectangleSet()
+        { 
+            
+        }
+        /// <summary>
         /// Creates a RectangleSet with the provided parameters.
         /// </summary>
         /// <param name="position">Describes the top right position of the rectangles in boundings before any offset.</param>
@@ -28,15 +38,17 @@ namespace Fantasy.Logic.Engine.Hitboxes
             this.position = position;
             this.boundings = boundings;
         }
+
         /// <summary>
-        /// Determines if the provided point inside of the RectangleSets boundings.
+        /// Determines if the provided point is inside of the RectangleSet boundings.
         /// </summary>
         /// <param name="foo">The point to be investigated.</param>
         /// <returns>True if the point foo is inside of the RectangelSets boundings, False if not.</returns>
         public bool PointInsideRectangleSet(Point foo)
         {
-            foreach (Rectangle bar in boundings)
+            foreach (Rectangle bounding in boundings)
             {
+                Rectangle bar = new Rectangle(bounding.X + position.X, bounding.Y + position.Y, bounding.Width, bounding.Height);
                 if (Util.PointInsideRectangle(foo, bar))
                 {
                     return true;
@@ -80,7 +92,7 @@ namespace Fantasy.Logic.Engine.Hitboxes
             return false;
         }
         /// <summary>
-        /// Determines if this RectangleSet intersects with any rectanlge in the provided rectangle array.
+        /// Determines if this RectangleSet intersects with any rectangle in the provided rectangle array.
         /// </summary>
         /// <param name="foo">The rectangle array to be investigated.</param>
         /// <returns>True if the provided rectangle array intersects with this RectangleSet, False if not.</returns>
@@ -96,54 +108,59 @@ namespace Fantasy.Logic.Engine.Hitboxes
             return false;
         }
         /// <summary>
-        /// Creates a new rectangle array that contains boundings rectangles with the RectanglesSet appplied.
+        /// Determines if this RectangleSet intersects with the provided Circle.
         /// </summary>
-        /// <returns>A new rectangle array that contains boundings rectangles with the RectanglesSet appplied.</returns>
+        /// <param name="foo">The circle to be investigated.</param>
+        /// <returns>True if the provided circle intersects with this RectangleSet, False if not.</returns>
+        public bool Intersection(Circle foo)
+        {
+            foreach (Rectangle bar in GetAbsoluteBoundings())
+            {
+                if (foo.Intersection(bar))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// Creates a new rectangle array that contains boundings rectangles with the RectangleSets position appplied.
+        /// </summary>
+        /// <returns>A new rectangle array that contains boundings rectangles with the RectangleSets position appplied.</returns>
         public Rectangle[] GetAbsoluteBoundings()
         {
             Rectangle[] foo = new Rectangle[boundings.Length];
             for (int i = 0; i < boundings.Length; i++)
-            { 
+            {
                 foo[i] = new Rectangle(boundings[i].X + position.X, boundings[i].Y + position.Y, boundings[i].Width, boundings[i].Height);
             }
             return foo;
         }
         /// <summary>
         /// Draws the rectangles in this RectangleSet.
+        /// <param name="color">The color the geometry will be drawn with.</param>
         /// </summary>
-        /// <param name="drawSegments">True results in overlapping perimeters being drawn, False results in only unique perimeter values being drawn.</param>
-        public void Draw(bool drawSegments = false)
+        public void Draw(Color color)
         {
-            if (drawSegments)
+            foreach (Rectangle bounding in boundings)
             {
-                foreach (Rectangle bounding in boundings)
-                {
-                    Debug.DrawRectangle(new Rectangle(bounding.X + position.X, bounding.Y + position.Y, bounding.Width, bounding.Height));
-                }
+                Debug.DrawRectangle(new Rectangle(bounding.X + position.X, bounding.Y + position.Y, bounding.Width, bounding.Height), color);
             }
-            else 
+        }
+
+        /// <summary>
+        /// Creates a string describing this RectangleSet.
+        /// </summary>
+        /// <returns>A string describing this RectangleSet.</returns>
+        new public string ToString()
+        {
+            StringBuilder text = new StringBuilder("__Geometry__");
+            foreach (Rectangle bounding in boundings)
             {
-                for (int i = 0; i < boundings.Length; i++)
-                {
-                    Point[] points = Util.RectanglePerimeterPoints(boundings[i]);
-                    foreach (Point point in points)
-                    {
-                        bool drawPoint = true;
-                        for (int j = 0; j < i; j++)
-                        {
-                            if (Util.PointInsideRectangle(point, boundings[j]))
-                            {
-                                drawPoint = false;
-                                break;
-                            }
-                        }
-                        if (drawPoint)
-                        {
-                            Debug.DrawPoint(new Point(point.X + position.X, point.Y + position.Y), false);
-                        }
-                    }
-                }
+                text.Append(Environment.NewLine + new Rectangle(bounding.X + position.X, bounding.Y + position.Y, bounding.Width, bounding.Height));
             }
+
+            return text.ToString();
         }
     }
 }

@@ -65,7 +65,7 @@ namespace Fantasy.Logic.Engine.Screen
             particle.Draw();
             boo.Draw(Color.Black);
             foo.Draw(Color.White);
-            foo.SetTexture(LightSource.CastCircleOnLayer(foo, 1));
+            LightSource.CastCircleOnLayer(foo, 1);
 
             Global._spriteBatch.End();
 

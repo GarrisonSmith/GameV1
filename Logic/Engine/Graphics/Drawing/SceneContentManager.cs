@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Fantasy.Logic.Engine.Hitboxes;
+using Fantasy.Logic.Engine.Graphics.Lighting;
 
 namespace Fantasy.Logic.Engine.Graphics.Drawing
 {
@@ -55,8 +56,26 @@ namespace Fantasy.Logic.Engine.Graphics.Drawing
             }
             foreach (Entity e in entities)
             {
-                //foo.Add(e.hitbox);
+                foo.Add(e.hitbox);
             }
+            return foo.ToArray();
+        }
+
+        public Lightbox[] GetLayerLightboxes(int layer)
+        {
+            List<Tile> tiles = _tileMap.GetLayer(layer).map; List<Entity> entities = _entitySet.GetLayer(layer);
+            List<Lightbox> foo = new List<Lightbox>();
+            foreach (Tile t in tiles)
+            {
+                if (t.lightboxes != null)
+                {
+                    foreach (Lightbox l in t.lightboxes)
+                    {
+                        foo.Add(l);
+                    }
+                }
+            }
+
             return foo.ToArray();
         }
 

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Hitboxes;
+using Fantasy.Logic.Engine.Graphics.Lighting;
 
 namespace Fantasy.Logic.Engine.Graphics.tilemap
 {
@@ -32,6 +33,10 @@ namespace Fantasy.Logic.Engine.Graphics.tilemap
         /// Array containing the hitboxes for this tile.
         /// </summary>
         public Tilebox[] hitboxes;
+        /// <summary>
+        /// Array containing the lightboxes for this tile.
+        /// </summary>
+        public Lightbox[] lightboxes;
 
         /// <summary>
         /// Generic inherited constructor.
@@ -73,15 +78,7 @@ namespace Fantasy.Logic.Engine.Graphics.tilemap
             }
             return false;
         }
-        /// <summary>
-        /// Draws the tile.
-        /// </summary>
-        public void Draw()
-        {
-            Global._spriteBatch.Draw(tileSet, Util.GetTopLeftVector(positionBox, true),
-                new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64),
-                Color.White, 0f, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), 0);
-        }
+
         /// <summary>
         /// Draws all of this Tiles hitboxes.
         /// </summary>
@@ -94,6 +91,15 @@ namespace Fantasy.Logic.Engine.Graphics.tilemap
                     foo.DrawHitbox();
                 }
             }
+        }
+        /// <summary>
+        /// Draws the tile.
+        /// </summary>
+        public void Draw()
+        {
+            Global._spriteBatch.Draw(tileSet, Util.GetTopLeftVector(positionBox, true),
+                new Rectangle(tileSetCoordinate.X, tileSetCoordinate.Y, 64, 64),
+                Color.White, 0f, new Vector2(0, 0), new Vector2(1, 1), new SpriteEffects(), 0);
         }
 
         /// <summary>

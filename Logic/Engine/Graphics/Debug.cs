@@ -121,7 +121,7 @@ namespace Fantasy.Logic.Engine.Graphics
 
             if (foo != null)
             {
-                foo.DrawHitbox(Color.MonoGameOrange);
+                foo.Draw(Color.MonoGameOrange);
             }
         }
 
