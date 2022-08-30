@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Fantasy.Logic.Engine.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -29,6 +30,7 @@ namespace Fantasy.Logic.Engine.Screen
 
         Circle foo = new Circle(100, new Point(300, 555));
         Circle boo = new Circle(100, new Point(300, 555));
+        public List<Tuple<Point, Point>> fbao = new List<Tuple<Point, Point>>(); 
 
         public Scene()
         {
@@ -63,9 +65,14 @@ namespace Fantasy.Logic.Engine.Screen
             _spriteManager.DrawArea(_camera.cameraPosition);
             //Debug.DrawRectangle(_tileMap.GetTileMapBounding(), Color.Black * .9f, true);
             particle.Draw();
-            boo.Draw(Color.Black);
+            boo.Draw(Color.White * .4f);
             foo.Draw(Color.White);
+
             LightSource.CastCircleOnLayer(foo, 1);
+            foreach (Tuple<Point, Point> a in fbao)
+            {
+                Lines.DrawLinearAxisLineSegment(a);
+            }
 
             Global._spriteBatch.End();
 

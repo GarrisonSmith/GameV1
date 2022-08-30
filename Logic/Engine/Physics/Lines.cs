@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Fantasy.Logic.Engine.Graphics;
 
 namespace Fantasy.Logic.Engine.Physics
 {
@@ -109,6 +110,29 @@ namespace Fantasy.Logic.Engine.Physics
                 return (Math.Min(line.Item1.X, line.Item2.X) <= foo.X && foo.X <= Math.Max(line.Item1.X, line.Item2.X));
             }
             return false; //lines are not linear.
+        }
+
+        /// <summary>
+        /// Draws the provided horizontal or vertical line segment.
+        /// </summary>
+        /// <param name="line">The horizontal or veritcal line segment to be drawn.</param>
+        public static void DrawLinearAxisLineSegment(Tuple<Point, Point> line)
+        {
+            if (line.Item1.X == line.Item2.X)
+            {
+                for (int i = Math.Min(line.Item1.Y, line.Item2.Y); i <= Math.Max(line.Item1.Y, line.Item2.Y); i++)
+                {
+                    Debug.DrawPoint(new Point(line.Item1.X, i), Color.MonoGameOrange);
+                }
+            }
+            else if (line.Item1.Y == line.Item2.Y)
+            {
+                for (int i = Math.Min(line.Item1.X, line.Item2.X); i <= Math.Max(line.Item1.X, line.Item2.X); i++)
+                {
+                    Debug.DrawPoint(new Point(i, line.Item1.Y), Color.MonoGameOrange);
+                }
+            }
+            return; //lines are not linear.
         }
     }
 }

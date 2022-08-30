@@ -135,7 +135,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                             lightLineCollisions.Add(left);
                         }
                     }
-                    if (!Lines.PointOnLinearAxisLineSegment(top, center) && !Lines.PointOnLinearAxisLineSegment(right, center) && 
+                    if (!Lines.PointOnLinearAxisLineSegment(top, center) && !Lines.PointOnLinearAxisLineSegment(right, center) &&
                         !Lines.PointOnLinearAxisLineSegment(bottom, center) && !Lines.PointOnLinearAxisLineSegment(left, center)) //center is not on rec lines.
                     {
                         if (!lightPhysics[1, 0]) //check if rec top does not allow for light pass out.
@@ -179,10 +179,10 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                         {
                             lightLineCollisions.Add(top);
                         }
-                    }  
+                    }
                     else //rec is above center.
                     {
-                        if (lightPhysics[0, 3]) //checks if rec bottom allows for light pass in.
+                        if (lightPhysics[0, 2]) //checks if rec bottom allows for light pass in.
                         {
                             if (!lightPhysics[1, 1]) //check if rec right does not allow for light pass out.
                             {
@@ -229,11 +229,11 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                     }
                     else //rec is left of center.
                     {
-                        if (lightPhysics[0, 3]) //checks if rec top allows for light pass in.
+                        if (lightPhysics[0, 3]) //checks if rec left allows for light pass in.
                         {
-                            if (!lightPhysics[1, 1]) //check if rec right does not allow for light pass out.
+                            if (!lightPhysics[1, 3]) //check if rec right does not allow for light pass out.
                             {
-                                lightLineCollisions.Add(right);
+                                lightLineCollisions.Add(left);
                             }
                             if (!lightPhysics[1, 2]) //check if rec bottoms does not allow for light pass out.
                             {
@@ -246,7 +246,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                         }
                         else
                         {
-                            lightLineCollisions.Add(left);
+                            lightLineCollisions.Add(right);
                         }
                     }
                 }
@@ -265,16 +265,13 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                                 lightLineCollisions.Add(left);
                             }
                         }
-                        else
+                        if (!lightPhysics[0, 1])
                         {
-                            if (!lightPhysics[0, 1])
-                            {
-                                lightLineCollisions.Add(right);
-                            }
-                            if (!lightPhysics[0, 2])
-                            {
-                                lightLineCollisions.Add(bottom);
-                            }
+                            lightLineCollisions.Add(right);
+                        }
+                        if (!lightPhysics[0, 2])
+                        {
+                            lightLineCollisions.Add(bottom);
                         }
                     }
                     else if (top.Item1.X > center.X && top.Item1.Y > center.Y) //rec is to the top right of the center.
@@ -290,16 +287,13 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                                 lightLineCollisions.Add(right);
                             }
                         }
-                        else
+                        if (!lightPhysics[0, 3])
                         {
-                            if (!lightPhysics[0, 3])
-                            {
-                                lightLineCollisions.Add(left);
-                            }
-                            if (!lightPhysics[0, 2])
-                            {
-                                lightLineCollisions.Add(bottom);
-                            }
+                            lightLineCollisions.Add(left);
+                        }
+                        if (!lightPhysics[0, 2])
+                        {
+                            lightLineCollisions.Add(bottom);
                         }
                     }
                     else if (top.Item1.X < center.X && top.Item1.Y < center.Y) //rec is to the bottom left of the center.
@@ -315,16 +309,13 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                                 lightLineCollisions.Add(left);
                             }
                         }
-                        else
+                        if (!lightPhysics[0, 1])
                         {
-                            if (!lightPhysics[0, 1])
-                            {
-                                lightLineCollisions.Add(right);
-                            }
-                            if (!lightPhysics[0, 0])
-                            {
-                                lightLineCollisions.Add(top);
-                            }
+                            lightLineCollisions.Add(right);
+                        }
+                        if (!lightPhysics[0, 0])
+                        {
+                            lightLineCollisions.Add(top);
                         }
                     }
                     else if (top.Item1.X > center.X && top.Item1.Y < center.Y) //rec is to the bottom right of the center.
@@ -340,16 +331,13 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                                 lightLineCollisions.Add(right);
                             }
                         }
-                        else
+                        if (!lightPhysics[0, 3])
                         {
-                            if (!lightPhysics[0, 3])
-                            {
-                                lightLineCollisions.Add(left);
-                            }
-                            if (!lightPhysics[0, 0])
-                            {
-                                lightLineCollisions.Add(top);
-                            }
+                            lightLineCollisions.Add(left);
+                        }
+                        if (!lightPhysics[0, 0])
+                        {
+                            lightLineCollisions.Add(top);
                         }
                     }
                 }

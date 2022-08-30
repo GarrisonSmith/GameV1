@@ -17,6 +17,8 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
         /// <param name="layer"></param>
         public static void CastCircleOnLayer(Circle foo, int layer)
         {
+            Global._currentScene.fbao = new List<Tuple<Point, Point>>();
+            
             Lightbox[] bar = Global._currentScene._spriteManager.GetLayerLightboxes(layer);
             foreach (Lightbox box in bar)
             {
@@ -24,11 +26,11 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 {
                     foreach (Tuple<Point, Point> l in box.GetLightCollisionLines(foo.center))
                     {
+                        Global._currentScene.fbao.Add(l);
                         ReplaceSlice(foo, l.Item1, l.Item2, Color.Transparent);
                     }
                 }
             }
-
         }
         /// <summary>
         /// Replaces a slice of the circle foos texture with the provided replacement color. pointOne and pointTwo act as clamp points for casting the replacement area.
@@ -111,8 +113,18 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 {
                     for (int x = Math.Min(pointOne.X, pointTwo.X); x <= foo.center.X + foo.radius; x++)
                     {
-                        int yOne = linePointsOne.Find(p => p.X == x).Y;
-                        int yTwo = linePointsTwo.Find(p => p.X == x).Y;
+                        int yOne = pointOne.Y;
+                        int yTwo = pointTwo.Y;
+
+                        if (linePointsOne.Exists(p => p.X == x))
+                        {
+                            yOne = linePointsOne.Find(p => p.X == x).Y;
+                        }
+                        if (linePointsTwo.Exists(p => p.X == x))
+                        {
+                            yTwo = linePointsTwo.Find(p => p.X == x).Y;
+                        }
+
                         for (int y = Math.Min(yOne, yTwo); y <= Math.Max(yOne, yTwo); y++)
                         {
                             Point p = new Point(x, y);
@@ -128,8 +140,18 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 {
                     for (int x = Math.Max(pointOne.X, pointTwo.X); x >= foo.center.X - foo.radius; x--)
                     {
-                        int yOne = linePointsOne.Find(p => p.X == x).Y;
-                        int yTwo = linePointsTwo.Find(p => p.X == x).Y;
+                        int yOne = pointOne.Y;
+                        int yTwo = pointTwo.Y;
+
+                        if (linePointsOne.Exists(p => p.X == x))
+                        {
+                            yOne = linePointsOne.Find(p => p.X == x).Y;
+                        }
+                        if (linePointsTwo.Exists(p => p.X == x))
+                        {
+                            yTwo = linePointsTwo.Find(p => p.X == x).Y;
+                        }
+
                         for (int y = Math.Min(yOne, yTwo); y <= Math.Max(yOne, yTwo); y++)
                         {
                             Point p = new Point(x, y);
@@ -148,8 +170,18 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 {
                     for (int y = Math.Min(pointOne.Y, pointTwo.Y); y <= foo.center.Y + foo.radius; y++)
                     {
-                        int xOne = linePointsOne.Find(p => p.Y == y).X;
-                        int xTwo = linePointsTwo.Find(p => p.Y == y).X;
+                        int xOne = pointOne.X;
+                        int xTwo = pointTwo.X;
+
+                        if (linePointsOne.Exists(p => p.Y == y))
+                        {
+                            xOne = linePointsOne.Find(p => p.Y == y).X;
+                        }
+                        if (linePointsTwo.Exists(p => p.Y == y))
+                        {
+                            xTwo = linePointsTwo.Find(p => p.Y == y).X;
+                        }
+
                         for (int x = Math.Min(xOne, xTwo); x <= Math.Max(xOne, xTwo); x++)
                         {
                             Point p = new Point(x, y);
@@ -165,8 +197,18 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 {
                     for (int y = Math.Max(pointOne.Y, pointTwo.Y); y >= foo.center.Y - foo.radius; y--)
                     {
-                        int xOne = linePointsOne.Find(p => p.Y == y).X;
-                        int xTwo = linePointsTwo.Find(p => p.Y == y).X;
+                        int xOne = pointOne.X;
+                        int xTwo = pointTwo.X;
+
+                        if (linePointsOne.Exists(p => p.Y == y))
+                        {
+                            xOne = linePointsOne.Find(p => p.Y == y).X;
+                        }
+                        if (linePointsTwo.Exists(p => p.Y == y))
+                        {
+                            xTwo = linePointsTwo.Find(p => p.Y == y).X;
+                        }
+
                         for (int x = Math.Min(xOne, xTwo); x <= Math.Max(xOne, xTwo); x++)
                         {
                             Point p = new Point(x, y);
@@ -178,6 +220,15 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                         }
                     }
                 }
+            }
+
+            foreach (Point p in linePointsOne)
+            {
+                Debug.DrawPoint(p, Color.CornflowerBlue);
+            }
+            foreach (Point p in linePointsTwo)
+            {
+                Debug.DrawPoint(p, Color.CornflowerBlue);
             }
 
             foo.SetTexture(curData);
