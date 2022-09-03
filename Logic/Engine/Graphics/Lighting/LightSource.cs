@@ -15,11 +15,29 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
         /// </summary>
         /// <param name="foo"></param>
         /// <param name="layer"></param>
-        public static void CastCircleOnLayer(Circle foo, int layer)
+        public static void StaticCastCircleOnLayer(Circle foo, int layer)
         {
             Global._currentScene.fbao = new List<Tuple<Point, Point>>();
             
-            Lightbox[] bar = Global._currentScene._spriteManager.GetLayerLightboxes(layer);
+            Lightbox[] bar = Global._currentScene._spriteManager.GetLayerStaticLightboxes(layer);
+            foreach (Lightbox box in bar)
+            {
+                if (foo.Intersection(box.GetAbsoluteBoundings()))
+                {
+                    foreach (Tuple<Point, Point> l in box.GetLightCollisionLines(foo.center))
+                    {
+                        Global._currentScene.fbao.Add(l);
+                        ReplaceSlice(foo, l.Item1, l.Item2, Color.Transparent);
+                    }
+                }
+            }
+        }
+
+        public static void DynamicCastCircleOnLayer(Circle foo, int layer)
+        {
+            Global._currentScene.fbao = new List<Tuple<Point, Point>>();
+
+            Lightbox[] bar = Global._currentScene._spriteManager.GetLayerDynamicLightboxes(layer);
             foreach (Lightbox box in bar)
             {
                 if (foo.Intersection(box.GetAbsoluteBoundings()))
@@ -51,9 +69,34 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
             Tuple<double, double> lineOne = Lines.LineFormula(pointOne, foo.center);
             Tuple<double, double> lineTwo = Lines.LineFormula(pointTwo, foo.center);
 
+            Point topLeft = new Point(foo.center.X - foo.radius, foo.center.Y + foo.radius), progOne = pointOne, progTwo = pointTwo, progOneLast = pointOne, progTwoLast = pointTwo;
+            int pIndex;
+            bool doneOne = false, doneTwo = false;
+            Color[] curData = foo.GetTextureData();
+            List<Point> linePointsOne = new List<Point>(), linePointsTwo = new List<Point>();
+            linePointsOne.Add(progOne); linePointsTwo.Add(progTwo);
+
             //determines which direction pointOne and pointTwo need to move towards.
             sbyte directionOne, directionTwo;
-            if (pointOne.X >= foo.center.X)
+            if (pointOne.X == foo.center.X)
+            {
+                directionOne = 0;
+                doneOne = true;
+                while (Math.Abs(progOne.Y - foo.center.Y) <= foo.radius)
+                {
+                    if (progOne.Y <= foo.center.Y)
+                    {
+                        progOne = new Point(progOne.X, progOne.Y - 1);
+                        linePointsOne.Add(progOne);
+                    }
+                    else
+                    {
+                        progOne = new Point(progOne.X, progOne.Y + 1);
+                        linePointsOne.Add(progOne);
+                    }
+                }
+            }
+            else if (pointOne.X > foo.center.X)
             {
                 directionOne = 1;
             }
@@ -61,7 +104,25 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
             {
                 directionOne = -1;
             }
-            if (pointTwo.X >= foo.center.X)
+            if (pointTwo.X == foo.center.X)
+            {
+                directionTwo = 0;
+                doneTwo = true;
+                while (Math.Abs(progTwo.Y - foo.center.Y) <= foo.radius && directionOne != directionTwo)
+                {
+                    if (progTwo.Y <= foo.center.Y)
+                    {
+                        progTwo = new Point(progTwo.X, progTwo.Y - 1);
+                        linePointsTwo.Add(progTwo);
+                    }
+                    else
+                    {
+                        progTwo = new Point(progTwo.X, progTwo.Y + 1);
+                        linePointsTwo.Add(progTwo);
+                    }
+                }
+            }
+            else if (pointTwo.X > foo.center.X)
             {
                 directionTwo = 1;
             }
@@ -71,39 +132,81 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
             }
 
             //generates the points on the lines from pointOne and pointTwo.
-            Point topLeft = new Point(foo.center.X - foo.radius, foo.center.Y + foo.radius), progOne = pointOne, progTwo = pointTwo, progOneLast = pointOne, progTwoLast = pointTwo;
-            int pIndex;
-            bool doneOne = false, doneTwo = false;
-            Color[] curData = foo.GetTextureData();
-            List<Point> linePointsOne = new List<Point>(), linePointsTwo = new List<Point>();
-            linePointsOne.Add(progOne); linePointsTwo.Add(progTwo);
             while (!doneOne || !doneTwo)
             {
                 //Generates the points of a ray from foo's center toward pointOne that are inside of foo and beyond pointOne.
-                progOne = new Point(progOne.X + directionOne, Lines.GetY(lineOne, progOne.X + directionOne));
-                if (directionOne != directionTwo)
+                if (!doneOne)
                 {
-                    for (int y = Math.Min(progOne.Y, progOneLast.Y); y < Math.Max(progOne.Y, progOneLast.Y); y++)
+                    progOne = new Point(progOne.X + directionOne, Lines.GetY(lineOne, progOne.X + directionOne));
+                    if (directionOne != directionTwo)
                     {
-                        linePointsOne.Add(new Point(progOne.X, y));
+                        for (int y = Math.Min(progOne.Y, progOneLast.Y); y < Math.Max(progOne.Y, progOneLast.Y); y++)
+                        {
+                            linePointsOne.Add(new Point(progOne.X, y));
+                        }
+                    }
+                    linePointsOne.Add(progOne);
+                    progOneLast = progOne;
+                    if (!foo.PointInsideCircle(progOne))
+                    {
+                        doneOne = true;
+                        while (Math.Abs(progOne.X - foo.center.X) <= foo.radius && directionOne == directionTwo)
+                        {
+                            progOne = new Point(progOne.X + directionOne, progOne.Y);
+                            linePointsOne.Add(progOne);
+                        }
+                        while (Math.Abs(progOne.Y - foo.center.Y) <= foo.radius && directionOne != directionTwo)
+                        {
+                            if (progOne.Y <= foo.center.Y)
+                            {
+                                progOne = new Point(progOne.X, progOne.Y - 1);
+                                linePointsOne.Add(progOne);
+                            }
+                            else 
+                            {
+                                progOne = new Point(progOne.X, progOne.Y + 1);
+                                linePointsOne.Add(progOne);
+                            }
+                        }
                     }
                 }
-                linePointsOne.Add(progOne);
-                progOneLast = progOne;
-                doneOne = ((directionOne != directionTwo && Math.Abs(progOne.Y - foo.center.Y) > foo.radius) || (directionOne == directionTwo && Math.Abs(progOne.X - foo.center.X) > foo.radius));
 
                 //Generates the points of a ray from foo's center toward pointTwo that are inside of foo and beyond pointTwo.
-                progTwo = new Point(progTwo.X + directionTwo, Lines.GetY(lineTwo, progTwo.X + directionTwo));
-                if (directionOne != directionTwo)
+                if (!doneTwo)
                 {
-                    for (int y = Math.Min(progTwo.Y, progTwoLast.Y); y < Math.Max(progTwo.Y, progTwoLast.Y); y++)
+                    progTwo = new Point(progTwo.X + directionTwo, Lines.GetY(lineTwo, progTwo.X + directionTwo));
+                    if (directionOne != directionTwo)
                     {
-                        linePointsTwo.Add(new Point(progTwo.X, y));
+                        for (int y = Math.Min(progTwo.Y, progTwoLast.Y); y < Math.Max(progTwo.Y, progTwoLast.Y); y++)
+                        {
+                            linePointsTwo.Add(new Point(progTwo.X, y));
+                        }
+                    }
+                    linePointsTwo.Add(progTwo);
+                    progTwoLast = progTwo;
+                    if (!foo.PointInsideCircle(progTwo))
+                    {
+                        doneTwo = true;
+                        while (Math.Abs(progTwo.X - foo.center.X) <= foo.radius && directionOne == directionTwo)
+                        {
+                            progTwo = new Point(progTwo.X + directionTwo, progTwo.Y);
+                            linePointsTwo.Add(progTwo);
+                        }
+                        while (Math.Abs(progTwo.Y - foo.center.Y) <= foo.radius && directionOne != directionTwo)
+                        {
+                            if (progTwo.Y <= foo.center.Y)
+                            {
+                                progTwo = new Point(progTwo.X, progTwo.Y - 1);
+                                linePointsTwo.Add(progTwo);
+                            }
+                            else
+                            {
+                                progTwo = new Point(progTwo.X, progTwo.Y + 1);
+                                linePointsTwo.Add(progTwo);
+                            }
+                        }
                     }
                 }
-                linePointsTwo.Add(progTwo);
-                progTwoLast = progTwo;
-                doneTwo = ((directionOne != directionTwo && Math.Abs(progTwo.Y - foo.center.Y) > foo.radius) || (directionOne == directionTwo && Math.Abs(progTwo.X - foo.center.X) > foo.radius)); ;
             }
 
             //Gets the points between progOne and progTwo and replaces their colors.
@@ -113,16 +216,24 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 {
                     for (int x = Math.Min(pointOne.X, pointTwo.X); x <= foo.center.X + foo.radius; x++)
                     {
-                        int yOne = pointOne.Y;
-                        int yTwo = pointTwo.Y;
-
+                        int yOne;
                         if (linePointsOne.Exists(p => p.X == x))
                         {
                             yOne = linePointsOne.Find(p => p.X == x).Y;
                         }
+                        else
+                        {
+                            yOne = pointOne.Y;
+                        }
+
+                        int yTwo;
                         if (linePointsTwo.Exists(p => p.X == x))
                         {
                             yTwo = linePointsTwo.Find(p => p.X == x).Y;
+                        }
+                        else
+                        {
+                            yTwo = pointTwo.Y;
                         }
 
                         for (int y = Math.Min(yOne, yTwo); y <= Math.Max(yOne, yTwo); y++)
@@ -138,18 +249,26 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 }
                 else if (pointOne.X < foo.center.X && pointTwo.X < foo.center.X) // > from center
                 {
-                    for (int x = Math.Max(pointOne.X, pointTwo.X); x >= foo.center.X - foo.radius; x--)
+                    for (int x = Math.Max(pointOne.X, pointTwo.X); x >= -Math.Abs(foo.center.X - foo.radius); x--)
                     {
-                        int yOne = pointOne.Y;
-                        int yTwo = pointTwo.Y;
-
+                        int yOne;
                         if (linePointsOne.Exists(p => p.X == x))
                         {
                             yOne = linePointsOne.Find(p => p.X == x).Y;
                         }
+                        else
+                        {
+                            yOne = pointOne.Y;
+                        }
+
+                        int yTwo;
                         if (linePointsTwo.Exists(p => p.X == x))
                         {
                             yTwo = linePointsTwo.Find(p => p.X == x).Y;
+                        }
+                        else
+                        {
+                            yTwo = pointTwo.Y;
                         }
 
                         for (int y = Math.Min(yOne, yTwo); y <= Math.Max(yOne, yTwo); y++)
@@ -224,11 +343,11 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
 
             foreach (Point p in linePointsOne)
             {
-                Debug.DrawPoint(p, Color.CornflowerBlue);
+                //Debug.DrawPoint(p, Color.CornflowerBlue);
             }
             foreach (Point p in linePointsTwo)
             {
-                Debug.DrawPoint(p, Color.CornflowerBlue);
+                //Debug.DrawPoint(p, Color.CornflowerBlue);
             }
 
             foo.SetTexture(curData);
@@ -237,11 +356,13 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
         /// <summary>
         /// 
         /// </summary>
-        public Point position;
+        int layer;
+        
+        public Circle[] staticCircles;
+
+        public Circle[] dynamicCircles;
 
         public float[] transparency;
-
-        public int[][] intensity;
 
         public Color[] color;
 
@@ -249,13 +370,25 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
 
         private int frame;
 
-        public LightSource(Point position, float[] transparency, int[][] intensity, Color[] color)
+        public LightSource(int layer, Point position, int[] intensity, float[] transparency, Color[] color)
         {
-            this.position = position;
+            this.layer = layer;
+            int lowestLength = (transparency.Length < intensity.Length) ? ((transparency.Length < color.Length) ? transparency.Length : color.Length) : ((intensity.Length < color.Length) ? intensity.Length : color.Length);
+            staticCircles = new Circle[lowestLength];
+            dynamicCircles = new Circle[lowestLength];
             this.transparency = transparency;
-            this.intensity = intensity;
             this.color = color;
             frame = 0;
+
+            for (int i = 0; i < lowestLength; i++)
+            {
+                Circle foo = new Circle(intensity[i], position);
+                StaticCastCircleOnLayer(foo, layer);
+                staticCircles[i] = foo;
+                Circle bar = new Circle(intensity[i], position, false);
+                bar.SetTexture(foo.GetTextureData());
+                dynamicCircles[i] = bar;
+            }
         }
 
         public void Draw()
@@ -273,14 +406,11 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 }
             }
 
-            //gets the lowest length of the arrays transparency, intensity, and color.
-            int lowestLength = (transparency.Length < intensity.Length) ? ((transparency.Length < color.Length) ? transparency.Length : color.Length) : ((intensity.Length < color.Length) ? intensity.Length : color.Length);
-
-            Texture2D circle;
-            for (int i = 0; i < lowestLength; i++)
+            for (int i = 0; i < dynamicCircles.Length; i++)
             {
-                circle = Circle.GetCircleTexture(intensity[i][frame]);
-                Global._spriteBatch.Draw(circle, new Rectangle(position.X - circle.Width / 2, -(position.Y + circle.Height / 2), circle.Width, circle.Height), color[i] * transparency[i]);
+                DynamicCastCircleOnLayer(dynamicCircles[i], layer);
+                dynamicCircles[i].Draw(color[i] * transparency[i]);
+                dynamicCircles[i].SetTexture(staticCircles[i].GetTextureData());
             }
 
         }

@@ -57,6 +57,7 @@ namespace Fantasy.Logic.Engine.Graphics.tilemap
             this.tileMapCoordinate = tileMapCoordinate;
             this.positionBox = positionBox;
             this.hitboxes = hitboxes;
+            lightboxes = new Lightbox[] { new Lightbox(Util.GetTopLeftPoint(positionBox), new Rectangle[] { new Rectangle(0, 0, 64, 64) }, new bool[,] { { false, true, true, true }, { true, true, true, true } }) };
         }
 
         /// <summary>

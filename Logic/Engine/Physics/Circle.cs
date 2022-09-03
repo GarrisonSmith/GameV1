@@ -424,7 +424,10 @@ namespace Fantasy.Logic.Engine.Physics
         {
             texture = foo;
         }
-
+        /// <summary>
+        /// Sets this circles texture to the provided texture data.
+        /// </summary>
+        /// <param name="foo">The texture data to be made this circles texture.</param>
         public void SetTexture(Color[] foo)
         {
             Texture2D newTexure = new Texture2D(Global._graphics.GraphicsDevice, radius * 2 + 1, radius * 2 + 1);

@@ -6,6 +6,7 @@ using Fantasy.Logic.Engine.Physics;
 using Fantasy.Logic.Controllers;
 using System.Collections.Generic;
 using Fantasy.Logic.Engine.Utility;
+using Fantasy.Logic.Engine.Graphics.Lighting;
 
 namespace Fantasy.Logic.Engine.entities
 {
@@ -34,6 +35,10 @@ namespace Fantasy.Logic.Engine.entities
         /// This entities hitbox for collision on a TileMap or other entities. Also stores the characters location.
         /// </summary>
         public Entitybox hitbox;
+        /// <summary>
+        /// Array containing the lightboxes for this tile.
+        /// </summary>
+        public Lightbox lightbox;
         /// <summary>
         /// The spritesheet this entity uses when drawing or when animated.
         /// </summary>
@@ -87,6 +92,7 @@ namespace Fantasy.Logic.Engine.entities
         /// </summary>
         public void UpdateEntity()
         {
+            lightbox.position = hitbox.GetPointPosition();
             int movementAmount;
             switch (movement)
             {

@@ -35,7 +35,7 @@ namespace Fantasy.Logic.Engine.Graphics.tilemap
             this.positionBox = positionBox;
             this.hitboxes = hitboxes;
             this.animation = animation;
-            lightboxes = new Lightbox[] { new Lightbox(Util.GetTopLeftPoint(positionBox), new Rectangle[] { new Rectangle(0, 0, 64, 64) }, new bool[,] { { true, false, true, true }, { true, true, true, false } }) };
+            lightboxes = new Lightbox[] { new Lightbox(Util.GetTopLeftPoint(positionBox), new Rectangle[] { new Rectangle(0, 0, 64, 64) }, new bool[,] { { true, true, true, true }, { true, true, true, true } }) };
         }
 
         /// <summary>

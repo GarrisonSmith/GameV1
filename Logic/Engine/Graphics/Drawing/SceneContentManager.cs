@@ -61,9 +61,9 @@ namespace Fantasy.Logic.Engine.Graphics.Drawing
             return foo.ToArray();
         }
 
-        public Lightbox[] GetLayerLightboxes(int layer)
+        public Lightbox[] GetLayerStaticLightboxes(int layer)
         {
-            List<Tile> tiles = _tileMap.GetLayer(layer).map; List<Entity> entities = _entitySet.GetLayer(layer);
+            List<Tile> tiles = _tileMap.GetLayer(layer).map;
             List<Lightbox> foo = new List<Lightbox>();
             foreach (Tile t in tiles)
             {
@@ -73,6 +73,21 @@ namespace Fantasy.Logic.Engine.Graphics.Drawing
                     {
                         foo.Add(l);
                     }
+                }
+            }
+
+            return foo.ToArray();
+        }
+
+        public Lightbox[] GetLayerDynamicLightboxes(int layer)
+        {
+            List<Entity> entities = _entitySet.GetLayer(layer);
+            List<Lightbox> foo = new List<Lightbox>();
+            foreach (Entity e in entities)
+            {
+                if (e.lightbox != null)
+                {
+                    foo.Add(e.lightbox);
                 }
             }
 

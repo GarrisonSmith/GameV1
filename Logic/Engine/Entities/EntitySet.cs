@@ -167,14 +167,7 @@ namespace Fantasy.Logic.Engine.entities
                     foo.Add(e);
                 }
             }
-            if (foo.Count == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return foo;
-            }
+            return foo;
         }
         /// <summary>
         /// Creates and returns a list containing the entities on the provided layers.
@@ -194,16 +187,9 @@ namespace Fantasy.Logic.Engine.entities
                     }
                 }
             }
-            if (foo.Count == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return foo;
-            }
+            return foo;
         }
-        
+
         /// <summary>
         /// Draws all entities on all layers in this EntitySet.
         /// </summary>
@@ -252,8 +238,8 @@ namespace Fantasy.Logic.Engine.entities
         public void DrawArea(Rectangle drawArea)
         {
             foreach (Entity e in entitySet)
-            { 
-                if(Util.PointInsideRectangle(e.GetEntityVisualCenter(), drawArea))
+            {
+                if (Util.PointInsideRectangle(e.GetEntityVisualCenter(), drawArea))
                 {
                     e.Draw();
                 }

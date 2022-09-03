@@ -207,7 +207,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                 {
                     if (rec.X > center.X) //rec is right of center.
                     {
-                        if (lightPhysics[0, 1]) //checks if rec right allows for light pass in.
+                        if (lightPhysics[0, 3]) //checks if rec left allows for light pass in.
                         {
                             if (!lightPhysics[1, 0]) //check if rec top does not allow for light pass out.
                             {
@@ -217,21 +217,21 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                             {
                                 lightLineCollisions.Add(bottom);
                             }
-                            if (!lightPhysics[1, 3]) //checks if rec left does not allow for light pass out.
+                            if (!lightPhysics[1, 1]) //checks if rec right does not allow for light pass out.
                             {
-                                lightLineCollisions.Add(left);
+                                lightLineCollisions.Add(right);
                             }
                         }
                         else
                         {
-                            lightLineCollisions.Add(right);
+                            lightLineCollisions.Add(left);
                         }
                     }
                     else //rec is left of center.
                     {
-                        if (lightPhysics[0, 3]) //checks if rec left allows for light pass in.
+                        if (lightPhysics[0, 1]) //checks if rec right allows for light pass in.
                         {
-                            if (!lightPhysics[1, 3]) //check if rec right does not allow for light pass out.
+                            if (!lightPhysics[1, 3]) //check if rec left does not allow for light pass out.
                             {
                                 lightLineCollisions.Add(left);
                             }
