@@ -43,7 +43,7 @@ namespace Fantasy.Logic.Engine.entities
             this.orientation = orientation;
             this.hitbox = hitbox;
             frames = new Animation(spriteSheet, 400, 400, 0, 4, 0, 0, 64, 128, AnimationState.idle);
-            lightbox = new Lightbox(hitbox.GetPointPosition(), new Rectangle[] { new Rectangle(8, -16, 48, 112) }, new bool[,] { { false, false, false, false }, { true, true, true, true } });
+            lightbox = null;
         }
 
         /// <summary>

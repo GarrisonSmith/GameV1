@@ -36,7 +36,7 @@ namespace Fantasy.Logic.Engine.Screen
         {
             _tileMap = new TileMap("large_light_test_map");
             _entitySet = new EntitySet();
-            _entitySet.AddEntity(new Character("character", "character", Global._content.Load<Texture2D>(@"character-sets\character_three_spritesheet"), 1, new Point(64, 128),
+            _entitySet.AddEntity(new Character("character", "character", Global._content.Load<Texture2D>(@"character-sets\character_three_spritesheet"), 2, new Point(64, 128),
                 new Entitybox(new Point(-350, 516), new Rectangle[] { new Rectangle(16, -104, 32, 24) }), new MoveSpeed(96, TimeUnits.seconds), Orientation.down), true);
 
             _spriteManager = new SceneContentManager(_tileMap, _entitySet);

@@ -104,7 +104,7 @@ namespace Fantasy.Logic.Engine.Graphics
         {
             Point mouseRelativePosition = new Point(_scene._camera.cameraPosition.X + (int)(mousePosition.X * 1 / _scene._camera.stretch),
                 _scene._camera.cameraPosition.Y - (int)(mousePosition.Y * 1 / _scene._camera.stretch));
-            Tile foo = _scene._tileMap.GetTile(1, mouseRelativePosition);
+            Tile foo = _scene._tileMap.GetTile(_scene._spriteManager._entitySet.player.layer, mouseRelativePosition);
 
             if (foo != null)
             {
@@ -117,7 +117,7 @@ namespace Fantasy.Logic.Engine.Graphics
         {
             Point mouseRelativePosition = new Point(_scene._camera.cameraPosition.X + (int)(mousePosition.X * 1 / _scene._camera.stretch),
                 _scene._camera.cameraPosition.Y - (int)(mousePosition.Y * 1 / _scene._camera.stretch));
-            Eventbox foo = _scene._spriteManager._tileMap.GetEventbox(1, mouseRelativePosition);
+            Eventbox foo = _scene._spriteManager._tileMap.GetEventbox(_scene._spriteManager._entitySet.player.layer, mouseRelativePosition);
 
             if (foo != null)
             {
@@ -172,7 +172,7 @@ namespace Fantasy.Logic.Engine.Graphics
 
         public static void InterrogateTileUnderMouse(Scene _scene, Point mousePosition, Point mouseRelativePosition)
         {
-            Tile foo = _scene._spriteManager._tileMap.GetTile(1, mouseRelativePosition);
+            Tile foo = _scene._spriteManager._tileMap.GetTile(_scene._spriteManager._entitySet.player.layer, mouseRelativePosition);
 
             if (foo != null)
             {
@@ -194,7 +194,7 @@ namespace Fantasy.Logic.Engine.Graphics
 
         public static void InterrogateEventboxUnderMouse(Scene _scene, Point mousePosition, Point mouseRelativePosition)
         {
-            Eventbox foo = _scene._spriteManager._tileMap.GetEventbox(1, mouseRelativePosition);
+            Eventbox foo = _scene._spriteManager._tileMap.GetEventbox(_scene._spriteManager._entitySet.player.layer, mouseRelativePosition);
 
             if (foo != null)
             {

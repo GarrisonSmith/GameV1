@@ -83,6 +83,41 @@ namespace Fantasy.Logic.Engine.Utility
                     int.Parse(foo.Substring(foo.IndexOf("Height:") + 7, foo.IndexOf('}') - (foo.IndexOf("Height:") + 7)))
                     );
         }
+
+        public static bool[,] BoolArrayFromString(string foo)
+        {
+            int rows = 1, cols = 0;
+            foreach (char c in foo.ToCharArray())
+            {
+                if (c == ',')
+                {
+                    cols++;
+                }
+                else if (c == '|')
+                {
+                    rows++;
+                }
+            }
+            cols += rows; cols /= rows; 
+            
+            bool[,] arr = new bool[rows,cols];
+            int curRow = 0;
+
+            string[] bar = foo.Split('|');
+            for (int i = 0; i < bar.Length; i++)
+            {
+                bar[i] = bar[i].Trim('{'); bar[i] = bar[i].Trim('}');
+                string[] baz = bar[i].Split(',');
+                int curCol = 0;
+                foreach (string s in baz)
+                {
+                    arr[curRow, curCol] = Convert.ToBoolean(Convert.ToByte(s));
+                    curCol++;
+                }
+                curRow++;
+            }
+            return arr;
+        }
         /// <summary>
         /// Determines the distance between two points.
         /// </summary>

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Physics;
+using System.Text;
 
 namespace Fantasy.Logic.Engine.Graphics.Lighting
 {
@@ -344,6 +345,26 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
             }
 
             return lightLineCollisions.ToArray();
+        }
+
+        /// <summary>
+        /// Creates a string describing this Lightbox.
+        /// </summary>
+        /// <returns>A string describing this Lightbox.</returns>
+        new public string ToString()
+        {
+            StringBuilder text = new StringBuilder();
+            foreach (Rectangle bounding in boundings)
+            {
+                text.Append(new Rectangle(bounding.X + position.X, bounding.Y + position.Y, bounding.Width, bounding.Height) + Environment.NewLine);
+            }
+            text.Append("__Light In__" + Environment.NewLine);
+            text.Append("Top:" + lightPhysics[0, 0].ToString() + " Right:" + lightPhysics[0, 1].ToString() + " Bottom:" + lightPhysics[0, 2].ToString() + " Left:" + lightPhysics[0, 3].ToString() + Environment.NewLine);
+
+            text.Append("__Light Out__" + Environment.NewLine);
+            text.Append("Top:" + lightPhysics[1, 0].ToString() + " Right:" + lightPhysics[1, 1].ToString() + " Bottom:" + lightPhysics[1, 2].ToString() + " Left:" + lightPhysics[1, 3].ToString());
+
+            return text.ToString();
         }
     }
 }

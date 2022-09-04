@@ -50,14 +50,15 @@ namespace Fantasy.Logic.Engine.Graphics.tilemap
         /// <param name="tileMapCoordinate">Point containing the column (x value) and row (y value) this Tile occupies on its TileMapLayer.</param>
         /// <param name="positionBox">Describes where the tile is located (top right position) and the area this tile occupies.</param>
         /// <param name="hitboxes">Describes the hitboxes of this Tile.</param>
-        public Tile(Texture2D tileSet, Point tileSetCoordinate, Point tileMapCoordinate, Rectangle positionBox, Tilebox[] hitboxes)
+        /// <param name="lightboxes">Describes the lightboxes of this Tile.</param>
+        public Tile(Texture2D tileSet, Point tileSetCoordinate, Point tileMapCoordinate, Rectangle positionBox, Tilebox[] hitboxes, Lightbox[] lightboxes)
         {
             this.tileSet = tileSet;
             this.tileSetCoordinate = tileSetCoordinate;
             this.tileMapCoordinate = tileMapCoordinate;
             this.positionBox = positionBox;
             this.hitboxes = hitboxes;
-            lightboxes = new Lightbox[] { new Lightbox(Util.GetTopLeftPoint(positionBox), new Rectangle[] { new Rectangle(0, 0, 64, 64) }, new bool[,] { { false, true, true, true }, { true, true, true, true } }) };
+            this.lightboxes = lightboxes;
         }
 
         /// <summary>
@@ -120,6 +121,15 @@ namespace Fantasy.Logic.Engine.Graphics.tilemap
                     text.Append(Environment.NewLine + "__Hitbox " + i + "__" + Environment.NewLine + box.ToString());
                     i++;
                 }
+            }
+            if (lightboxes != null)
+            {
+                int i = 0;
+                foreach (Lightbox box in lightboxes)
+                {
+                    text.Append(Environment.NewLine + "__Lightbox " + i + "__" + Environment.NewLine + box.ToString());
+                    i++;
+                }   
             }
 
             return text.ToString();

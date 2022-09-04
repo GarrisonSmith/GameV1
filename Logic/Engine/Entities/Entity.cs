@@ -92,7 +92,11 @@ namespace Fantasy.Logic.Engine.entities
         /// </summary>
         public void UpdateEntity()
         {
-            lightbox.position = hitbox.GetPointPosition();
+            if (lightbox != null)
+            {
+                lightbox.position = hitbox.GetPointPosition();
+            }
+            
             int movementAmount;
             switch (movement)
             {

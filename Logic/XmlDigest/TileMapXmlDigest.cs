@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Graphics.tilemap;
 using Fantasy.Logic.Engine.Graphics;
+using Fantasy.Logic.Engine.Graphics.Lighting;
 using System;
 
 namespace Fantasy.Logic.XmlDigest
@@ -27,6 +28,7 @@ namespace Fantasy.Logic.XmlDigest
             Point tileMapCoordinate = new Point();
             Rectangle positionBox = new Rectangle();
             Tilebox[] hitboxes = null;
+            Lightbox[] lightboxes = null;
 
             foreach (XmlElement foo in tileTag)
             {
@@ -50,8 +52,12 @@ namespace Fantasy.Logic.XmlDigest
                 {
                     hitboxes = GetTileHitboxes(foo);
                 }
+                else if (foo.Name.Equals("lightboxes"))
+                {
+                    lightboxes = GetTileLightboxes(foo);
+                }
             }
-            return new Tile(tileSet, tileSetCoordinate, tileMapCoordinate, positionBox, hitboxes);
+            return new Tile(tileSet, tileSetCoordinate, tileMapCoordinate, positionBox, hitboxes, lightboxes);
         }
 
         /// <summary>
@@ -105,9 +111,13 @@ namespace Fantasy.Logic.XmlDigest
         /// <returns>A Tilebox array with the perameters described in hitboxesTag.</returns>
         public static Tilebox[] GetTileHitboxes(XmlElement hitboxesTag)
         {
+            if (hitboxesTag.ChildNodes.Count == 0)
+            {
+                return null;
+            }
+            
             Tilebox[] tileboxes = new Tilebox[hitboxesTag.ChildNodes.Count];
             int hitboxIndex = 0;
-
             foreach (XmlElement hitbox in hitboxesTag)
             {
                 MovementInclusions movementInclusions = MovementInclusions.inassessible;
@@ -141,6 +151,47 @@ namespace Fantasy.Logic.XmlDigest
             return tileboxes;
         }
 
+        public static Lightbox[] GetTileLightboxes(XmlElement lightboxesTag)
+        {
+            if (lightboxesTag.ChildNodes.Count == 0)
+            {
+                return null;
+            }
+
+            Lightbox[] lightboxes = new Lightbox[lightboxesTag.ChildNodes.Count];
+            int lightboxIndex = 0;
+            foreach (XmlElement hitbox in lightboxesTag)
+            {
+                Point position = new Point();
+                bool[,] lightPhysics = null;
+                Rectangle[] boundings = null;
+
+                foreach (XmlElement foo in hitbox)
+                {
+                    if (foo.Name.Equals("position"))
+                    {
+                        position = Util.PointFromString(foo.InnerText);
+                    }
+                    else if (foo.Name.Equals("boundings"))
+                    {
+                        boundings = new Rectangle[foo.ChildNodes.Count];
+                        int boundingIndex = 0;
+                        foreach (XmlElement rectangle in foo)
+                        {
+                            boundings[boundingIndex] = Util.RectangleFromString(rectangle.InnerText);
+                            boundingIndex++;
+                        }
+                    }
+                    else if (foo.Name.Equals("lightphysics"))
+                    {
+                        lightPhysics = Util.BoolArrayFromString(foo.InnerText);
+                    }
+                }
+                lightboxes[lightboxIndex] = new Lightbox(position, boundings, lightPhysics);
+                lightboxIndex++;
+            }
+            return lightboxes;
+        }
         /// <summary>
         /// Creates a Animation from the provided XmlElement.
         /// </summary>
