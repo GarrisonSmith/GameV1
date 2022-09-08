@@ -163,7 +163,8 @@ namespace Fantasy.Logic.XmlDigest
             foreach (XmlElement hitbox in lightboxesTag)
             {
                 Point position = new Point();
-                bool[,] lightPhysics = null;
+                bool[,] lightPhysics = new bool[2, 4];
+                bool[,] lightPhysicsAbove = null, lightPhysicsRight = null, lightPhysicsBelow = null, lightPhysicsLeft = null;
                 Rectangle[] boundings = null;
 
                 foreach (XmlElement foo in hitbox)
@@ -182,12 +183,29 @@ namespace Fantasy.Logic.XmlDigest
                             boundingIndex++;
                         }
                     }
-                    else if (foo.Name.Equals("lightphysics"))
+                    else if (foo.Name.Equals("lightPhysics"))
                     {
                         lightPhysics = Util.BoolArrayFromString(foo.InnerText);
+                        lightPhysicsAbove = lightPhysicsRight = lightPhysicsBelow = lightPhysicsLeft = lightPhysics;
+                    }
+                    else if (foo.Name.Equals("lightPhysicsAbove"))
+                    {
+                        lightPhysicsAbove = Util.BoolArrayFromString(foo.InnerText);
+                    }
+                    else if (foo.Name.Equals("lightPhysicsRight"))
+                    {
+                        lightPhysicsAbove = Util.BoolArrayFromString(foo.InnerText);
+                    }
+                    else if (foo.Name.Equals("lightPhysicsBelow"))
+                    {
+                        lightPhysicsAbove = Util.BoolArrayFromString(foo.InnerText);
+                    }
+                    else if (foo.Name.Equals("lightPhysicsLeft"))
+                    {
+                        lightPhysicsAbove = Util.BoolArrayFromString(foo.InnerText);
                     }
                 }
-                lightboxes[lightboxIndex] = new Lightbox(position, boundings, lightPhysics);
+                lightboxes[lightboxIndex] = new Lightbox(position, boundings, lightPhysicsAbove, lightPhysicsRight, lightPhysicsBelow, lightPhysicsLeft);
                 lightboxIndex++;
             }
             return lightboxes;

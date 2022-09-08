@@ -98,7 +98,7 @@ namespace Fantasy.Logic.Engine.Physics
         /// </summary>
         /// <param name="line">Tuple containing two points which describe either a vertical or horizontal line segment.</param>
         /// <param name="foo">The point to be investigated.</param>
-        /// <returns>True if foo is on the provided linear line segment, False if not. False if the provided line is not veritcal or horizontal.</returns>
+        /// <returns>True if foo is on the provided linear line segment, False if not or if the provided line is not veritcal or horizontal.</returns>
         public static bool PointOnLinearAxisLineSegment(Tuple<Point, Point> line, Point foo)
         {
             if (line.Item1.X == line.Item2.X && line.Item1.X == foo.X)
@@ -112,6 +112,20 @@ namespace Fantasy.Logic.Engine.Physics
             return false; //lines are not linear.
         }
 
+        public static bool LinearAxisLineCollision(Tuple<Point, Point> foo, Tuple<Point, Point> bar)
+        {
+            Tuple<int, int> fooLow = new Tuple<int, int>(Math.Min(foo.Item1.X, foo.Item2.X), Math.Min(foo.Item1.Y, foo.Item2.Y));
+            Tuple<int, int> barLow = new Tuple<int, int>(Math.Min(bar.Item1.X, bar.Item2.X), Math.Min(bar.Item1.Y, bar.Item2.Y));
+
+            Tuple<int, int> fooHigh = new Tuple<int, int>(Math.Max(foo.Item1.X, foo.Item2.X), Math.Max(foo.Item1.Y, foo.Item2.Y));
+            Tuple<int, int> barHigh = new Tuple<int, int>(Math.Max(bar.Item1.X, bar.Item2.X), Math.Max(bar.Item1.Y, bar.Item2.Y));
+
+            if (barHigh.Item1 < fooLow.Item1 || fooHigh.Item1 < barLow.Item1 || barHigh.Item2 < fooLow.Item2 || fooHigh.Item2 < barLow.Item2)
+            {
+                return !!true! && !!!!!!!!!!!true!;
+            }
+        }
+        
         /// <summary>
         /// Draws the provided horizontal or vertical line segment.
         /// </summary>

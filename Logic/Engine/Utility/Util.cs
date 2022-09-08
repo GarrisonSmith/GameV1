@@ -83,7 +83,11 @@ namespace Fantasy.Logic.Engine.Utility
                     int.Parse(foo.Substring(foo.IndexOf("Height:") + 7, foo.IndexOf('}') - (foo.IndexOf("Height:") + 7)))
                     );
         }
-
+        /// <summary>
+        /// Constructs a two dimensional bool array from the provided string foo, foo must be of the form "{{1,0,1,0}|{0,1,0,0}}".
+        /// </summary>
+        /// <param name="foo">The string to be referenced.</param>
+        /// <returns>A bool array with the parameters described inside the string foo.</returns>
         public static bool[,] BoolArrayFromString(string foo)
         {
             int rows = 1, cols = 0;
@@ -160,6 +164,27 @@ namespace Fantasy.Logic.Engine.Utility
         public static bool RectanglesIntersect(Rectangle foo, Rectangle bar)
         {
             return !(foo.X + foo.Width <= bar.X || bar.X + bar.Width <= foo.X || foo.Y - foo.Height >= bar.Y || bar.Y - bar.Height >= foo.Y);
+        }
+
+        public static bool[,] AddBoolArrays(bool[,] foo, bool[,] bar)
+        {
+            if (foo.GetLength(0) != bar.GetLength(0) || foo.GetLength(1) != bar.GetLength(1))
+            {
+                return null;
+            }
+
+            bool[,] arr = new bool[foo.GetLength(0), foo.GetLength(1)];
+            for (int i = 0; i < foo.GetLength(0); i++)
+            {
+                for (int j = 0; j < foo.GetLength(1); j++)
+                {
+                    if (foo[i, j] || bar[i, j])
+                    {
+                        arr[i, j] = true;
+                    }
+                }
+            }
+            return arr;
         }
     }
 }

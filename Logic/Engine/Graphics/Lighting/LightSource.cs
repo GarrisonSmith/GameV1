@@ -1,6 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Fantasy.Logic.Engine.Graphics.tilemap;
-using Microsoft.Xna.Framework.Graphics;
 using Fantasy.Logic.Engine.Utility;
 using Fantasy.Logic.Engine.Physics;
 using System.Collections.Generic;
@@ -17,7 +15,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
         /// <param name="layer"></param>
         public static void StaticCastCircleOnLayer(Circle foo, int layer)
         {
-            Global._currentScene.fbao = new List<Tuple<Point, Point>>();
+            //Global._currentScene.fbao = new List<Tuple<Point, Point>>();
             
             Lightbox[] bar = Global._currentScene._spriteManager.GetLayerStaticLightboxes(layer);
             foreach (Lightbox box in bar)
@@ -35,7 +33,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
 
         public static void DynamicCastCircleOnLayer(Circle foo, int layer)
         {
-            Global._currentScene.fbao = new List<Tuple<Point, Point>>();
+            //Global._currentScene.fbao = new List<Tuple<Point, Point>>();
 
             Lightbox[] bar = Global._currentScene._spriteManager.GetLayerDynamicLightboxes(layer);
             foreach (Lightbox box in bar)
@@ -52,6 +50,7 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
         }
         /// <summary>
         /// Replaces a slice of the circle foos texture with the provided replacement color. pointOne and pointTwo act as clamp points for casting the replacement area.
+        /// pointOne and pointTwo must be in a vertical or horizontal line.
         /// </summary>
         /// <remarks>pontOne and pointTwo must be in either a vertical or horizontal line.</remarks>
         /// <param name="foo">The circle to be used.</param>
@@ -339,15 +338,6 @@ namespace Fantasy.Logic.Engine.Graphics.Lighting
                         }
                     }
                 }
-            }
-
-            foreach (Point p in linePointsOne)
-            {
-                //Debug.DrawPoint(p, Color.CornflowerBlue);
-            }
-            foreach (Point p in linePointsTwo)
-            {
-                //Debug.DrawPoint(p, Color.CornflowerBlue);
             }
 
             foo.SetTexture(curData);
