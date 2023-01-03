@@ -1,13 +1,9 @@
 ﻿using Fantasy.Engine.ContentManagement;
-using Fantasy.Engine.Logic.Drawing;
 using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Fantasy.Engine.Logic.Mapping.Tiling
@@ -36,17 +32,23 @@ namespace Fantasy.Engine.Logic.Mapping.Tiling
         /// </summary>
         /// <param name="tileElement">The XML element that defines the tile.</param>
         /// <param name="mapKey">The location of the tile in the map, as a tuple of (row, col).</param>
+        /// <param name="layer">The layer of the tile.</param>
         /// <returns>The tile that was looked up or created.</returns>
-        internal static Tile LookUpTile(XmlElement tileElement, (int row, int col) mapKey)
+        internal static Tile GetTile(XmlElement tileElement, (int row, int col) mapKey, int layer)
         {
-            if (!UNIQUE_TILES.TryGetValue(tileElement.GetAttribute("id"), out Tile foo))
+            if (!UNIQUE_TILES.TryGetValue(tileElement.GetAttribute("id"), out Tile tile))
             {
-                foo = new Tile(tileElement);
-                UNIQUE_TILES.Add(tileElement.GetAttribute("id"), foo);
+                tile = new Tile(tileElement);
+                UNIQUE_TILES.Add(tileElement.GetAttribute("id"), tile);
             }
-            foo.Locations.Add(new Vector2(mapKey.col * 64, mapKey.row * 64));
+            if (!tile.Locations.ContainsKey(layer))
+            {
+                tile.Locations[layer] = new HashSet<Coordinates>();
+            }
+            tile.Locations[layer].Add(new Coordinates(mapKey.col * TILE_WIDTH, mapKey.row * TILE_HEIGHT,
+                (mapKey.col * TILE_WIDTH) + (TILE_WIDTH / 2) + .5f, (mapKey.row * TILE_HEIGHT) + (TILE_HEIGHT / 2) + .5f));
 
-            return foo;
+            return tile;
         }
 
         /// <summary>
@@ -54,13 +56,13 @@ namespace Fantasy.Engine.Logic.Mapping.Tiling
         /// </summary>
         internal Texture2D Spritesheet { get; set; }
         /// <summary>
-        /// The coordinates of the tile's image on the spritesheet, as a tuple of (row, col).
+        /// The area of the spritesheet from which the tile's image is taken.
         /// </summary>
-        internal (int row, int col) SheetCoordinates { get; set; }
+        internal Rectangle SheetBox { get; set; }
         /// <summary>
-        /// The locations of the tile on the map.
+        /// A dictionary that maps layer numbers to sets of locations (Vector2 objects) for the tile on the map.
         /// </summary>
-        internal HashSet<Vector2> Locations { get; set; }
+        internal Dictionary<int, HashSet<Coordinates>> Locations { get; set; }
         /// <summary>
         /// The ID of the tile.
         /// </summary>
@@ -70,9 +72,10 @@ namespace Fantasy.Engine.Logic.Mapping.Tiling
         /// Creates a new tile from the specified XML element.
         /// </summary>
         /// <param name="tileElement">The XML element that defines the tile.</param>
+        /// <exception cref="ArgumentException">Throws an exception if the XML element is invalid or if the spritesheet or ID attributes are missing.</exception>
         private Tile(XmlElement tileElement)
         {
-            Locations = new HashSet<Vector2>();
+            Locations = new Dictionary<int, HashSet<Coordinates>>();
             Id = tileElement.GetAttribute("id");
             foreach (XmlElement foo in tileElement)
             {
@@ -84,10 +87,10 @@ namespace Fantasy.Engine.Logic.Mapping.Tiling
                 {
                     int row = int.Parse(foo.GetAttribute("row"));
                     int col = int.Parse(foo.GetAttribute("col"));
-                    SheetCoordinates = (row, col);
+                    SheetBox = new Rectangle(col * TILE_WIDTH, row * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
                 }
             }
-            if (Spritesheet == null || SheetCoordinates == (null, null) || Id == null)
+            if (Spritesheet == null || Id == null)
             {
                 throw new Exception("Invalid Tile XmlElement " + tileElement);
             }

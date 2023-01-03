@@ -13,31 +13,31 @@ namespace Fantasy.Engine.ContentManagement
 
         private static Dictionary<string, Texture2D> Spritesheets { get; set; }
 
-        internal static void LoadTextures(Game1 foo)
+        internal static void LoadTextures(Game1 game)
         {
-            LoadSpritesheets(foo);
+            LoadSpritesheets(game);
         }
 
-        internal static void LoadSpritesheets(Game1 foo)
+        internal static void LoadSpritesheets(Game1 game)
         {
             Spritesheets = new Dictionary<string, Texture2D>
             {
-                { "DEBUG", foo.Content.Load<Texture2D>(@"spritesheets\DEBUG") },
-                { "EMPTY", foo.Content.Load<Texture2D>(@"spritesheets\EMPTY") },
-                { "brickwall_spritesheet", foo.Content.Load<Texture2D>(@"spritesheets\brickwall_spritesheet") },
-                { "grass_spritesheet", foo.Content.Load<Texture2D>(@"spritesheets\grass_spritesheet")},
-                { "woodfloor_spritesheet", foo.Content.Load<Texture2D>(@"spritesheets\woodfloor_spritesheet")}
+                { "DEBUG", game.Content.Load<Texture2D>(@"spritesheets\DEBUG") },
+                { "EMPTY", game.Content.Load<Texture2D>(@"spritesheets\EMPTY") },
+                { "brickwall_spritesheet", game.Content.Load<Texture2D>(@"spritesheets\brickwall_spritesheet") },
+                { "grass_spritesheet", game.Content.Load<Texture2D>(@"spritesheets\grass_spritesheet")},
+                { "woodfloor_spritesheet", game.Content.Load<Texture2D>(@"spritesheets\woodfloor_spritesheet")}
             };
         }
 
-        internal static Texture2D GetSpritesheet(string name)
+        internal static Texture2D GetSpritesheet(string spritesheetName)
         {
             Texture2D foo;
-            if (Spritesheets.TryGetValue(name, out foo))
+            if (Spritesheets.TryGetValue(spritesheetName, out foo))
             {
                 return foo;
             }
-            throw new Exception("Spritesheet with name " + name + " was not found.");
+            throw new Exception("Spritesheet with name " + spritesheetName + " was not found.");
         }
 
     }
