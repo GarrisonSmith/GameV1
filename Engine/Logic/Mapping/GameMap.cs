@@ -10,13 +10,18 @@ namespace Fantasy.Engine.Logic.Mapping
 {
     internal class GameMap : GameComponent
     {
-        string tileMapName;
+        private string tileMapName;
 
-        List<MapLayer> Layers;
+        private List<MapLayer> Layers;
+
+        internal GameMap() : base(null)
+        { 
+            
+        }
 
         internal GameMap(Game game, string tileMapName) : base(game)
         {
-            Layers = new List<MapLayer>();
+            //Layers = new List<MapLayer>();
             game.Content.Load<XmlDocument>(@"tilemaps\" + tileMapName);
         }
 
@@ -27,7 +32,7 @@ namespace Fantasy.Engine.Logic.Mapping
 
         public override void Update(GameTime gameTime)
         {
-            System.Diagnostics.Debug.WriteLine(tileMapName);
+            //System.Diagnostics.Debug.WriteLine(tileMapName);
         }
     }
 }

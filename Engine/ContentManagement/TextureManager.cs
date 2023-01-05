@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +14,12 @@ namespace Fantasy.Engine.ContentManagement
 
         private static Dictionary<string, Texture2D> Spritesheets { get; set; }
 
-        internal static void LoadTextures(Game1 game)
+        internal static void LoadTextures(Game game)
         {
             LoadSpritesheets(game);
         }
 
-        internal static void LoadSpritesheets(Game1 game)
+        internal static void LoadSpritesheets(Game game)
         {
             Spritesheets = new Dictionary<string, Texture2D>
             {

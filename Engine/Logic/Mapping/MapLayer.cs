@@ -1,6 +1,7 @@
 ﻿using Fantasy.Engine.Logic.Mapping.Tiling;
 using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
+using MonoGame.Framework;
 using System;
 using System.Collections.Generic;
 using System.Xml;
@@ -49,7 +50,7 @@ namespace Fantasy.Engine.Logic.Mapping
                 tile.Locations.TryGetValue(Layer, out HashSet<Coordinates> locations);
                 foreach (Coordinates cord in locations)
                 {
-                    Game1._spriteBatch.Draw(tile.Spritesheet, cord.TopLeft, tile.SheetBox, Color.White);
+                    //Game._spriteBatch.Draw(tile.Spritesheet, cord.TopLeft, tile.SheetBox, Color.White);
                 }
             }
         }
