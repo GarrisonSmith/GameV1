@@ -13,7 +13,7 @@ namespace Fantasy.Engine.Logic.Mapping
 
         internal int Layer { get; set; }
 
-        internal Dictionary<(int row, int col), Tile> Map { get; set; }
+        internal Dictionary<Location, Tile> Map { get; set; }
 
         public int DrawOrder => throw new NotImplementedException();
 
@@ -21,26 +21,22 @@ namespace Fantasy.Engine.Logic.Mapping
 
         internal MapLayer(Game game, XmlElement layerElement) : base(game)
         {
-            Layer = int.Parse(layerElement.GetAttribute("name"));
-            Map = new Dictionary<(int, int), Tile>();
-            foreach (XmlElement tileElement in layerElement)
-            {
-                (int row, int col) mapKey = (int.Parse(tileElement.GetAttribute("mapRow")), int.Parse(tileElement.GetAttribute("mapCol")));
-                Map.Add(mapKey, Tile.GetTile(tileElement, mapKey, Layer));
-            }
+            Layer = int.Parse(layerElement.GetAttribute("layer"));
+            Map = new Dictionary<Location, Tile>();
+
         }
 
         public event EventHandler<EventArgs> DrawOrderChanged;
         public event EventHandler<EventArgs> VisibleChanged;
 
-        internal Tile LookUpTile((int row, int col) foo)
+        internal Tile LookUpTile(Location foo)
         {
             return Map[foo];
         }
 
         internal Tile LookUpTile(Coordinates foo)
         {
-            return Map[((int)foo.Center.Y / Tile.TILE_HEIGHT, (int)foo.Center.X / Tile.TILE_WIDTH)];
+            return Map[new Location(foo)];
         }
 
         public override void Draw(GameTime gameTime)

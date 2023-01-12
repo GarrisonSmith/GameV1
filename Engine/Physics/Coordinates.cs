@@ -8,18 +8,16 @@ namespace Fantasy.Engine.Physics
     /// </summary>
     internal class Coordinates
     {
+        private Vector2 topLeft;
+        private Vector2 center;
+
         /// <summary>
         /// The top-left point of the shape.
         /// </summary>
-        private Vector2 topLeft;
-
         internal Vector2 TopLeft 
         {
             get => topLeft;
         }
-
-        private Vector2 center;
-        
         /// <summary>
         /// The center point of the shape.
         /// </summary>
