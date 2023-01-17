@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Fantasy.Engine.ContentManagement
 {
-    //tileSets.Add("NAME", Global._content.Load<Texture2D>(@"spritesheets\NAME"));
     internal static class TextureManager
     {
 
@@ -21,7 +20,8 @@ namespace Fantasy.Engine.ContentManagement
 
         internal static void LoadSpritesheets(Game game)
         {
-            Spritesheets = new Dictionary<string, Texture2D>
+			//tileSets.Add("NAME", Global._content.Load<Texture2D>(@"spritesheets\NAME"));
+			Spritesheets = new Dictionary<string, Texture2D>
             {
                 { "DEBUG", game.Content.Load<Texture2D>(@"spritesheets\DEBUG") },
                 { "EMPTY", game.Content.Load<Texture2D>(@"spritesheets\EMPTY") },

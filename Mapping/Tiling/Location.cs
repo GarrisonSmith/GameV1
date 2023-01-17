@@ -12,19 +12,18 @@ namespace Fantasy.Engine.Mapping.Tiling
     /// </summary>
     internal readonly struct Location
     {
-
         private readonly int col;
         private readonly int row;
 
         /// <summary>
-        /// Gets the column of the location.
+        /// The column of the location.
         /// </summary>
         public int Col
         {
             get => col;
         }
         /// <summary>
-        /// Gets the row of the location.
+        /// The row of the location.
         /// </summary>
         public int Row
         {
