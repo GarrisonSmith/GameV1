@@ -2,8 +2,10 @@
 using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 
 namespace Fantasy.Engine.Mapping.Tiling
@@ -45,22 +47,35 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// Gets a dictionary of tiles that exist on the specified map layer.
 		/// </summary>
 		/// <param name="layer">The number of the map layer to get tiles for.</param>
+		/// <param name="coordinates"></param>
 		/// <returns>A dictionary containing the tiles on the specified layer, with the keys being a Location struct describing the row and column of the coordinates of the layer 
 		/// and the values being the tiles themselves.</returns>
-		internal static Dictionary<Location, Tile> GetLayerDictionary(int layer)
+		internal static Dictionary<Location, Tile> GetLayerDictionary(int layer, out Coordinates coordinates)
 		{
 			Dictionary<Location, Tile> foo = new();
 			foreach (Tile tile in UNIQUE_TILES.Values)
 			{
 				tile.GetLocationDictionary(layer, foo);
 			}
+
+			Vector2 topLeft = new(foo.Keys.ToArray()[0].Col, foo.Keys.ToArray()[0].Row);
+			Vector2 bottomLeft = topLeft;
+			foreach (Location location in foo.Keys)
+			{
+				if (location.Col < topLeft.X)
+				{ 
+					topLeft.X = location.Col;
+				}
+
+			}
+
 			return foo;
 		}
 		/// <summary>
-		/// 
+		/// Gets a list of tiles that exist on the specified map layer.
 		/// </summary>
-		/// <param name="layer"></param>
-		/// <returns></returns>
+		/// <param name="layer">The number of the map layer to get tiles for.</param>
+		/// <returns>A list of tiles that exist on the specified map layer.</returns>
 		internal static List<Tile> GetLayerTiles(int layer)
 		{
 			List<Tile> foo = new();
@@ -74,17 +89,39 @@ namespace Fantasy.Engine.Mapping.Tiling
 			return foo;
 		}
 		/// <summary>
-		/// 
+		/// Update the drawing coordinates of tiles in the active game map.
 		/// </summary>
-		/// <exception cref="Exception"></exception>
+		/// <exception cref="Exception">Thrown if the ActiveGameMap has no highest MapLayer.</exception>
 		internal static void UpdateTileDrawLocations()
 		{
 			if (ActiveGameMap.HIGHEST_LAYER == null)
 			{
 				throw new Exception("The ActiveGameMap has no highest MapLayer.");
 			}
-			
+
 			MapLayer map = ActiveGameMap.HIGHEST_LAYER;
+			while (map != null)
+			{
+				foreach (Tile tile in UNIQUE_TILES.Values)
+				{
+					tile.UpdateDrawCoordinates(map.Layer);
+				}
+				map = map.Next;
+			}
+		}
+		/// <summary>
+		/// Update the drawing coordinates of tiles in the active game map, starting from the specified layer.
+		/// </summary>
+		/// <param name="startLayer">The layer number to start updating the drawing coordinates from.</param>
+		/// <exception cref="Exception">Thrown if the ActiveGameMap has no highest MapLayer.</exception>
+		internal static void UpdateTileDrawLocations(int startLayer)
+		{
+			if (ActiveGameMap.MapLayers[startLayer] == null)
+			{
+				throw new Exception("The ActiveGameMap does not contain the provided startLayer: " + startLayer + ".");
+			}
+
+			MapLayer map = ActiveGameMap.MapLayers[startLayer];
 			while (map != null)
 			{
 				foreach (Tile tile in UNIQUE_TILES.Values)
@@ -227,45 +264,40 @@ namespace Fantasy.Engine.Mapping.Tiling
 			return LayerCoordinates.ContainsKey(layer);
 		}
 		/// <summary>
-		/// 
+		/// Removes the draw location of the tile from the specified layer.
 		/// </summary>
-		/// <param name="layer"></param>
-		/// <param name="cord"></param>
+		/// <param name="layer">The layer number to remove the draw location from.</param>
 		internal void RemoveDrawLocation(int layer, Coordinates cord)
 		{
 			if (!IsInLayer(layer))
 			{
 				return;
 			}
-			DrawCoordinates[layer].Remove(cord);
+			DrawCoordinates[layer].RemoveWhere(drawCord => cord.Equals(drawCord)); //TODO could be optimized. probably 
 		}
 		/// <summary>
-		/// 
+		/// Update the drawing coordinates of the tile for the specified layer.
 		/// </summary>
-		/// <param name="layer"></param>
-		/// <exception cref="Exception"></exception>
-		internal void UpdateDrawCoordinates(int layer)
+		/// <exception cref="Exception">Thrown if the specified layer is not found.</exception>
+		internal void UpdateDrawCoordinates(int startLayer)
 		{
-			if (!ActiveGameMap.MapLayers.ContainsKey(layer))
+			if (!ActiveGameMap.MapLayers.ContainsKey(startLayer))
 			{
 				throw new Exception("The ActiveGameMap does contain the provided layer.");
 			}
 
-			MapLayer map = ActiveGameMap.MapLayers[layer].Next;
+			MapLayer map = ActiveGameMap.MapLayers[startLayer].Next;
 			while (map != null)
 			{
-				if (!IsInLayer(layer))
+				if (!IsInLayer(startLayer))
 				{
 					map = map.Next;
 					continue;
 				}
 
-				foreach (Coordinates cord in DrawCoordinates[layer])
+				foreach (Coordinates cord in DrawCoordinates[startLayer])
 				{
-					if (map.LookUpTile(cord) != null)
-					{
-						map.LookUpTile(cord).RemoveDrawLocation(layer, cord);
-					}
+					map.TileLayer.LookUpTile(cord)?.RemoveDrawLocation(map.Layer, cord);
 				}
 				map = map.Next;
 			}

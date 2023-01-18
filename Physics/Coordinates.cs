@@ -25,16 +25,64 @@ namespace Fantasy.Engine.Physics
         {
             get => center;
         }
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="Coordinates"/> class with the specified top-left and center points.
+        /// 
         /// </summary>
-        /// <param name="xTopLeft">The x-coordinate of the top-left point.</param>
-        /// <param name="yTopLeft">The y-coordinate of the top-left point.</param>
-        /// <param name="xCenter">The x-coordinate of the center point.</param>
-        /// <param name="yCenter">The y-coordinate of the center point.</param>
-        /// <exception cref="ArgumentException">Thrown if the top-left point is not to the top and left of the center point.</exception>
-        internal Coordinates(float xTopLeft, float yTopLeft, float xCenter, float yCenter)
+        internal int Width
+        {
+            get => (int)(Center.X - TopLeft.X) * 2;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        internal int Height
+        {
+            get => (int)(Center.Y - TopLeft.Y) * 2;
+		}
+		/// <summary>
+		/// Sets the top left coordinate of the shape.
+		/// </summary>
+		/// <param name="xTopLeft">The x-coordinate of the top left point.</param>
+		/// <param name="yTopLeft">The y-coordinate of the top left point.</param>
+		/// <exception cref="ArgumentException">Thrown if the top left point is not to the top left of the center point.</exception>
+		internal void SetTopLeft(float xTopLeft, float yTopLeft)
+		{
+			if (xTopLeft > center.X && yTopLeft < center.Y)
+			{
+				throw new ArgumentException("Coordinate TopLeft value must be to the top left of coordinate Center value.");
+			}
+
+			center.X += (xTopLeft - topLeft.X); center.Y += (yTopLeft - topLeft.Y);
+			topLeft.X = xTopLeft; topLeft.Y = yTopLeft;
+		}
+		/// <summary>
+		/// Sets the center coordinate of the shape.
+		/// </summary>
+		/// <param name="xCenter">The x-coordinate of the center point.</param>
+		/// <param name="yCenter">The y-coordinate of the center point.</param>
+		/// <exception cref="ArgumentException">Thrown if the center point is not to the bottom right of the top left point.</exception>
+		internal void SetCenter(float xCenter, float yCenter)
+		{
+			if (xCenter < topLeft.X && yCenter > topLeft.Y)
+			{
+				throw new ArgumentException("Coordinate Center value must be to the bottom right of coordinate TopLeft value.");
+			}
+
+			topLeft.X += (xCenter - center.X);
+			topLeft.Y += (yCenter - center.Y);
+			center.X = xCenter;
+			center.Y = yCenter;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Coordinates"/> class with the specified top-left and center points.
+		/// </summary>
+		/// <param name="xTopLeft">The x-coordinate of the top-left point.</param>
+		/// <param name="yTopLeft">The y-coordinate of the top-left point.</param>
+		/// <param name="xCenter">The x-coordinate of the center point.</param>
+		/// <param name="yCenter">The y-coordinate of the center point.</param>
+		/// <exception cref="ArgumentException">Thrown if the top-left point is not to the top and left of the center point.</exception>
+		internal Coordinates(float xTopLeft, float yTopLeft, float xCenter, float yCenter)
         {
             if (xTopLeft > xCenter && yTopLeft < yCenter)
             {
@@ -98,45 +146,21 @@ namespace Fantasy.Engine.Physics
             center.X -= amount;
         }
         /// <summary>
-        /// Sets the top left coordinate of the shape.
-        /// </summary>
-        /// <param name="xTopLeft">The x-coordinate of the top left point.</param>
-        /// <param name="yTopLeft">The y-coordinate of the top left point.</param>
-        /// <exception cref="ArgumentException">Thrown if the top left point is not to the top left of the center point.</exception>
-        internal void SetTopLeft(float xTopLeft, float yTopLeft)
-        {
-            if (xTopLeft > center.X && yTopLeft < center.Y)
-            {
-                throw new ArgumentException("Coordinate TopLeft value must be to the top left of coordinate Center value.");
-            }
-
-            center.X += (xTopLeft - topLeft.X); center.Y += (yTopLeft - topLeft.Y);
-            topLeft.X = xTopLeft; topLeft.Y = yTopLeft;
-        }
-        /// <summary>
-        /// Sets the center coordinate of the shape.
-        /// </summary>
-        /// <param name="xCenter">The x-coordinate of the center point.</param>
-        /// <param name="yCenter">The y-coordinate of the center point.</param>
-        /// <exception cref="ArgumentException">Thrown if the center point is not to the bottom right of the top left point.</exception>
-        internal void SetCenter(float xCenter, float yCenter)
-        {
-            if (xCenter < topLeft.X && yCenter > topLeft.Y)
-            {
-                throw new ArgumentException("Coordinate Center value must be to the bottom right of coordinate TopLeft value.");
-            }
-
-            topLeft.X += (xCenter - center.X);
-            topLeft.Y += (yCenter - center.Y);
-            center.X = xCenter;
-            center.Y = yCenter;
-        }
-        /// <summary>
         /// Returns a string representation of the Coordinates object.
         /// </summary>
         public override string ToString()
         { 
             return "TopLeft: " + topLeft + ", Center: " + center;
         }
-    }
+		/// <summary>
+		/// Compares if this Coordinates instance is equal with another.
+		/// </summary>
+		/// <param name="obj">The object to compare equality with.</param>
+		/// <returns>True if this Coordinates object is equivalent to another, False if not.</returns>
+		public override bool Equals(object obj)
+		{
+            Coordinates cord = obj as Coordinates;
+            return (TopLeft == cord.TopLeft && Center == cord.center);
+		}
+	}
 }
