@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 namespace Fantasy.Engine.Mapping.Tiling
 {
+	/// <summary>
+	/// Represents a collection of tiles on a specific map layer.
+	/// </summary>
 	internal struct TileCollection : ISubDrawable
 	{
 		private bool isVisible;
@@ -13,9 +16,10 @@ namespace Fantasy.Engine.Mapping.Tiling
 		private Texture2D combinedTexture;
 		private readonly MapLayer map;
 		private readonly Dictionary<Location, Tile> tiles;
+		private readonly Coordinates coordinates;
 
 		/// <summary>
-		/// 
+		/// Indicates whether the TileCollection is visible or not.
 		/// </summary>
 		public bool IsVisible
 		{
@@ -23,7 +27,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 			set => isVisible = value;
 		}
 		/// <summary>
-		/// 
+		/// Indicates whether the TileCollection uses a combined texture or not.
 		/// </summary>
 		internal bool UseCombinedTexture
 		{
@@ -31,7 +35,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 			set => useCombinedTexture = value;
 		}
 		/// <summary>
-		/// 
+		/// The combined texture of the TileCollection.
 		/// </summary>
 		internal Texture2D CombinedTexture
 		{
@@ -39,33 +43,41 @@ namespace Fantasy.Engine.Mapping.Tiling
 			set => combinedTexture = value;
 		}
 		/// <summary>
-		/// 
+		/// The MapLayer of the TileCollection.
 		/// </summary>
 		internal MapLayer Map
 		{
 			get => map;
 		}
 		/// <summary>
-		/// 
+		/// The tiles in the TileCollection, with the keys being a Location struct describing the row and column of the coordinates of the layer 
+		/// and the values being the tiles themselves.
 		/// </summary>
 		internal Dictionary<Location, Tile> Tiles
 		{
 			get => tiles;
 		}
+		/// <summary>
+		/// The coordinates of the TileCollection.
+		/// </summary>
+		internal Coordinates Coordinates
+		{ 
+			get => coordinates;
+		}
 
 		/// <summary>
-		/// 
+		/// Creates a new TileCollection for the specified MapLayer.
 		/// </summary>
-		/// <param name="map"></param>
-		/// <param name="isVisible"></param>
-		/// <param name="useCombinedTexture"></param>
+		/// <param name="map">The MapLayer to create the TileCollection for.</param>
+		/// <param name="isVisible">Indicates whether the TileCollection is visible or not.</param>
+		/// <param name="useCombinedTexture">Indicates whether the TileCollection uses a combined texture or not.</param>
 		public TileCollection(MapLayer map, bool isVisible = true, bool useCombinedTexture = false)
 		{
 			this.isVisible = isVisible;
 			this.useCombinedTexture = useCombinedTexture;
 			combinedTexture = null;
 			this.map = map;
-			tiles = Tile.GetLayerDictionary(map.Layer);
+			tiles = Tile.GetLayerDictionary(map.Layer, out coordinates);
 		}
 		/// <summary>
 		/// Looks up a tile at a specified location.
@@ -90,10 +102,10 @@ namespace Fantasy.Engine.Mapping.Tiling
 			return LookUpTile(new Location(foo));
 		}
 		/// <summary>
-		/// 
+		/// Creates a combined texture of all the tiles in the TileCollection.
 		/// </summary>
-		/// <param name="useCombinedTexture"></param>
-		internal void CreateCombinedTexture(bool useCombinedTexture = true)
+		/// <param name="useCombinedTexture">Indicates whether the TileCollection uses a combined texture or not.</param>
+		internal void CreateCombinedTexture(bool useCombinedTexture = false)
 		{ 
 			UseCombinedTexture = useCombinedTexture;
 			RenderTarget2D foo = new(SpritebatchHandler.SpriteBatch.GraphicsDevice, 100, 100);
@@ -111,9 +123,9 @@ namespace Fantasy.Engine.Mapping.Tiling
 			SpritebatchHandler.SpriteBatch.GraphicsDevice.SetRenderTarget(null);
 		}
 		/// <summary>
-		/// 
+		/// Draws the tile collection on the screen
 		/// </summary>
-		/// <param name="gameTime"></param>
+		/// <param name="gameTime">The current game time</param>
 		public void Draw(GameTime gameTime)
 		{
 			if (!IsVisible)

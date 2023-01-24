@@ -2,7 +2,6 @@
 using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,8 +46,24 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// Gets a dictionary of tiles that exist on the specified map layer.
 		/// </summary>
 		/// <param name="layer">The number of the map layer to get tiles for.</param>
-		/// <param name="coordinates"></param>
 		/// <returns>A dictionary containing the tiles on the specified layer, with the keys being a Location struct describing the row and column of the coordinates of the layer 
+		/// and the values being the tiles themselves.</returns>
+		internal static Dictionary<Location, Tile> GetLayerDictionary(int layer)
+		{
+			Dictionary<Location, Tile> foo = new();
+			foreach (Tile tile in UNIQUE_TILES.Values)
+			{
+				tile.GetLocationDictionary(layer, foo);
+			}
+
+			return foo;
+		}
+		/// <summary>
+		/// Gets a dictionary of tiles that exist on the specified map layer.
+		/// </summary>
+		/// <param name="layer">The number of the map layer to get tiles for. The layer number should be an integer.</param>
+		/// <param name="coordinates">An out parameter that will contain the coordinates of the top left and bottom left of the tiles on the specified layer</param>
+		/// <returns>A dictionary containing the tiles on the specified layer, with the keys being a Location struct describing the row and column of the coordinates of the layer
 		/// and the values being the tiles themselves.</returns>
 		internal static Dictionary<Location, Tile> GetLayerDictionary(int layer, out Coordinates coordinates)
 		{
@@ -63,11 +78,24 @@ namespace Fantasy.Engine.Mapping.Tiling
 			foreach (Location location in foo.Keys)
 			{
 				if (location.Col < topLeft.X)
-				{ 
+				{
 					topLeft.X = location.Col;
 				}
+				else if (location.Col > bottomLeft.X)
+				{
+					bottomLeft.X = location.Col;
+				}
 
+				if (location.Row < topLeft.Y)
+				{
+					topLeft.Y = location.Row;
+				}
+				else if (location.Row > topLeft.Y)
+				{
+					bottomLeft.Y = location.Row;
+				}
 			}
+			coordinates = new Coordinates(topLeft * 64, new Vector2((topLeft.X * 64 + bottomLeft.X * 64) / 2, (topLeft.Y * 64 + bottomLeft.Y * 64) / 2));
 
 			return foo;
 		}
