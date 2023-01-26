@@ -56,6 +56,11 @@ namespace Fantasy.Engine.Mapping
 			UpdateOrder = layer;
 			tileLayer = new TileCollection(this);
 
+			if (layer == 2)
+			{
+				tileLayer.CreateCombinedTexture(true);
+			}
+
 			if (ActiveGameMap.HIGHEST_LAYER == null || ActiveGameMap.HIGHEST_LAYER.Layer < layer)
 			{
 				next = ActiveGameMap.HIGHEST_LAYER;

@@ -90,12 +90,14 @@ namespace Fantasy.Engine.Mapping.Tiling
 				{
 					topLeft.Y = location.Row;
 				}
-				else if (location.Row > topLeft.Y)
+				else if (location.Row > bottomLeft.Y)
 				{
 					bottomLeft.Y = location.Row;
 				}
 			}
-			coordinates = new Coordinates(topLeft * 64, new Vector2((topLeft.X * 64 + bottomLeft.X * 64) / 2, (topLeft.Y * 64 + bottomLeft.Y * 64) / 2));
+			bottomLeft.X += 1; bottomLeft.Y += 1; bottomLeft *= 64;
+			topLeft *= 64;
+			coordinates = new Coordinates(topLeft, new Vector2((topLeft.X + (bottomLeft.X - topLeft.X) / 2), ((topLeft.Y + (bottomLeft.Y - topLeft.Y) / 2)) + .5f));
 
 			return foo;
 		}

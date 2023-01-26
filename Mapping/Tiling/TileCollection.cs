@@ -40,7 +40,6 @@ namespace Fantasy.Engine.Mapping.Tiling
 		internal Texture2D CombinedTexture
 		{
 			get => combinedTexture;
-			set => combinedTexture = value;
 		}
 		/// <summary>
 		/// The MapLayer of the TileCollection.
@@ -108,22 +107,23 @@ namespace Fantasy.Engine.Mapping.Tiling
 		internal void CreateCombinedTexture(bool useCombinedTexture = false)
 		{ 
 			UseCombinedTexture = useCombinedTexture;
-			RenderTarget2D foo = new(SpritebatchHandler.SpriteBatch.GraphicsDevice, 100, 100);
-			SpritebatchHandler.SpriteBatch.GraphicsDevice.SetRenderTarget(foo);
-			SpritebatchHandler.Begin();
+			RenderTarget2D foo = new(SpriteBatchHandler.SpriteBatch.GraphicsDevice, coordinates.Width, coordinates.Height);
+			SpriteBatchHandler.SpriteBatch.GraphicsDevice.SetRenderTarget(foo);
+			SpriteBatchHandler.Begin();
 			foreach (Tile tile in Tiles.Values)
 			{
 				tile.DrawCoordinates.TryGetValue(Map.Layer, out HashSet<Coordinates> layerDrawCoordinates);
 				foreach (Coordinates cord in layerDrawCoordinates)
 				{
-					SpritebatchHandler.Draw(tile.Spritesheet, cord.TopLeft, tile.SheetBox, Color.White);
+					SpriteBatchHandler.Draw(tile.Spritesheet, cord.TopLeft, tile.SheetBox, Color.White);
 				}
 			}
-			SpritebatchHandler.End();
-			SpritebatchHandler.SpriteBatch.GraphicsDevice.SetRenderTarget(null);
+			SpriteBatchHandler.End();
+			SpriteBatchHandler.SpriteBatch.GraphicsDevice.SetRenderTarget(null);
+			combinedTexture = foo;
 		}
 		/// <summary>
-		/// Draws the tile collection on the screen
+		/// Draws the tile collection on the screen.
 		/// </summary>
 		/// <param name="gameTime">The current game time</param>
 		public void Draw(GameTime gameTime)
@@ -133,12 +133,18 @@ namespace Fantasy.Engine.Mapping.Tiling
 				return;
 			}
 
+			if (useCombinedTexture)
+			{
+				SpriteBatchHandler.Draw(combinedTexture, coordinates.Rectangle, Color.White);
+				return;
+			}
+
 			foreach (Tile tile in Tiles.Values)
 			{
 				tile.DrawCoordinates.TryGetValue(Map.Layer, out HashSet<Coordinates> layerDrawCoordinates);
 				foreach (Coordinates cord in layerDrawCoordinates)
 				{
-					SpritebatchHandler.Draw(tile.Spritesheet, cord.TopLeft, tile.SheetBox, Color.White);
+					SpriteBatchHandler.Draw(tile.Spritesheet, cord.TopLeft, tile.SheetBox, Color.White);
 				}
 			}
 		}

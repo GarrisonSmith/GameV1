@@ -19,7 +19,7 @@ namespace Fantasy.Engine.Physics
 			get => topLeft;
 			set
 			{
-				if (value.X > center.X && value.Y < center.Y)
+				if (value.X > center.X || value.Y > center.Y)
 				{
 					throw new ArgumentException("Coordinate TopLeft value must be to the top left of coordinate Center value.");
 				}
@@ -37,7 +37,7 @@ namespace Fantasy.Engine.Physics
 			get => center;
 			set
 			{
-				if (value.X < topLeft.X && value.Y > topLeft.Y)
+				if (value.X < topLeft.X || value.Y < topLeft.Y)
 				{
 					throw new ArgumentException("Coordinate Center value must be to the bottom right of coordinate TopLeft value.");
 				}
@@ -61,6 +61,14 @@ namespace Fantasy.Engine.Physics
 		{
 			get => (int)(Center.Y - TopLeft.Y) * 2;
 		}
+		/// <summary>
+		/// Returns a rectangle that represents the shape defined by the coordinates, with the top-left point being the
+		/// <see cref="TopLeft"/> property and the width and height being the <see cref="Width"/> and <see cref="Height"/> properties respectively.
+		/// </summary>
+		internal Rectangle Rectangle
+		{ 
+			get => new((int)topLeft.X, (int)topLeft.Y, Width, Height);
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Coordinates"/> class with the specified top-left and center points.
@@ -72,7 +80,7 @@ namespace Fantasy.Engine.Physics
 		/// <exception cref="ArgumentException">Thrown if the top-left point is not to the top and left of the center point.</exception>
 		internal Coordinates(float topLeftX, float topLeftY, float centerX, float centerY)
 		{
-			if (topLeftX > centerX && topLeftY < centerY)
+			if (topLeftX > centerX || topLeftY > centerY)
 			{
 				throw new ArgumentException("Coordinate TopLeft value must be to the top left of coordinate Center value.");
 			}
@@ -88,7 +96,7 @@ namespace Fantasy.Engine.Physics
 		/// <exception cref="ArgumentException">Thrown if the top-left point is not to the top and left of the center point.</exception>
 		internal Coordinates(Vector2 topLeft, Vector2 center)
 		{
-			if (topLeft.X > center.X && topLeft.Y < center.Y)
+			if (topLeft.X > center.X || topLeft.Y > center.Y)
 			{
 				throw new ArgumentException("Coordinate TopLeft value must be to the top left of coordinate Center value.");
 			}
