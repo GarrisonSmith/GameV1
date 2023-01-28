@@ -48,6 +48,21 @@ namespace Fantasy.Engine.Physics
 			}
 		}
 		/// <summary>
+		/// The bottom-right point of the shape.
+		/// </summary>
+		internal Vector2 BottomRight
+		{
+			get => new(TopLeft.X + Width, TopLeft.Y + Height);
+		}
+		/// <summary>
+		/// Returns a rectangle that represents the shape defined by the coordinates, with the top-left point being the
+		/// <see cref="TopLeft"/> property and the width and height being the <see cref="Width"/> and <see cref="Height"/> properties respectively.
+		/// </summary>
+		internal Rectangle Rectangle
+		{
+			get => new((int)topLeft.X, (int)topLeft.Y, Width, Height);
+		}
+		/// <summary>
 		/// The width of the shape, calculated as the distance between the center and top-left point multiplied by 2.
 		/// </summary>
 		internal int Width
@@ -60,14 +75,6 @@ namespace Fantasy.Engine.Physics
 		internal int Height
 		{
 			get => (int)(Center.Y - TopLeft.Y) * 2;
-		}
-		/// <summary>
-		/// Returns a rectangle that represents the shape defined by the coordinates, with the top-left point being the
-		/// <see cref="TopLeft"/> property and the width and height being the <see cref="Width"/> and <see cref="Height"/> properties respectively.
-		/// </summary>
-		internal Rectangle Rectangle
-		{ 
-			get => new((int)topLeft.X, (int)topLeft.Y, Width, Height);
 		}
 
 		/// <summary>

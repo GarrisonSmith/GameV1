@@ -95,8 +95,8 @@ namespace Fantasy.Engine.Mapping.Tiling
 					bottomLeft.Y = location.Row;
 				}
 			}
-			bottomLeft.X += 1; bottomLeft.Y += 1; bottomLeft *= 64;
-			topLeft *= 64;
+			bottomLeft.X += 1; bottomLeft.Y += 1; bottomLeft.X *= TILE_WIDTH; bottomLeft.Y *= TILE_HEIGHT;
+			topLeft.X *= TILE_WIDTH; topLeft.Y *= TILE_HEIGHT;
 			coordinates = new Coordinates(topLeft, new Vector2((topLeft.X + (bottomLeft.X - topLeft.X) / 2), ((topLeft.Y + (bottomLeft.Y - topLeft.Y) / 2)) + .5f));
 
 			return foo;

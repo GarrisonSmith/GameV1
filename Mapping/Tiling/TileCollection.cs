@@ -107,20 +107,8 @@ namespace Fantasy.Engine.Mapping.Tiling
 		internal void CreateCombinedTexture(bool useCombinedTexture = false)
 		{ 
 			UseCombinedTexture = useCombinedTexture;
-			RenderTarget2D foo = new(SpriteBatchHandler.SpriteBatch.GraphicsDevice, coordinates.Width, coordinates.Height);
-			SpriteBatchHandler.SpriteBatch.GraphicsDevice.SetRenderTarget(foo);
-			SpriteBatchHandler.Begin();
-			foreach (Tile tile in Tiles.Values)
-			{
-				tile.DrawCoordinates.TryGetValue(Map.Layer, out HashSet<Coordinates> layerDrawCoordinates);
-				foreach (Coordinates cord in layerDrawCoordinates)
-				{
-					SpriteBatchHandler.Draw(tile.Spritesheet, cord.TopLeft, tile.SheetBox, Color.White);
-				}
-			}
-			SpriteBatchHandler.End();
-			SpriteBatchHandler.SpriteBatch.GraphicsDevice.SetRenderTarget(null);
-			combinedTexture = foo;
+			combinedTexture = new Texture2D(SpriteBatchHandler.SpriteBatch.GraphicsDevice, coordinates.Width, coordinates.Height);
+			
 		}
 		/// <summary>
 		/// Draws the tile collection on the screen.

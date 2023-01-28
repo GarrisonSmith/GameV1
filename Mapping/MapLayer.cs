@@ -55,6 +55,7 @@ namespace Fantasy.Engine.Mapping
 			DrawOrder = layer;
 			UpdateOrder = layer;
 			tileLayer = new TileCollection(this);
+			tileLayer.CreateCombinedTexture(true);
 
 			if (layer == 2)
 			{
