@@ -3,14 +3,13 @@ using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using System.Xml.XPath;
 
 namespace Fantasy.Engine.Mapping.Tiling
 {
 	/// <summary>
 	/// Represents a collection of tiles on a specific map layer.
 	/// </summary>
-	internal struct TileCollection : ISubDrawable
+	public struct TileCollection : ILocatable, ISubDrawable
 	{
 		private bool isVisible;
 		private bool useCombinedTexture;
@@ -30,7 +29,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// <summary>
 		/// Indicates whether the TileCollection uses a combined texture or not.
 		/// </summary>
-		internal bool UseCombinedTexture
+		public bool UseCombinedTexture
 		{
 			get => useCombinedTexture;
 			set => useCombinedTexture = value;
@@ -38,14 +37,14 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// <summary>
 		/// The combined texture of the TileCollection.
 		/// </summary>
-		internal Texture2D CombinedTexture
+		public Texture2D CombinedTexture
 		{
 			get => combinedTexture;
 		}
 		/// <summary>
 		/// The MapLayer of the TileCollection.
 		/// </summary>
-		internal MapLayer Map
+		public MapLayer Map
 		{
 			get => map;
 		}
@@ -53,14 +52,14 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// The tiles in the TileCollection, with the keys being a Location struct describing the row and column of the coordinates of the layer 
 		/// and the values being the tiles themselves.
 		/// </summary>
-		internal Dictionary<Location, Tile> Tiles
+		public Dictionary<Location, Tile> Tiles
 		{
 			get => tiles;
 		}
 		/// <summary>
 		/// The coordinates of the TileCollection.
 		/// </summary>
-		internal Coordinates Coordinates
+		public Coordinates Coordinates
 		{
 			get => coordinates;
 		}
@@ -84,7 +83,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// </summary>
 		/// <param name="foo">The location of the tile to look up.</param>
 		/// <returns>The tile at the specified location.</returns>
-		internal Tile LookUpTile(Location foo)
+		public Tile LookUpTile(Location foo)
 		{
 			if (Tiles.ContainsKey(foo))
 			{
@@ -97,7 +96,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// </summary>
 		/// <param name="foo">The coordinates of the tile to look up.</param>
 		/// <returns>The tile at the specified coordinates.</returns>
-		internal Tile LookUpTile(Coordinates foo)
+		public Tile LookUpTile(Coordinates foo)
 		{
 			return LookUpTile(new Location(foo));
 		}
@@ -105,10 +104,9 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// Creates a combined texture of all the tiles in the TileCollection.
 		/// </summary>
 		/// <param name="useCombinedTexture">Indicates whether the TileCollection uses a combined texture or not.</param>
-		internal void CreateCombinedTexture(bool useCombinedTexture = false)
+		public void CreateCombinedTexture(bool useCombinedTexture = false)
 		{
 			UseCombinedTexture = useCombinedTexture;
-			//RenderTarget2D foo = new(SpriteBatchHandler.SpriteBatch.GraphicsDevice, coordinates.Width, coordinates.Height);
 			RenderTarget2D foo = new RenderTarget2D(
 				SpriteBatchHandler.SpriteBatch.GraphicsDevice,
 				coordinates.Width, coordinates.Height,
@@ -128,6 +126,16 @@ namespace Fantasy.Engine.Mapping.Tiling
 			SpriteBatchHandler.End();
 			SpriteBatchHandler.SpriteBatch.GraphicsDevice.SetRenderTarget(null);
 			combinedTexture = foo;
+		}
+
+		public bool Intersects(Coordinates foo)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public double Distance(Coordinates foo)
+		{
+			throw new System.NotImplementedException();
 		}
 		/// <summary>
 		/// Draws the tile collection on the screen.

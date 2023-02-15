@@ -12,16 +12,16 @@ namespace Fantasy.Engine.Mapping.Tiling
 	/// <summary>
 	/// Represents a tile in a MapLayer.
 	/// </summary>
-	internal class Tile
+	public class Tile
 	{
 		/// <summary>
 		/// The width of a tile, in pixels.
 		/// </summary>
-		internal static readonly int TILE_WIDTH = 64;
+		public static readonly int TILE_WIDTH = 64;
 		/// <summary>
 		/// The height of a tile, in pixels.
 		/// </summary>
-		internal static readonly int TILE_HEIGHT = 64;
+		public static readonly int TILE_HEIGHT = 64;
 		/// <summary>
 		/// A dictionary that stores unique tiles by their ID.
 		/// </summary>
@@ -32,7 +32,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// </summary>
 		/// <param name="tileElement">The XML element that defines the tile.</param>
 		/// <returns>A bool indicating whether or not a new Tile has been created or if it already exists.</returns>
-		internal static bool CreateTile(XmlElement tileElement)
+		public static bool CreateTile(XmlElement tileElement)
 		{
 			if (!UNIQUE_TILES.ContainsKey(tileElement.GetAttribute("id")))
 			{
@@ -48,7 +48,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// <param name="layer">The number of the map layer to get tiles for.</param>
 		/// <returns>A dictionary containing the tiles on the specified layer, with the keys being a Location struct describing the row and column of the coordinates of the layer 
 		/// and the values being the tiles themselves.</returns>
-		internal static Dictionary<Location, Tile> GetLayerDictionary(int layer)
+		public static Dictionary<Location, Tile> GetLayerDictionary(int layer)
 		{
 			Dictionary<Location, Tile> foo = new();
 			foreach (Tile tile in UNIQUE_TILES.Values)
@@ -65,7 +65,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// <param name="coordinates">An out parameter that will contain the coordinates of the top left and bottom left of the tiles on the specified layer</param>
 		/// <returns>A dictionary containing the tiles on the specified layer, with the keys being a Location struct describing the row and column of the coordinates of the layer
 		/// and the values being the tiles themselves.</returns>
-		internal static Dictionary<Location, Tile> GetLayerDictionary(int layer, out Coordinates coordinates)
+		public static Dictionary<Location, Tile> GetLayerDictionary(int layer, out Coordinates coordinates)
 		{
 			Dictionary<Location, Tile> foo = new();
 			foreach (Tile tile in UNIQUE_TILES.Values)
@@ -106,7 +106,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// </summary>
 		/// <param name="layer">The number of the map layer to get tiles for.</param>
 		/// <returns>A list of tiles that exist on the specified map layer.</returns>
-		internal static List<Tile> GetLayerTiles(int layer)
+		public static List<Tile> GetLayerTiles(int layer)
 		{
 			List<Tile> foo = new();
 			foreach (Tile tile in UNIQUE_TILES.Values)
@@ -122,7 +122,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// Update the drawing coordinates of tiles in the active game map.
 		/// </summary>
 		/// <exception cref="Exception">Thrown if the ActiveGameMap has no highest MapLayer.</exception>
-		internal static void UpdateTileDrawLocations()
+		public static void UpdateTileDrawLocations()
 		{
 			if (ActiveGameMap.HIGHEST_LAYER == null)
 			{
@@ -144,7 +144,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// </summary>
 		/// <param name="startLayer">The layer number to start updating the drawing coordinates from.</param>
 		/// <exception cref="Exception">Thrown if the ActiveGameMap has no highest MapLayer.</exception>
-		internal static void UpdateTileDrawLocations(int startLayer)
+		public static void UpdateTileDrawLocations(int startLayer)
 		{
 			if (ActiveGameMap.MapLayers[startLayer] == null)
 			{
@@ -172,42 +172,42 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// <summary>
 		/// The spritesheet that the tile's image is taken from.
 		/// </summary>
-		internal Texture2D Spritesheet
+		public Texture2D Spritesheet
 		{
 			get => spritesheet;
 		}
 		/// <summary>
 		/// The area of the spritesheet from which the tile's image is taken.
 		/// </summary>
-		internal Rectangle SheetBox
+		public Rectangle SheetBox
 		{
 			get => sheetBox;
 		}
 		/// <summary>
 		/// A dictionary that maps layer numbers to HashSets of coordinates for the tile on the current map.
 		/// </summary>
-		internal Dictionary<int, HashSet<Coordinates>> LayerCoordinates
+		public Dictionary<int, HashSet<Coordinates>> LayerCoordinates
 		{
 			get => layerCoordinates;
 		}
 		/// <summary>
 		/// A dictionary that maps layer numbers to HashSets of coordinates that describe draw locations on the current map.
 		/// </summary>
-		internal Dictionary<int, HashSet<Coordinates>> DrawCoordinates
+		public Dictionary<int, HashSet<Coordinates>> DrawCoordinates
 		{
 			get => drawCoordinates;
 		}
 		/// <summary>
 		/// The ID of the tile.
 		/// </summary>
-		internal string Id
+		public string Id
 		{
 			get => id;
 		}
 		/// <summary>
 		/// Describes if the tile completely obstructs the view of any tiles beneath it.
 		/// </summary>
-		internal bool IsOpaque
+		public bool IsOpaque
 		{
 			get => isOpaque;
 			set => isOpaque = value;
@@ -271,7 +271,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// <param name="foo">The dictionary to add the tile's locations to. 
 		/// The key is a Location struct describing the rows and columns the tile occupies and value is the tile itself.</param>
 		/// <returns>A bool value indicating whether or not the tile is present on the specified layer.</returns>
-		internal bool GetLocationDictionary(int layer, Dictionary<Location, Tile> foo)
+		public bool GetLocationDictionary(int layer, Dictionary<Location, Tile> foo)
 		{
 			if (!LayerCoordinates.TryGetValue(layer, out HashSet<Coordinates> set))
 			{
@@ -289,7 +289,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// </summary>
 		/// <param name="layer">The layer number to check if the tile occupies.</param>
 		/// <returns>A bool indicating if the tile is found on the provided layer.</returns>
-		internal bool IsInLayer(int layer)
+		public bool IsInLayer(int layer)
 		{
 			return LayerCoordinates.ContainsKey(layer);
 		}
@@ -297,7 +297,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// Removes the draw location of the tile from the specified layer.
 		/// </summary>
 		/// <param name="layer">The layer number to remove the draw location from.</param>
-		internal void RemoveDrawLocation(int layer, Coordinates cord)
+		public void RemoveDrawLocation(int layer, Coordinates cord)
 		{
 			if (!IsInLayer(layer))
 			{
@@ -309,7 +309,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// Update the drawing coordinates of the tile for the specified layer.
 		/// </summary>
 		/// <exception cref="Exception">Thrown if the specified layer is not found.</exception>
-		internal void UpdateDrawCoordinates(int startLayer)
+		public void UpdateDrawCoordinates(int startLayer)
 		{
 			if (!ActiveGameMap.MapLayers.ContainsKey(startLayer))
 			{

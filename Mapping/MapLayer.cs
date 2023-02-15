@@ -10,7 +10,7 @@ namespace Fantasy.Engine.Mapping
 	/// <summary>
 	/// Represents a layer of tiles in a game map.
 	/// </summary>
-	internal class MapLayer : DrawableGameComponent
+	public class MapLayer : DrawableGameComponent
 	{
 		private readonly int layer;
 		private readonly TileCollection tileLayer;
@@ -19,21 +19,21 @@ namespace Fantasy.Engine.Mapping
 		/// <summary>
 		/// The layer number.
 		/// </summary>
-		internal int Layer
+		public int Layer
 		{
 			get => layer;
 		}
 		/// <summary>
 		/// The collection of tiles in the layer.
 		/// </summary>
-		internal TileCollection TileLayer
+		public TileCollection TileLayer
 		{
 			get => tileLayer;
 		}
 		/// <summary>
 		/// The next layer in the map. This will be the layer with the next lowest layer value or null if no such layer exists.
 		/// </summary>
-		internal MapLayer Next
+		public MapLayer Next
 		{
 			get => next;
 		}
@@ -44,7 +44,7 @@ namespace Fantasy.Engine.Mapping
 		/// <param name="game">The game object to which the layer will be added.</param>
 		/// <param name="layer">The layer number of the new MapLayer.</param>
 		/// <exception cref="Exception">Thrown if a layer with the same number already exists in the ActiveGameMap.</exception>
-		internal MapLayer(Game game, int layer) : base(game)
+		public MapLayer(Game game, int layer) : base(game)
 		{
 			if (ActiveGameMap.MapLayers.ContainsKey(layer))
 			{

@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace Fantasy.Engine.ContentManagement
 {
-    internal static class TextureManager
+    public static class TextureManager
     {
 
         private static Dictionary<string, Texture2D> Spritesheets { get; set; }
 
-        internal static void LoadTextures(Game game)
+        public static void LoadTextures(Game game)
         {
             LoadSpritesheets(game);
         }
 
-        internal static void LoadSpritesheets(Game game)
+        public static void LoadSpritesheets(Game game)
         {
 			//tileSets.Add("NAME", Global._content.Load<Texture2D>(@"spritesheets\NAME"));
 			Spritesheets = new Dictionary<string, Texture2D>
@@ -31,7 +31,7 @@ namespace Fantasy.Engine.ContentManagement
             };
         }
 
-        internal static Texture2D GetSpritesheet(string spritesheetName)
+        public static Texture2D GetSpritesheet(string spritesheetName)
         {
             Texture2D foo;
             if (Spritesheets.TryGetValue(spritesheetName, out foo))

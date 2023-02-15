@@ -10,7 +10,7 @@ namespace Fantasy.Engine.Mapping.Tiling
     /// <summary>
     /// Represents a location on a grid with a column and row.
     /// </summary>
-    internal readonly struct Location
+    public readonly struct Location
     {
         private readonly int col;
         private readonly int row;

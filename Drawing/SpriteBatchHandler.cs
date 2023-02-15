@@ -4,16 +4,16 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Fantasy.Engine.Drawing
 {
 	/// <summary>
-	/// An internal utility class for handling a spritebatch object from the Monogame framework.
+	/// An public utility class for handling a spritebatch object from the Monogame framework.
 	/// </summary>
-	internal static class SpriteBatchHandler
+	public static class SpriteBatchHandler
 	{
-		internal static SpriteBatch spritebatch;
+		public static SpriteBatch spritebatch;
 
 		/// <summary>
 		/// The spritebatch object.
 		/// </summary>
-		internal static SpriteBatch SpriteBatch
+		public static SpriteBatch SpriteBatch
 		{
 			get => spritebatch;
 		}
@@ -22,26 +22,26 @@ namespace Fantasy.Engine.Drawing
 		/// Initializes the spritebatch object with a given GraphicsDevice.
 		/// </summary>
 		/// <param name="foo">The GraphicsDevice to use for initialization.</param>
-		internal static void Initialize(GraphicsDevice foo)
+		public static void Initialize(GraphicsDevice foo)
 		{
 			spritebatch = new SpriteBatch(foo);
 		}
 		/// <summary>
 		/// Begins the spritebatch drawing.
 		/// </summary>
-		internal static void Begin()
+		public static void Begin()
 		{ 
 			spritebatch.Begin();
 		}
 		/// <summary>
 		/// Ends the spritebatch drawing.
 		/// </summary>
-		internal static void End() 
+		public static void End() 
 		{
 			spritebatch.End();
 		}
 
-		internal static void Draw(Texture2D texture2D, Rectangle destBox, Color color)
+		public static void Draw(Texture2D texture2D, Rectangle destBox, Color color)
 		{
 			SpriteBatch.Draw(texture2D, destBox, color);
 		}
@@ -52,7 +52,7 @@ namespace Fantasy.Engine.Drawing
 		/// <param name="destination">The destination position of the Texture2D object, describes the top left position of the graphic.</param>
 		/// <param name="sourceBox">The source rectangle of the Texture2D object.</param>
 		/// <param name="color">The color of the Texture2D object.</param>
-		internal static void Draw(Texture2D texture2D, Vector2 destination, Rectangle sourceBox, Color color) 
+		public static void Draw(Texture2D texture2D, Vector2 destination, Rectangle sourceBox, Color color) 
 		{
 			SpriteBatch.Draw(texture2D, destination, sourceBox, color);
 		}

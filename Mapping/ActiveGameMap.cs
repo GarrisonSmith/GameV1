@@ -8,7 +8,7 @@ namespace Fantasy.Engine.Mapping
 	/// <summary>
 	/// Represents a game map consisting of multiple layers of tiles.
 	/// </summary>
-	internal static class ActiveGameMap
+	public static class ActiveGameMap
     {
 		private static string tileMapName;
 		private static MapLayer highest_layer;
@@ -18,14 +18,14 @@ namespace Fantasy.Engine.Mapping
 		/// <summary>
 		/// The name of the tile map.
 		/// </summary>
-		internal static string TileMapName
+		public static string TileMapName
 		{ 
 			get => tileMapName;
 		}
 		/// <summary>
 		/// The highest layer in the map.
 		/// </summary>
-		internal static MapLayer HIGHEST_LAYER
+		public static MapLayer HIGHEST_LAYER
 		{
 			get => highest_layer;
 			set => highest_layer = value;
@@ -33,14 +33,14 @@ namespace Fantasy.Engine.Mapping
 		/// <summary>
 		/// The collection of layers in the map.
 		/// </summary>
-		internal static Dictionary<int, MapLayer> MapLayers
+		public static Dictionary<int, MapLayer> MapLayers
 		{
 			get => mapLayers;
 		}
 		/// <summary>
 		/// The game object associated with the map.
 		/// </summary>
-		internal static Game Game
+		public static Game Game
 		{
 			get => game;
 		}
@@ -50,7 +50,7 @@ namespace Fantasy.Engine.Mapping
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="mapName"></param>
-		internal static void LoadMap(Game game, string mapName)
+		public static void LoadMap(Game game, string mapName)
         {
             XmlDocument mapDoc = new XmlDocument();
             mapDoc.Load(@"Content\tilemaps\" + mapName + ".xml");
@@ -76,7 +76,7 @@ namespace Fantasy.Engine.Mapping
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="mapElement"></param>
-		internal static void LoadMap(Game game, XmlElement mapElement)
+		public static void LoadMap(Game game, XmlElement mapElement)
         {
             tileMapName = mapElement.GetAttribute("name");
             mapLayers = new Dictionary<int, MapLayer>();
@@ -97,7 +97,7 @@ namespace Fantasy.Engine.Mapping
 		/// Adds the layers of the map to a specified game component collection.
 		/// </summary>
 		/// <param name="foo">The game component collection to add the layers to.</param>
-		internal static void GetGameComponents(GameComponentCollection foo)
+		public static void GetGameComponents(GameComponentCollection foo)
         {
             foreach (MapLayer layer in mapLayers.Values)
             {

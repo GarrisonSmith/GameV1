@@ -6,7 +6,7 @@ namespace Fantasy.Engine.Physics
 	/// <summary>
 	/// Represents a two-dimensional shape defined by a top-left point and a center point.
 	/// </summary>
-	internal class Coordinates
+	public class Coordinates
 	{
 		private Vector2 topLeft;
 		private Vector2 center;
@@ -14,7 +14,7 @@ namespace Fantasy.Engine.Physics
 		/// <summary>
 		/// The top-left point of the shape.
 		/// </summary>
-		internal Vector2 TopLeft
+		public Vector2 TopLeft
 		{
 			get => topLeft;
 			set
@@ -32,7 +32,7 @@ namespace Fantasy.Engine.Physics
 		/// <summary>
 		/// The center point of the shape.
 		/// </summary>
-		internal Vector2 Center
+		public Vector2 Center
 		{
 			get => center;
 			set
@@ -50,7 +50,7 @@ namespace Fantasy.Engine.Physics
 		/// <summary>
 		/// The bottom-right point of the shape.
 		/// </summary>
-		internal Vector2 BottomRight
+		public Vector2 BottomRight
 		{
 			get => new(TopLeft.X + Width, TopLeft.Y + Height);
 		}
@@ -58,21 +58,21 @@ namespace Fantasy.Engine.Physics
 		/// Returns a rectangle that represents the shape defined by the coordinates, with the top-left point being the
 		/// <see cref="TopLeft"/> property and the width and height being the <see cref="Width"/> and <see cref="Height"/> properties respectively.
 		/// </summary>
-		internal Rectangle Rectangle
+		public Rectangle Rectangle
 		{
 			get => new((int)topLeft.X, (int)topLeft.Y, Width, Height);
 		}
 		/// <summary>
 		/// The width of the shape, calculated as the distance between the center and top-left point multiplied by 2.
 		/// </summary>
-		internal int Width
+		public int Width
 		{
 			get => (int)(Center.X - TopLeft.X) * 2;
 		}
 		/// <summary>
 		/// The height of the shape, calculated as the distance between the center and top-left point multiplied by 2.
 		/// </summary>
-		internal int Height
+		public int Height
 		{
 			get => (int)(Center.Y - TopLeft.Y) * 2;
 		}
@@ -85,7 +85,7 @@ namespace Fantasy.Engine.Physics
 		/// <param name="centerX">The x-coordinate of the center point.</param>
 		/// <param name="centerY">The y-coordinate of the center point.</param>
 		/// <exception cref="ArgumentException">Thrown if the top-left point is not to the top and left of the center point.</exception>
-		internal Coordinates(float topLeftX, float topLeftY, float centerX, float centerY)
+		public Coordinates(float topLeftX, float topLeftY, float centerX, float centerY)
 		{
 			if (topLeftX > centerX || topLeftY > centerY)
 			{
@@ -101,7 +101,7 @@ namespace Fantasy.Engine.Physics
 		/// <param name="topLeft">The top-left point of the shape.</param>
 		/// <param name="center">The center point of the shape.</param>
 		/// <exception cref="ArgumentException">Thrown if the top-left point is not to the top and left of the center point.</exception>
-		internal Coordinates(Vector2 topLeft, Vector2 center)
+		public Coordinates(Vector2 topLeft, Vector2 center)
 		{
 			if (topLeft.X > center.X || topLeft.Y > center.Y)
 			{
@@ -116,7 +116,7 @@ namespace Fantasy.Engine.Physics
 		/// Moves the shape up by the specified amount.
 		/// </summary>
 		/// <param name="amount">The amount to move the shape up by.</param>
-		internal void MoveUp(float amount)
+		public void MoveUp(float amount)
 		{
 			topLeft.Y += amount;
 			center.Y += amount;
@@ -125,7 +125,7 @@ namespace Fantasy.Engine.Physics
 		/// Moves the shape down by the specified amount.
 		/// </summary>
 		/// <param name="amount">The amount to move the shape down by.</param>
-		internal void MoveDown(float amount)
+		public void MoveDown(float amount)
 		{
 			topLeft.Y -= amount;
 			center.Y -= amount;
@@ -134,7 +134,7 @@ namespace Fantasy.Engine.Physics
 		/// Moves the shape right by the specified amount.
 		/// </summary>
 		/// <param name="amount">The amount to move the shape right by.</param>
-		internal void MoveRight(float amount)
+		public void MoveRight(float amount)
 		{
 			topLeft.X += amount;
 			center.X += amount;
@@ -143,7 +143,7 @@ namespace Fantasy.Engine.Physics
 		/// Moves the shape left by the specified amount.
 		/// </summary>
 		/// <param name="amount">The amount to move the shape left by.</param>
-		internal void MoveLeft(float amount)
+		public void MoveLeft(float amount)
 		{
 			topLeft.X -= amount;
 			center.X -= amount;
