@@ -3,6 +3,7 @@ using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Xml.XPath;
 
 namespace Fantasy.Engine.Mapping.Tiling
 {
@@ -60,7 +61,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// The coordinates of the TileCollection.
 		/// </summary>
 		internal Coordinates Coordinates
-		{ 
+		{
 			get => coordinates;
 		}
 
@@ -105,10 +106,28 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// </summary>
 		/// <param name="useCombinedTexture">Indicates whether the TileCollection uses a combined texture or not.</param>
 		internal void CreateCombinedTexture(bool useCombinedTexture = false)
-		{ 
+		{
 			UseCombinedTexture = useCombinedTexture;
-			combinedTexture = new Texture2D(SpriteBatchHandler.SpriteBatch.GraphicsDevice, coordinates.Width, coordinates.Height);
-			
+			//RenderTarget2D foo = new(SpriteBatchHandler.SpriteBatch.GraphicsDevice, coordinates.Width, coordinates.Height);
+			RenderTarget2D foo = new RenderTarget2D(
+				SpriteBatchHandler.SpriteBatch.GraphicsDevice,
+				coordinates.Width, coordinates.Height,
+				false, SurfaceFormat.Color, DepthFormat.None, 0,
+				RenderTargetUsage.PreserveContents
+			);
+			SpriteBatchHandler.SpriteBatch.GraphicsDevice.SetRenderTarget(foo);
+			SpriteBatchHandler.Begin();
+			foreach (Tile tile in Tiles.Values)
+			{
+				tile.DrawCoordinates.TryGetValue(Map.Layer, out HashSet<Coordinates> layerDrawCoordinates);
+				foreach (Coordinates cord in layerDrawCoordinates)
+				{
+					SpriteBatchHandler.Draw(tile.Spritesheet, cord.TopLeft - Coordinates.TopLeft, tile.SheetBox, Color.White);
+				}
+			}
+			SpriteBatchHandler.End();
+			SpriteBatchHandler.SpriteBatch.GraphicsDevice.SetRenderTarget(null);
+			combinedTexture = foo;
 		}
 		/// <summary>
 		/// Draws the tile collection on the screen.

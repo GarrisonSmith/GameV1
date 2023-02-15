@@ -59,7 +59,7 @@ namespace Fantasy.Engine.Mapping
 
 			if (layer == 2)
 			{
-				tileLayer.CreateCombinedTexture(true);
+				
 			}
 
 			if (ActiveGameMap.HIGHEST_LAYER == null || ActiveGameMap.HIGHEST_LAYER.Layer < layer)
