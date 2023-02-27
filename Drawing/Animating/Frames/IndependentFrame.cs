@@ -5,7 +5,8 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Fantasy.Engine.Drawing.Animating.Frames
 {
 	/// <summary>
-	/// Represents a single frame of an animation.
+	/// Represents a single independent frame of an animation.
+	/// Does not require infomation from the greater Animation object to be drawn.
 	/// </summary>
 	public readonly struct IndependentFrame : IFrame
 	{
@@ -23,7 +24,7 @@ namespace Fantasy.Engine.Drawing.Animating.Frames
 			get => minDurationMili;
 		}
 		/// <summary>
-		/// Gets the chance for the frame to end after the frame has existed for the minimum duration in milliseconds. 
+		/// Get the maximum about the frame can be extended beyond its minimum duration in milliseconds.
 		/// </summary>
 		public int MaxDurationExtension
 		{ 
@@ -69,13 +70,13 @@ namespace Fantasy.Engine.Drawing.Animating.Frames
 		/// Creates a new frame with the specified minimum and maximum durations, source box, and spritesheet.
 		/// </summary>
 		/// <param name="minDurationMili">The minimum duration of the frame, in milliseconds.</param>
-		/// <param name="frameEndChance">The chance for the frame to change after the minimum frame duration.</param>
+		/// <param name="maxDurationExtension">The chance for the frame to end after the frame has existed for the minimum duration in milliseconds.</param>
 		/// <param name="sourceBox">The rectangular area on the spritesheet that contains the frame image.</param>
 		/// <param name="spritesheet">The spritesheet that contains the frame image.</param>
-		public IndependentFrame(int minDurationMili, byte frameEndChance, Rectangle sourceBox, Texture2D spritesheet)
+		public IndependentFrame(int minDurationMili, byte maxDurationExtension, Rectangle sourceBox, Texture2D spritesheet)
 		{
 			this.minDurationMili = minDurationMili;
-			this.frameEndChance = frameEndChance;
+			this.maxDurationExtension = maxDurationExtension;
 			offSet = new Vector2();
 			this.sourceBox = sourceBox;
 			this.spritesheet = spritesheet;
@@ -84,14 +85,14 @@ namespace Fantasy.Engine.Drawing.Animating.Frames
 		/// Creates a new frame with the specified minimum and maximum durations, offset, source box, and spritesheet.
 		/// </summary>
 		/// <param name="minDurationMili">The minimum duration of the frame, in milliseconds.</param>
-		/// <param name="frameEndChance">The chance for the frame to change after the minimum frame duration.</param>
+		/// <param name="maxDurationExtension">The chance for the frame to end after the frame has existed for the minimum duration in milliseconds.</param>
 		/// <param name="offSet">The offset of the frame, in pixels.</param>
 		/// <param name="sourceBox">The rectangular area on the spritesheet that contains the frame image.</param>
 		/// <param name="spritesheet">The spritesheet that contains the frame image.</param>
-		public IndependentFrame(int minDurationMili, byte frameEndChance, Vector2 offSet, Rectangle sourceBox, Texture2D spritesheet)
+		public IndependentFrame(int minDurationMili, byte maxDurationExtension, Vector2 offSet, Rectangle sourceBox, Texture2D spritesheet)
 		{
 			this.minDurationMili = minDurationMili;
-			this.frameEndChance = frameEndChance;
+			this.maxDurationExtension = maxDurationExtension;
 			this.offSet = offSet;
 			this.sourceBox = sourceBox;
 			this.spritesheet = spritesheet;

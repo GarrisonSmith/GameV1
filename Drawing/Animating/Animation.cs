@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Fantasy.Engine.Physics;
+using System;
 
 namespace Fantasy.Engine.Drawing.Animating
 {
 	/// <summary>
 	/// An abstract class representing an animation for a given subject.
 	/// </summary>
-	/// <typeparam name="T">The type of the animated subject.</typeparam>
-	public abstract class Animation<T>
+	public abstract class Animation
 	{
 		private readonly static Random random = new();
 
@@ -18,7 +18,7 @@ namespace Fantasy.Engine.Drawing.Animating
 			get => random;
 		}
 		
-		protected T animatedSubject;
+		protected ILocatable animatedSubject;
 		protected byte activeFrameIndex;
 		protected TimeSpan currentFrameDuration;
 		protected TimeSpan currentFrameMaxDuration;
@@ -26,7 +26,7 @@ namespace Fantasy.Engine.Drawing.Animating
 		/// <summary>
 		/// The subject being animated.
 		/// </summary>
-		public T AnimatedSubject
+		public ILocatable AnimatedSubject
 		{
 			get => animatedSubject;
 		}
