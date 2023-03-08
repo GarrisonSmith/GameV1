@@ -9,7 +9,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 	/// <summary>
 	/// Represents a collection of tiles on a specific map layer.
 	/// </summary>
-	public struct TileCollection : ILocatable, ISubDrawable
+	public struct TileCollection : ILocatable, ISubDrawableCollection<Location, Tile>
 	{
 		private bool isVisible;
 		private bool useCombinedTexture;
@@ -140,7 +140,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// <summary>
 		/// Draws the tile collection on the screen.
 		/// </summary>
-		/// <param name="gameTime">The current game time</param>
+		/// <param name="gameTime">The current game time.</param>
 		public void Draw(GameTime gameTime)
 		{
 			if (!IsVisible)
@@ -156,11 +156,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 
 			foreach (Tile tile in Tiles.Values)
 			{
-				tile.DrawCoordinates.TryGetValue(Map.Layer, out HashSet<Coordinates> layerDrawCoordinates);
-				foreach (Coordinates cord in layerDrawCoordinates)
-				{
-					SpriteBatchHandler.Draw(tile.Spritesheet, cord.TopLeft, tile.SheetBox, Color.White);
-				}
+				tile.Draw(gameTime, map.Layer);
 			}
 		}
 	}

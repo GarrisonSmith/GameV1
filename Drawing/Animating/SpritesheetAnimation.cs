@@ -1,29 +1,20 @@
 ﻿using Fantasy.Engine.Drawing.Animating.Frames;
 using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace Fantasy.Engine.Drawing.Animating
 {
-	internal class SpritesheetAnimation : Animation
+	/// <summary>
+	/// A class that defines a collection of <see cref="SpritesheetFrame"/> for an animation and manages the animation logic.
+	/// </summary>
+	public class SpritesheetAnimation : Animation
 	{
-		private int minDurationMili;
-		private int maxDurationExtension;
-		private Point firstFrameTopLeft;
-		private Rectangle sourceBox;
-		private Texture2D spritesheet;
-		private SpritesheetFrame[] frames;
+		private readonly int minDurationMili;
+		private readonly int maxDurationExtensionMili;
+		private Rectangle sheetBox;
+		private readonly SpritesheetFrame[] frames;
 
-		public Rectangle SourceBox
-		{
-			get => sourceBox;
-		}
-
-		public Texture2D Spritesheet
-		{ 
-			get => spritesheet;
-		}
 		/// <summary>
 		/// Gets the array of frames that define the animation.
 		/// </summary>
@@ -38,17 +29,19 @@ namespace Fantasy.Engine.Drawing.Animating
 		/// <param name="animatedSubject">The object that will be animated.</param>
 		/// <param name="frames">The collection of frames for the animation.</param>
 		/// <param name="startingFrameIndex">The index of the initial active frame.</param>
-		public SpritesheetAnimation(ILocatable animatedSubject, SpritesheetFrame[] frames, byte startingFrameIndex = 0)
+		public SpritesheetAnimation(ISubDrawable animatedSubject, SpritesheetFrame[] frames, byte startingFrameIndex = 0)
 		{
 			this.animatedSubject = animatedSubject;
+			sheetBox = animatedSubject.SheetBox;
 			this.frames = frames;
 			activeFrameIndex = startingFrameIndex;
 			if (startingFrameIndex >= frames.Length)
 			{
 				activeFrameIndex = 0;
 			}
+			sheetBox.X = AnimatedSubject.TextureSourceTopLeft.X + (activeFrameIndex * sheetBox.Width);
 			currentFrameDuration = TimeSpan.Zero;
-			currentFrameMaxDuration = new TimeSpan(0, 0, 0, 0, minDurationMili + Random.Next(maxDurationExtension));
+			currentFrameMaxDuration = new TimeSpan(0, 0, 0, 0, minDurationMili + Random.Next(maxDurationExtensionMili));
 		}
 		/// <summary>
 		/// Updates the current animation frame based on the elapsed game time.
@@ -64,8 +57,9 @@ namespace Fantasy.Engine.Drawing.Animating
 				{
 					activeFrameIndex = 0;
 				}
+				sheetBox.X = AnimatedSubject.TextureSourceTopLeft.X + (activeFrameIndex * sheetBox.Width);
 				currentFrameDuration = TimeSpan.Zero;
-				currentFrameMaxDuration = new TimeSpan(0, 0, 0, 0, minDurationMili + Random.Next(maxDurationExtension));
+				currentFrameMaxDuration = new TimeSpan(0, 0, 0, 0, minDurationMili + Random.Next(maxDurationExtensionMili));
 			}
 		}
 		/// <summary>
@@ -75,7 +69,7 @@ namespace Fantasy.Engine.Drawing.Animating
 		/// <param name="color">The color to apply to the frame.</param>
 		public void DrawCurrentFrame(Coordinates coordinates, Color color)
 		{
-			frames[ActiveFrameIndex].DrawFrame(spritesheet, coordinates, sourceBox, color);
+			frames[ActiveFrameIndex].DrawFrame(AnimatedSubject.Spritesheet, coordinates, sheetBox, color);
 		}
 	}
 }

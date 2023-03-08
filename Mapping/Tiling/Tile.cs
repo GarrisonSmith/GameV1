@@ -1,4 +1,5 @@
 ﻿using Fantasy.Engine.ContentManagement;
+using Fantasy.Engine.Drawing;
 using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,20 +13,33 @@ namespace Fantasy.Engine.Mapping.Tiling
 	/// <summary>
 	/// Represents a tile in a MapLayer.
 	/// </summary>
-	public class Tile
+	public class Tile : ISubDrawable
 	{
+		private static readonly int TileWidth = 64;
+		private static readonly int TileHeight = 64;
+		private static readonly Dictionary<string, Tile> UniqueTiles = new();
+
 		/// <summary>
 		/// The width of a tile, in pixels.
 		/// </summary>
-		public static readonly int TILE_WIDTH = 64;
+		public static int TILE_WIDTH
+		{
+			get => TileWidth;
+		}
 		/// <summary>
 		/// The height of a tile, in pixels.
 		/// </summary>
-		public static readonly int TILE_HEIGHT = 64;
+		public static int TILE_HEIGHT
+		{
+			get => TileHeight;
+		}
 		/// <summary>
 		/// A dictionary that stores unique tiles by their ID.
 		/// </summary>
-		private static readonly Dictionary<string, Tile> UNIQUE_TILES = new();
+		protected static Dictionary<string, Tile> UNIQUE_TILES
+		{
+			get => UniqueTiles;
+		}
 
 		/// <summary>
 		/// Attempts to create a Tile from the provided XmlElement, if the Tile has already been created then no Tile is created.
@@ -43,7 +57,16 @@ namespace Fantasy.Engine.Mapping.Tiling
 			return false;
 		}
 		/// <summary>
-		/// Gets a dictionary of tiles that exist on the specified map layer.
+		/// Gets a tile with the specified ID.
+		/// </summary>
+		/// <param name="tileId">The ID of the tile to get.</param>
+		/// <returns>The tile with the specified ID.</returns>
+		public static Tile GetTile(string tileId)
+		{ 
+			return UniqueTiles[tileId];
+		}
+		/// <summary>
+		/// Gets a dictionary of tiles that exist on the specified layer.
 		/// </summary>
 		/// <param name="layer">The number of the map layer to get tiles for.</param>
 		/// <returns>A dictionary containing the tiles on the specified layer, with the keys being a Location struct describing the row and column of the coordinates of the layer 
@@ -59,7 +82,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 			return foo;
 		}
 		/// <summary>
-		/// Gets a dictionary of tiles that exist on the specified map layer.
+		/// Gets a dictionary of tiles that exist on the specified layer.
 		/// </summary>
 		/// <param name="layer">The number of the map layer to get tiles for. The layer number should be an integer.</param>
 		/// <param name="coordinates">An out parameter that will contain the coordinates of the top left and bottom left of the tiles on the specified layer</param>
@@ -162,26 +185,41 @@ namespace Fantasy.Engine.Mapping.Tiling
 			}
 		}
 
+		private bool isVisible = true; //TODO implement
+		private Rectangle sheetBox;
 		private readonly Texture2D spritesheet;
-		private readonly Rectangle sheetBox;
 		private readonly Dictionary<int, HashSet<Coordinates>> layerCoordinates;
-		private Dictionary<int, HashSet<Coordinates>> drawCoordinates;
+		private readonly Dictionary<int, HashSet<Coordinates>> drawCoordinates;
 		private readonly string id;
-		private bool isOpaque = true; //TODO implement
 
 		/// <summary>
-		/// The spritesheet that the tile's image is taken from.
+		/// Describes if the tile completely obstructs the view of any tiles beneath it.
 		/// </summary>
-		public Texture2D Spritesheet
+		public bool IsVisible
 		{
-			get => spritesheet;
+			get => isVisible;
+			set => isVisible = value;
 		}
 		/// <summary>
-		/// The area of the spritesheet from which the tile's image is taken.
+		/// The top left point of this tile's starting texture on the spritesheet.
+		/// </summary>
+		public Point TextureSourceTopLeft 
+		{
+			get => sheetBox.Location;
+		}
+		/// <summary>
+		/// The area of the spritesheet from which the tile's texture is taken.
 		/// </summary>
 		public Rectangle SheetBox
 		{
 			get => sheetBox;
+		}
+		/// <summary>
+		/// The spritesheet that the tile's texture is taken from.
+		/// </summary>
+		public Texture2D Spritesheet
+		{
+			get => spritesheet;
 		}
 		/// <summary>
 		/// A dictionary that maps layer numbers to HashSets of coordinates for the tile on the current map.
@@ -204,15 +242,14 @@ namespace Fantasy.Engine.Mapping.Tiling
 		{
 			get => id;
 		}
-		/// <summary>
-		/// Describes if the tile completely obstructs the view of any tiles beneath it.
-		/// </summary>
-		public bool IsOpaque
-		{
-			get => isOpaque;
-			set => isOpaque = value;
-		}
 
+		/// <summary>
+		/// Generic inherited constructor.
+		/// </summary>
+		protected Tile()
+		{ 
+			
+		}
 		/// <summary>
 		/// Creates a new tile from the specified XML element.
 		/// </summary>
@@ -330,6 +367,19 @@ namespace Fantasy.Engine.Mapping.Tiling
 					map.TileLayer.LookUpTile(cord)?.RemoveDrawLocation(map.Layer, cord);
 				}
 				map = map.Next;
+			}
+		}
+		/// <summary>
+		/// Draws the tile to all draw location on the provided layer. 
+		/// </summary>
+		/// <param name="gameTime">The current game time.</param>
+		/// <param name="layer">The layer to be drawn.</param>
+		public void Draw(GameTime gameTime, int layer)
+		{
+			DrawCoordinates.TryGetValue(layer, out HashSet<Coordinates> layerDrawCoordinates);
+			foreach (Coordinates cord in layerDrawCoordinates)
+			{
+				SpriteBatchHandler.Draw(Spritesheet, cord.TopLeft, SheetBox, Color.White);
 			}
 		}
 	}

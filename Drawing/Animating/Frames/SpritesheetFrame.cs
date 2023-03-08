@@ -4,7 +4,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Fantasy.Engine.Drawing.Animating.Frames
 {
-	internal readonly struct SpritesheetFrame
+	/// <summary>
+	/// Represents a single dependent frame of an animation.
+	/// Only contains information about the offset of the frame and requires infomation from a greater <see cref="Animation"/> object to be drawn.
+	/// </summary>
+	public readonly struct SpritesheetFrame
 	{
 		private readonly Vector2 offSet;
 

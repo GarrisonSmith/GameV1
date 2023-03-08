@@ -6,7 +6,7 @@ namespace Fantasy.Engine.Drawing.Animating.Frames
 {
 	/// <summary>
 	/// Represents a single dependent frame of an animation.
-	/// Requires infomation from the greater Animation object to be drawn.
+	/// Requires infomation from a greater <see cref="Animation"/> object to be drawn.
 	/// </summary>
 	public readonly struct DependentFrame : IFrame
 	{

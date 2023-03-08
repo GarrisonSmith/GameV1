@@ -6,7 +6,7 @@ using System;
 namespace Fantasy.Engine.Drawing.Animating
 {
 	/// <summary>
-	/// A class that defines a collection of frames for an animation and manages the animation logic.
+	/// A class that defines a collection of <see cref="IndependentFrame"/> for an animation and manages the animation logic.
 	/// </summary>
 	public class CustomizableAnimation : Animation
 	{

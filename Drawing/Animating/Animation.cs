@@ -4,7 +4,7 @@ using System;
 namespace Fantasy.Engine.Drawing.Animating
 {
 	/// <summary>
-	/// An abstract class representing an animation for a given subject.
+	/// An abstract class representing an animation for a <see cref="ISubDrawable"/> subject.
 	/// </summary>
 	public abstract class Animation
 	{
@@ -18,7 +18,7 @@ namespace Fantasy.Engine.Drawing.Animating
 			get => random;
 		}
 		
-		protected ILocatable animatedSubject;
+		protected ISubDrawable animatedSubject;
 		protected byte activeFrameIndex;
 		protected TimeSpan currentFrameDuration;
 		protected TimeSpan currentFrameMaxDuration;
@@ -26,7 +26,7 @@ namespace Fantasy.Engine.Drawing.Animating
 		/// <summary>
 		/// The subject being animated.
 		/// </summary>
-		public ILocatable AnimatedSubject
+		public ISubDrawable AnimatedSubject
 		{
 			get => animatedSubject;
 		}
