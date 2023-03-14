@@ -1,8 +1,5 @@
 ﻿using Fantasy.Engine.Mapping.Tiling;
-using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using Fantasy.Engine.Drawing;
 using System;
 
 namespace Fantasy.Engine.Mapping
@@ -55,7 +52,7 @@ namespace Fantasy.Engine.Mapping
 			DrawOrder = layer;
 			UpdateOrder = layer;
 			tileLayer = new TileCollection(this);
-			tileLayer.CreateCombinedTexture(true);
+			tileLayer.CreateCombinedTexture(false);
 
 			if (ActiveGameMap.HIGHEST_LAYER == null || ActiveGameMap.HIGHEST_LAYER.Layer < layer)
 			{

@@ -1,12 +1,13 @@
 ﻿using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Xml;
 
 namespace Fantasy.Engine.Drawing.Animating.Frames
 {
 	/// <summary>
 	/// Represents a single dependent frame of an animation.
-	/// Only contains information about the offset of the frame and requires infomation from a greater <see cref="Animation"/> object to be drawn.
+	/// Only contains information about the offset of the frame and requires information from a greater <see cref="Animation"/> object to be drawn.
 	/// </summary>
 	public readonly struct SpritesheetFrame
 	{
@@ -41,13 +42,13 @@ namespace Fantasy.Engine.Drawing.Animating.Frames
 		{
 			offSet = new Vector2();
 		}
-		/// <summary>
-		/// Creates a new frame with the specified minimum and maximum durations, offset, source box, and spritesheet.
-		/// </summary>
-		/// <param name="offSet">The offset of the frame, in pixels.</param>
-		public SpritesheetFrame(Vector2 offSet)
+        /// <summary>
+        /// Creates a new frame with the specified minimum and maximum durations, offset, source box, and spritesheet.
+        /// </summary>
+        /// <param name="frameElement">XmlElement describe this frame.</param>
+        public SpritesheetFrame(XmlElement frameElement)
 		{
-			this.offSet = offSet;
+			offSet = new Vector2(float.Parse(frameElement.GetAttribute("verticalOffset")), float.Parse(frameElement.GetAttribute("horizontalOffset")));
 		}
 
 		/// <summary>

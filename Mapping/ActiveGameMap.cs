@@ -55,14 +55,19 @@ namespace Fantasy.Engine.Mapping
             XmlDocument mapDoc = new XmlDocument();
             mapDoc.Load(@"Content\tilemaps\" + mapName + ".xml");
             XmlElement mapElement = (XmlElement)mapDoc.SelectSingleNode("Engine.Logic.Mapping.GameMap");
-
 			tileMapName = mapElement.GetAttribute("name");
-			mapLayers = new Dictionary<int, MapLayer>();
+
 			foreach (XmlElement tileElement in mapElement.GetElementsByTagName("Engine.Logic.Mapping.Tiling.Tile"))
 			{
 				Tile.CreateTile(tileElement);
 			}
 
+			foreach (XmlElement animatedTileElement in mapElement.GetElementsByTagName("Engine.Logic.Mapping.Tiling.AnimatedTile"))
+			{
+				AnimatedTile.CreateTile(animatedTileElement);
+			}
+
+			mapLayers = new Dictionary<int, MapLayer>();
 			foreach (XmlElement layerElement in mapElement.SelectSingleNode("Layers"))
 			{
 				int layer = int.Parse(layerElement.GetAttribute("id"));

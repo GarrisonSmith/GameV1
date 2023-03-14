@@ -244,18 +244,11 @@ namespace Fantasy.Engine.Mapping.Tiling
 		}
 
 		/// <summary>
-		/// Generic inherited constructor.
-		/// </summary>
-		protected Tile()
-		{ 
-			
-		}
-		/// <summary>
 		/// Creates a new tile from the specified XML element.
 		/// </summary>
 		/// <param name="tileElement">The XML element that defines the tile.</param>
 		/// <exception cref="ArgumentException">Throws an exception if the XML element is invalid or if the spritesheet, id, or locations elements are missing.</exception>
-		private Tile(XmlElement tileElement)
+		protected Tile(XmlElement tileElement)
 		{
 			id = tileElement.GetAttribute("id");
 			layerCoordinates = new Dictionary<int, HashSet<Coordinates>>();
@@ -294,13 +287,15 @@ namespace Fantasy.Engine.Mapping.Tiling
 					}
 					LayerCoordinates.Add(layer, layerSet);
 					DrawCoordinates.Add(layer, drawSet);
+					continue;
 				}
 			}
-			if (spritesheet == null || id == null || layerCoordinates == null)
+			if (Spritesheet == null || Id == null || LayerCoordinates == null)
 			{
 				throw new Exception("Invalid Tile XmlElement: " + tileElement);
 			}
 		}
+
 		/// <summary>
 		/// Adds the locations of the tile in the specified layer to the provided dictionary.
 		/// </summary>

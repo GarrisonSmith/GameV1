@@ -117,10 +117,13 @@ namespace Fantasy.Engine.Mapping.Tiling
 			SpriteBatchHandler.Begin();
 			foreach (Tile tile in Tiles.Values)
 			{
-				tile.DrawCoordinates.TryGetValue(Map.Layer, out HashSet<Coordinates> layerDrawCoordinates);
-				foreach (Coordinates cord in layerDrawCoordinates)
+				if (tile is not AnimatedTile)
 				{
-					SpriteBatchHandler.Draw(tile.Spritesheet, cord.TopLeft - Coordinates.TopLeft, tile.SheetBox, Color.White);
+					tile.DrawCoordinates.TryGetValue(Map.Layer, out HashSet<Coordinates> layerDrawCoordinates);
+					foreach (Coordinates cord in layerDrawCoordinates)
+					{
+						SpriteBatchHandler.Draw(tile.Spritesheet, cord.TopLeft - Coordinates.TopLeft, tile.SheetBox, Color.White);
+					}
 				}
 			}
 			SpriteBatchHandler.End();
@@ -151,11 +154,23 @@ namespace Fantasy.Engine.Mapping.Tiling
 			if (useCombinedTexture)
 			{
 				SpriteBatchHandler.Draw(combinedTexture, coordinates.Rectangle, Color.White);
-				return;
+                foreach (Tile tile in Tiles.Values)
+                {
+					if (tile is AnimatedTile)
+					{
+                        ((AnimatedTile)tile).Draw(gameTime, map.Layer);
+					}
+                }
+                return;
 			}
 
 			foreach (Tile tile in Tiles.Values)
 			{
+				if (tile is AnimatedTile)
+				{ 
+					((AnimatedTile)tile).Draw(gameTime, map.Layer);
+				}
+
 				tile.Draw(gameTime, map.Layer);
 			}
 		}

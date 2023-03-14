@@ -6,7 +6,7 @@ namespace Fantasy.Engine.Drawing.Animating.Frames
 {
 	/// <summary>
 	/// Represents a single independent frame of an animation.
-	/// Does not require infomation from a greater <see cref="Animation"/> object to be drawn.
+	/// Does not require information from a greater <see cref="Animation"/> object to be drawn.
 	/// </summary>
 	public readonly struct IndependentFrame : IFrame
 	{

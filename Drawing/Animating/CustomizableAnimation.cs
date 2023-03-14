@@ -26,7 +26,7 @@ namespace Fantasy.Engine.Drawing.Animating
 		/// <param name="animatedSubject">The object that will be animated.</param>
 		/// <param name="frames">The collection of frames for the animation.</param>
 		/// <param name="startingFrameIndex">The index of the initial active frame.</param>
-		public CustomizableAnimation(ILocatable animatedSubject, IndependentFrame[] frames, byte startingFrameIndex = 0)
+		public CustomizableAnimation(ISubDrawable animatedSubject, IndependentFrame[] frames, byte startingFrameIndex = 0) : base()
 		{ 
 			this.animatedSubject = animatedSubject;
 			this.frames = frames;
