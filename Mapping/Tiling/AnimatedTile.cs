@@ -94,34 +94,8 @@ namespace Fantasy.Engine.Mapping.Tiling
 			{
 				return;
 			}
-			DrawCoordinates[layer].RemoveWhere(drawCord => cord.Equals(drawCord)); //TODO could be optimized. probably 
-		}
-		/// <summary>
-		/// Update the drawing coordinates of the tile for the specified layer.
-		/// </summary>
-		/// <exception cref="Exception">Thrown if the specified layer is not found.</exception>
-		public new void UpdateDrawCoordinates(int startLayer)
-		{
-			if (!ActiveGameMap.MapLayers.ContainsKey(startLayer))
-			{
-				throw new Exception("The ActiveGameMap does contain the provided layer.");
-			}
-
-			MapLayer map = ActiveGameMap.MapLayers[startLayer].Next;
-			while (map != null)
-			{
-				if (!IsInLayer(startLayer))
-				{
-					map = map.Next;
-					continue;
-				}
-
-				foreach (Coordinates cord in DrawCoordinates[startLayer])
-				{
-					map.TileLayer.LookUpTile(cord)?.RemoveDrawLocation(map.Layer, cord);
-				}
-				map = map.Next;
-			}
+			DrawCoordinates[layer].RemoveWhere(drawCord => cord.Equals(drawCord)); //TODO could be optimized. probably. probably doesn't need to be.
+			Animations[layer][cord].IsActive = false;
 		}
 		/// <summary>
 		/// Draws the tile on the specified layer using the current frame of each animation.

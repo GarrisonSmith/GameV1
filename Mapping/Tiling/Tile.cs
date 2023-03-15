@@ -1,5 +1,6 @@
 ﻿using Fantasy.Engine.ContentManagement;
 using Fantasy.Engine.Drawing;
+using Fantasy.Engine.Drawing.Interfaces;
 using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,10 +11,10 @@ using System.Xml;
 
 namespace Fantasy.Engine.Mapping.Tiling
 {
-	/// <summary>
-	/// Represents a tile in a MapLayer.
-	/// </summary>
-	public class Tile : ISubDrawable
+    /// <summary>
+    /// Represents a tile in a MapLayer.
+    /// </summary>
+    public class Tile : ISubDrawable
 	{
 		private static readonly int TileWidth = 64;
 		private static readonly int TileHeight = 64;

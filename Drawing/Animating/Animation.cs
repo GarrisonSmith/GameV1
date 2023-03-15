@@ -1,14 +1,15 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Fantasy.Engine.Drawing.Interfaces;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
 namespace Fantasy.Engine.Drawing.Animating
 {
-	/// <summary>
-	/// An abstract class representing an animation for a <see cref="ISubDrawable"/> subject.
-	/// </summary>
-	public abstract class Animation
+    /// <summary>
+    /// An abstract class representing an animation for a <see cref="ISubDrawable"/> subject.
+    /// </summary>
+    public abstract class Animation
 	{
 		private readonly static Random random = new();
 		private readonly static List<Animation> activeAnimations = new();
@@ -40,7 +41,7 @@ namespace Fantasy.Engine.Drawing.Animating
 			}
 		}
 
-		protected bool active;
+		protected bool isActive;
 		protected ISubDrawable animatedSubject;
 		protected byte activeFrameIndex;
 		protected TimeSpan currentFrameDuration;
@@ -48,19 +49,20 @@ namespace Fantasy.Engine.Drawing.Animating
 
         /// <summary>
         /// Describes if the animation is active and being updated.
-        /// Instantiated to true when all Animation object are created.
+        /// Initialized to true when all Animation object are created.
         /// </summary>
-        public bool Active
+        public bool IsActive
 		{
-			get => active;
-			set {
-				if (active == value)
+			get => isActive;
+			set 
+			{
+				if (isActive == value)
 				{
 					return;
 				}
 				
-				active = value;
-                if (active)
+				isActive = value;
+                if (isActive)
                 {
                     ActiveAnimations.Add(this);
                 }
@@ -104,7 +106,7 @@ namespace Fantasy.Engine.Drawing.Animating
 		/// </summary>
 		public Animation()
 		{
-			active = true;
+			isActive = true;
 			ActiveAnimations.Add(this);
 		}
 	}

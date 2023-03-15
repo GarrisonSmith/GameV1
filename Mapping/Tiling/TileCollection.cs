@@ -1,4 +1,5 @@
 ﻿using Fantasy.Engine.Drawing;
+using Fantasy.Engine.Drawing.Interfaces;
 using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,10 +7,10 @@ using System.Collections.Generic;
 
 namespace Fantasy.Engine.Mapping.Tiling
 {
-	/// <summary>
-	/// Represents a collection of tiles on a specific map layer.
-	/// </summary>
-	public struct TileCollection : ILocatable, ISubDrawableCollection<Location, Tile>
+    /// <summary>
+    /// Represents a collection of tiles on a specific map layer.
+    /// </summary>
+    public struct TileCollection : ILocatable, ISubDrawableCollection<Location, Tile>
 	{
 		private bool isVisible;
 		private bool useCombinedTexture;
@@ -156,9 +157,9 @@ namespace Fantasy.Engine.Mapping.Tiling
 				SpriteBatchHandler.Draw(combinedTexture, coordinates.Rectangle, Color.White);
                 foreach (Tile tile in Tiles.Values)
                 {
-					if (tile is AnimatedTile)
+					if (tile is AnimatedTile animatedTile)
 					{
-                        ((AnimatedTile)tile).Draw(gameTime, map.Layer);
+                        animatedTile.Draw(gameTime, map.Layer);
 					}
                 }
                 return;
@@ -166,12 +167,14 @@ namespace Fantasy.Engine.Mapping.Tiling
 
 			foreach (Tile tile in Tiles.Values)
 			{
-				if (tile is AnimatedTile)
-				{ 
-					((AnimatedTile)tile).Draw(gameTime, map.Layer);
+				if (tile is AnimatedTile animatedTile)
+				{
+                    animatedTile.Draw(gameTime, map.Layer);
 				}
-
-				tile.Draw(gameTime, map.Layer);
+				else
+				{
+					tile.Draw(gameTime, map.Layer);
+				}
 			}
 		}
 	}

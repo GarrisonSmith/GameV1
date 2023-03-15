@@ -2,13 +2,14 @@
 using Microsoft.Xna.Framework;
 using Fantasy.Engine.Drawing.Animating.Frames;
 using System;
+using Fantasy.Engine.Drawing.Interfaces;
 
 namespace Fantasy.Engine.Drawing.Animating
 {
-	/// <summary>
-	/// A class that defines a collection of <see cref="IndependentFrame"/> for an animation and manages the animation logic.
-	/// </summary>
-	public class CustomizableAnimation : Animation
+    /// <summary>
+    /// A class that defines a collection of <see cref="IndependentFrame"/> for an animation and manages the animation logic.
+    /// </summary>
+    public class CustomizableAnimation : Animation
 	{
 		private IndependentFrame[] frames;
 

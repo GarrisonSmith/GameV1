@@ -52,7 +52,7 @@ namespace Fantasy.Engine.Mapping
 			DrawOrder = layer;
 			UpdateOrder = layer;
 			tileLayer = new TileCollection(this);
-			tileLayer.CreateCombinedTexture(false);
+			tileLayer.CreateCombinedTexture(true);
 
 			if (ActiveGameMap.HIGHEST_LAYER == null || ActiveGameMap.HIGHEST_LAYER.Layer < layer)
 			{

@@ -1,5 +1,6 @@
 ﻿using Fantasy.Engine.ContentManagement;
 using Fantasy.Engine.Drawing.Animating.Frames;
+using Fantasy.Engine.Drawing.Interfaces;
 using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
 using System;
@@ -7,10 +8,10 @@ using System.Xml;
 
 namespace Fantasy.Engine.Drawing.Animating
 {
-	/// <summary>
-	/// A class that defines a collection of <see cref="SpritesheetFrame"/> for an animation and manages the animation logic.
-	/// </summary>
-	public class SpritesheetAnimation : Animation
+    /// <summary>
+    /// A class that defines a collection of <see cref="SpritesheetFrame"/> for an animation and manages the animation logic.
+    /// </summary>
+    public class SpritesheetAnimation : Animation
 	{
 		private readonly int minDurationMili;
 		private readonly int maxDurationExtensionMili;
