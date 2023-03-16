@@ -336,7 +336,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 			{
 				return;
 			}
-			DrawBoundingBoxes[layer].RemoveWhere(drawBoundBox => boundBox.Equals(drawBoundBox)); //TODO could be optimized. probably 
+			DrawBoundingBoxes[layer].RemoveWhere(drawBoundBox => boundBox == drawBoundBox); //TODO could be optimized. probably 
 		}
 		/// <summary>
 		/// Update the drawing BoundingBox2 of the tile for the specified layer.

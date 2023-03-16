@@ -94,7 +94,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 			{
 				return;
 			}
-			DrawBoundingBoxes[layer].RemoveWhere(drawBoundBox => boundBox.Equals(drawBoundBox)); //TODO could be optimized. probably. probably doesn't need to be.
+			DrawBoundingBoxes[layer].RemoveWhere(drawBoundBox => boundBox == drawBoundBox); //TODO could be optimized. probably. probably doesn't need to be.
 			Animations[layer][boundBox].IsActive = false;
 		}
 		/// <summary>

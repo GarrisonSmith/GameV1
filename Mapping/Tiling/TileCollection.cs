@@ -17,7 +17,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		private Texture2D combinedTexture;
 		private readonly MapLayer map;
 		private readonly Dictionary<Location, Tile> tiles;
-		private readonly BoundingBox2 BoundingBox2;
+		private readonly BoundingBox2 boundingBox2;
 
 		/// <summary>
 		/// Indicates whether the TileCollection is visible or not.
@@ -62,7 +62,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// </summary>
 		public BoundingBox2 BoundingBox2
 		{
-			get => BoundingBox2;
+			get => boundingBox2;
 		}
 
 		/// <summary>
@@ -77,7 +77,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 			this.useCombinedTexture = useCombinedTexture;
 			combinedTexture = null;
 			this.map = map;
-			tiles = Tile.GetLayerDictionary(map.Layer, out BoundingBox2);
+			tiles = Tile.GetLayerDictionary(map.Layer, out boundingBox2);
 		}
 		/// <summary>
 		/// Looks up a tile at a specified location.

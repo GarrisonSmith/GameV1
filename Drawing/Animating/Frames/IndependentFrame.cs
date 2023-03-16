@@ -13,7 +13,7 @@ namespace Fantasy.Engine.Drawing.Animating.Frames
 		private readonly int minDurationMili;
 		private readonly int maxDurationExtension;
 		private readonly Vector2 offSet;
-		private readonly Rectangle sourceBox;
+		private readonly Rectangle sheetBox;
 		private readonly Texture2D spritesheet;
 
 		/// <summary>
@@ -54,9 +54,9 @@ namespace Fantasy.Engine.Drawing.Animating.Frames
 		/// <summary>
 		/// Gets the source rectangle of the frame in the spritesheet.
 		/// </summary>
-		public Rectangle SourceBox
+		public Rectangle SheetBox
 		{
-			get => sourceBox;
+			get => sheetBox;
 		}
 		/// <summary>
 		/// Gets the spritesheet texture that contains the frame.
@@ -71,14 +71,14 @@ namespace Fantasy.Engine.Drawing.Animating.Frames
 		/// </summary>
 		/// <param name="minDurationMili">The minimum duration of the frame, in milliseconds.</param>
 		/// <param name="maxDurationExtension">The chance for the frame to end after the frame has existed for the minimum duration in milliseconds.</param>
-		/// <param name="sourceBox">The rectangular area on the spritesheet that contains the frame image.</param>
+		/// <param name="sheetBox">The rectangular area on the spritesheet that contains the frame image.</param>
 		/// <param name="spritesheet">The spritesheet that contains the frame image.</param>
-		public IndependentFrame(int minDurationMili, byte maxDurationExtension, Rectangle sourceBox, Texture2D spritesheet)
+		public IndependentFrame(int minDurationMili, byte maxDurationExtension, Rectangle sheetBox, Texture2D spritesheet)
 		{
 			this.minDurationMili = minDurationMili;
 			this.maxDurationExtension = maxDurationExtension;
 			offSet = new Vector2();
-			this.sourceBox = sourceBox;
+			this.sheetBox = sheetBox;
 			this.spritesheet = spritesheet;
 		}
 		/// <summary>
@@ -87,14 +87,14 @@ namespace Fantasy.Engine.Drawing.Animating.Frames
 		/// <param name="minDurationMili">The minimum duration of the frame, in milliseconds.</param>
 		/// <param name="maxDurationExtension">The chance for the frame to end after the frame has existed for the minimum duration in milliseconds.</param>
 		/// <param name="offSet">The offset of the frame, in pixels.</param>
-		/// <param name="sourceBox">The rectangular area on the spritesheet that contains the frame image.</param>
+		/// <param name="sheetBox">The rectangular area on the spritesheet that contains the frame image.</param>
 		/// <param name="spritesheet">The spritesheet that contains the frame image.</param>
-		public IndependentFrame(int minDurationMili, byte maxDurationExtension, Vector2 offSet, Rectangle sourceBox, Texture2D spritesheet)
+		public IndependentFrame(int minDurationMili, byte maxDurationExtension, Vector2 offSet, Rectangle sheetBox, Texture2D spritesheet)
 		{
 			this.minDurationMili = minDurationMili;
 			this.maxDurationExtension = maxDurationExtension;
 			this.offSet = offSet;
-			this.sourceBox = sourceBox;
+			this.sheetBox = sheetBox;
 			this.spritesheet = spritesheet;
 		}
 
@@ -105,7 +105,7 @@ namespace Fantasy.Engine.Drawing.Animating.Frames
 		/// <param name="color">The color to use when drawing the frame.</param>
 		public void DrawFrame(BoundingBox2 BoundingBox2, Color color)
 		{
-			SpriteBatchHandler.Draw(Spritesheet, BoundingBox2.TopLeft + OffSet, SourceBox, color);
+			SpriteBatchHandler.Draw(Spritesheet, BoundingBox2.TopLeft + OffSet, SheetBox, color);
 		}
 	}
 }
