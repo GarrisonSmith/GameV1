@@ -17,7 +17,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		private Texture2D combinedTexture;
 		private readonly MapLayer map;
 		private readonly Dictionary<Location, Tile> tiles;
-		private readonly Coordinates coordinates;
+		private readonly BoundingBox2 BoundingBox2;
 
 		/// <summary>
 		/// Indicates whether the TileCollection is visible or not.
@@ -50,7 +50,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 			get => map;
 		}
 		/// <summary>
-		/// The tiles in the TileCollection, with the keys being a Location struct describing the row and column of the coordinates of the layer 
+		/// The tiles in the TileCollection, with the keys being a Location struct describing the row and column of the BoundingBox2 of the layer 
 		/// and the values being the tiles themselves.
 		/// </summary>
 		public Dictionary<Location, Tile> Tiles
@@ -58,11 +58,11 @@ namespace Fantasy.Engine.Mapping.Tiling
 			get => tiles;
 		}
 		/// <summary>
-		/// The coordinates of the TileCollection.
+		/// The BoundingBox2 of the TileCollection.
 		/// </summary>
-		public Coordinates Coordinates
+		public BoundingBox2 BoundingBox2
 		{
-			get => coordinates;
+			get => BoundingBox2;
 		}
 
 		/// <summary>
@@ -77,7 +77,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 			this.useCombinedTexture = useCombinedTexture;
 			combinedTexture = null;
 			this.map = map;
-			tiles = Tile.GetLayerDictionary(map.Layer, out coordinates);
+			tiles = Tile.GetLayerDictionary(map.Layer, out BoundingBox2);
 		}
 		/// <summary>
 		/// Looks up a tile at a specified location.
@@ -93,11 +93,11 @@ namespace Fantasy.Engine.Mapping.Tiling
 			return null;
 		}
 		/// <summary>
-		/// Looks up a tile at a specified coordinates.
+		/// Looks up a tile at a specified BoundingBox2.
 		/// </summary>
-		/// <param name="foo">The coordinates of the tile to look up.</param>
-		/// <returns>The tile at the specified coordinates.</returns>
-		public Tile LookUpTile(Coordinates foo)
+		/// <param name="foo">The BoundingBox2 of the tile to look up.</param>
+		/// <returns>The tile at the specified BoundingBox2.</returns>
+		public Tile LookUpTile(BoundingBox2 foo)
 		{
 			return LookUpTile(new Location(foo));
 		}
@@ -110,7 +110,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 			UseCombinedTexture = useCombinedTexture;
 			RenderTarget2D foo = new RenderTarget2D(
 				SpriteBatchHandler.SpriteBatch.GraphicsDevice,
-				coordinates.Width, coordinates.Height,
+				BoundingBox2.Width, BoundingBox2.Height,
 				false, SurfaceFormat.Color, DepthFormat.None, 0,
 				RenderTargetUsage.PreserveContents
 			);
@@ -120,10 +120,10 @@ namespace Fantasy.Engine.Mapping.Tiling
 			{
 				if (tile is not AnimatedTile)
 				{
-					tile.DrawCoordinates.TryGetValue(Map.Layer, out HashSet<Coordinates> layerDrawCoordinates);
-					foreach (Coordinates cord in layerDrawCoordinates)
+					tile.DrawBoundingBoxes.TryGetValue(Map.Layer, out HashSet<BoundingBox2> layerDrawBoundingBox2);
+					foreach (BoundingBox2 boundBox in layerDrawBoundingBox2)
 					{
-						SpriteBatchHandler.Draw(tile.Spritesheet, cord.TopLeft - Coordinates.TopLeft, tile.SheetBox, Color.White);
+                        SpriteBatchHandler.Draw(tile.Spritesheet, boundBox.TopLeft - BoundingBox2.TopLeft, tile.SheetBox, Color.White);
 					}
 				}
 			}
@@ -132,12 +132,12 @@ namespace Fantasy.Engine.Mapping.Tiling
 			combinedTexture = foo;
 		}
 
-		public bool Intersects(Coordinates foo)
+		public bool Intersects(BoundingBox2 foo)
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public double Distance(Coordinates foo)
+		public double Distance(BoundingBox2 foo)
 		{
 			throw new System.NotImplementedException();
 		}
@@ -154,7 +154,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 
 			if (useCombinedTexture)
 			{
-				SpriteBatchHandler.Draw(combinedTexture, coordinates.Rectangle, Color.White);
+				SpriteBatchHandler.Draw(combinedTexture, BoundingBox2.Rectangle, Color.White);
                 foreach (Tile tile in Tiles.Values)
                 {
 					if (tile is AnimatedTile animatedTile)

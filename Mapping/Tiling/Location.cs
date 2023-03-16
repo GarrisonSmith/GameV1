@@ -57,28 +57,28 @@ namespace Fantasy.Engine.Mapping.Tiling
             }
         }
         /// <summary>
-        /// Creates a new instance of the Location struct based on the specified Coordinates.
+        /// Creates a new instance of the Location struct based on the specified BoundingBox2.
         /// Column and row values less than 0 will be set to 0.
         /// </summary>
-        /// <param name="cord">The Coordinates to base the location on.</param>
-        public Location(Coordinates cord)
+        /// <param name="boundBox">The BoundingBox2 to base the location on.</param>
+        public Location(BoundingBox2 boundBox)
         {
-            if (cord.TopLeft.X < 0)
+            if (boundBox.TopLeft.X < 0)
             {
                 col = 0;
             }
             else
             {
-                col = (int)(cord.TopLeft.X / Tile.TILE_WIDTH);
+                col = (int)(boundBox.TopLeft.X / Tile.TILE_WIDTH);
             }
 
-            if (cord.TopLeft.Y < 0)
+            if (boundBox.TopLeft.Y < 0)
             {
                 row = 0;
             }
             else
             {
-                row = (int)(cord.TopLeft.Y / Tile.TILE_HEIGHT);
+                row = (int)(boundBox.TopLeft.Y / Tile.TILE_HEIGHT);
             }
         }
     }

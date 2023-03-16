@@ -52,15 +52,15 @@ namespace Fantasy.Engine.Drawing.Animating.Frames
 		}
 
 		/// <summary>
-		/// Draws the frame at the specified coordinates with the specified color.
+		/// Draws the frame at the specified BoundingBox2 with the specified color.
 		/// </summary>
 		/// <param name="spritesheet">The texture containing the sprite sheet.</param>
-		/// <param name="coordinates">The coordinates at which to draw the frame.</param>
+		/// <param name="BoundingBox2">The BoundingBox2 at which to draw the frame.</param>
 		/// <param name="sourceBox">The source rectangle of the frame on the sprite sheet.</param>
 		/// <param name="color">The color to use when drawing the frame.</param>
-		public void DrawFrame(Texture2D spritesheet, Coordinates coordinates, Rectangle sourceBox, Color color)
+		public void DrawFrame(Texture2D spritesheet, BoundingBox2 BoundingBox2, Rectangle sourceBox, Color color)
 		{
-			SpriteBatchHandler.Draw(spritesheet, coordinates.TopLeft + OffSet, sourceBox, color);
+			SpriteBatchHandler.Draw(spritesheet, BoundingBox2.TopLeft + OffSet, sourceBox, color);
 		}
 	}
 }

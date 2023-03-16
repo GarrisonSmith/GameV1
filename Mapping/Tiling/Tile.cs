@@ -70,7 +70,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// Gets a dictionary of tiles that exist on the specified layer.
 		/// </summary>
 		/// <param name="layer">The number of the map layer to get tiles for.</param>
-		/// <returns>A dictionary containing the tiles on the specified layer, with the keys being a Location struct describing the row and column of the coordinates of the layer 
+		/// <returns>A dictionary containing the tiles on the specified layer, with the keys being a Location struct describing the row and column of the BoundingBox2 of the layer 
 		/// and the values being the tiles themselves.</returns>
 		public static Dictionary<Location, Tile> GetLayerDictionary(int layer)
 		{
@@ -86,10 +86,10 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// Gets a dictionary of tiles that exist on the specified layer.
 		/// </summary>
 		/// <param name="layer">The number of the map layer to get tiles for. The layer number should be an integer.</param>
-		/// <param name="coordinates">An out parameter that will contain the coordinates of the top left and bottom left of the tiles on the specified layer</param>
-		/// <returns>A dictionary containing the tiles on the specified layer, with the keys being a Location struct describing the row and column of the coordinates of the layer
+		/// <param name="BoundingBox2">An out parameter that will contain the BoundingBox2 of the top left and bottom left of the tiles on the specified layer</param>
+		/// <returns>A dictionary containing the tiles on the specified layer, with the keys being a Location struct describing the row and column of the BoundingBox2 of the layer
 		/// and the values being the tiles themselves.</returns>
-		public static Dictionary<Location, Tile> GetLayerDictionary(int layer, out Coordinates coordinates)
+		public static Dictionary<Location, Tile> GetLayerDictionary(int layer, out BoundingBox2 BoundingBox2)
 		{
 			Dictionary<Location, Tile> foo = new();
 			foreach (Tile tile in UNIQUE_TILES.Values)
@@ -121,7 +121,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 			}
 			bottomLeft.X += 1; bottomLeft.Y += 1; bottomLeft.X *= TILE_WIDTH; bottomLeft.Y *= TILE_HEIGHT;
 			topLeft.X *= TILE_WIDTH; topLeft.Y *= TILE_HEIGHT;
-			coordinates = new Coordinates(topLeft, new Vector2((topLeft.X + (bottomLeft.X - topLeft.X) / 2), ((topLeft.Y + (bottomLeft.Y - topLeft.Y) / 2)) + .5f));
+			BoundingBox2 = new BoundingBox2(topLeft, new Vector2((topLeft.X + (bottomLeft.X - topLeft.X) / 2), ((topLeft.Y + (bottomLeft.Y - topLeft.Y) / 2)) + .5f));
 
 			return foo;
 		}
@@ -143,7 +143,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 			return foo;
 		}
 		/// <summary>
-		/// Update the drawing coordinates of tiles in the active game map.
+		/// Update the drawing BoundingBox2 of tiles in the active game map.
 		/// </summary>
 		/// <exception cref="Exception">Thrown if the ActiveGameMap has no highest MapLayer.</exception>
 		public static void UpdateTileDrawLocations()
@@ -158,15 +158,15 @@ namespace Fantasy.Engine.Mapping.Tiling
 			{
 				foreach (Tile tile in UNIQUE_TILES.Values)
 				{
-					tile.UpdateDrawCoordinates(map.Layer);
+					tile.UpdateDrawBoundingBox2(map.Layer);
 				}
 				map = map.Next;
 			}
 		}
 		/// <summary>
-		/// Update the drawing coordinates of tiles in the active game map, starting from the specified layer.
+		/// Update the drawing BoundingBox2 of tiles in the active game map, starting from the specified layer.
 		/// </summary>
-		/// <param name="startLayer">The layer number to start updating the drawing coordinates from.</param>
+		/// <param name="startLayer">The layer number to start updating the drawing BoundingBox2 from.</param>
 		/// <exception cref="Exception">Thrown if the ActiveGameMap has no highest MapLayer.</exception>
 		public static void UpdateTileDrawLocations(int startLayer)
 		{
@@ -180,7 +180,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 			{
 				foreach (Tile tile in UNIQUE_TILES.Values)
 				{
-					tile.UpdateDrawCoordinates(map.Layer);
+					tile.UpdateDrawBoundingBox2(map.Layer);
 				}
 				map = map.Next;
 			}
@@ -189,8 +189,8 @@ namespace Fantasy.Engine.Mapping.Tiling
 		private bool isVisible = true; //TODO implement
 		private Rectangle sheetBox;
 		private readonly Texture2D spritesheet;
-		private readonly Dictionary<int, HashSet<Coordinates>> layerCoordinates;
-		private readonly Dictionary<int, HashSet<Coordinates>> drawCoordinates;
+		private readonly Dictionary<int, HashSet<BoundingBox2>> layerBoundingBoxes;
+		private readonly Dictionary<int, HashSet<BoundingBox2>> drawBoundingBoxes;
 		private readonly string id;
 
 		/// <summary>
@@ -223,18 +223,18 @@ namespace Fantasy.Engine.Mapping.Tiling
 			get => spritesheet;
 		}
 		/// <summary>
-		/// A dictionary that maps layer numbers to HashSets of coordinates for the tile on the current map.
+		/// A dictionary that maps layer numbers to HashSets of BoundingBox2 for the tile on the current map.
 		/// </summary>
-		public Dictionary<int, HashSet<Coordinates>> LayerCoordinates
+		public Dictionary<int, HashSet<BoundingBox2>> LayerBoundingBoxes
 		{
-			get => layerCoordinates;
+			get => layerBoundingBoxes;
 		}
 		/// <summary>
-		/// A dictionary that maps layer numbers to HashSets of coordinates that describe draw locations on the current map.
+		/// A dictionary that maps layer numbers to HashSets of BoundingBox2 that describe draw locations on the current map.
 		/// </summary>
-		public Dictionary<int, HashSet<Coordinates>> DrawCoordinates
+		public Dictionary<int, HashSet<BoundingBox2>> DrawBoundingBoxes
 		{
-			get => drawCoordinates;
+			get => drawBoundingBoxes;
 		}
 		/// <summary>
 		/// The ID of the tile.
@@ -252,8 +252,8 @@ namespace Fantasy.Engine.Mapping.Tiling
 		protected Tile(XmlElement tileElement)
 		{
 			id = tileElement.GetAttribute("id");
-			layerCoordinates = new Dictionary<int, HashSet<Coordinates>>();
-			drawCoordinates = new Dictionary<int, HashSet<Coordinates>>();
+            layerBoundingBoxes = new Dictionary<int, HashSet<BoundingBox2>>();
+            drawBoundingBoxes = new Dictionary<int, HashSet<BoundingBox2>>();
 			foreach (XmlElement foo in tileElement)
 			{
 				if (foo.Name.Equals("spritesheet"))
@@ -261,7 +261,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 					spritesheet = TextureManager.GetSpritesheet(foo.InnerText);
 					continue;
 				}
-				if (foo.Name.Equals("sheet-coordinates"))
+				if (foo.Name.Equals("sheet-BoundingBox2"))
 				{
 					int col = int.Parse(foo.GetAttribute("col"));
 					int row = int.Parse(foo.GetAttribute("row"));
@@ -271,27 +271,27 @@ namespace Fantasy.Engine.Mapping.Tiling
 				if (foo.Name.Equals("locations"))
 				{
 					int layer = int.Parse(foo.GetAttribute("layer"));
-					if (layerCoordinates.ContainsKey(layer))
+					if (layerBoundingBoxes.ContainsKey(layer))
 					{
 						throw new Exception("Tile XmlElement contains duplicate layer: " + layer + " " + tileElement);
 					}
 
-					HashSet<Coordinates> layerSet = new();
-					HashSet<Coordinates> drawSet = new();
+                    HashSet<BoundingBox2> layerSet = new();
+                    HashSet<BoundingBox2> drawSet = new();
 					foreach (XmlElement location in foo)
 					{
 						float x = float.Parse(location.GetAttribute("x"));
 						float y = float.Parse(location.GetAttribute("y"));
-						Coordinates cord = new(x, y, x + TILE_WIDTH / 2 + .5f, y + TILE_HEIGHT / 2 + .5f);
-						layerSet.Add(cord);
-						drawSet.Add(cord);
+                        BoundingBox2 boundBox = new(x, y, x + TILE_WIDTH / 2 + .5f, y + TILE_HEIGHT / 2 + .5f);
+						layerSet.Add(boundBox);
+						drawSet.Add(boundBox);
 					}
-					LayerCoordinates.Add(layer, layerSet);
-					DrawCoordinates.Add(layer, drawSet);
+					LayerBoundingBoxes.Add(layer, layerSet);
+					DrawBoundingBoxes.Add(layer, drawSet);
 					continue;
 				}
 			}
-			if (Spritesheet == null || Id == null || LayerCoordinates == null)
+			if (Spritesheet == null || Id == null || LayerBoundingBoxes == null)
 			{
 				throw new Exception("Invalid Tile XmlElement: " + tileElement);
 			}
@@ -306,14 +306,14 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// <returns>A bool value indicating whether or not the tile is present on the specified layer.</returns>
 		public bool GetLocationDictionary(int layer, Dictionary<Location, Tile> foo)
 		{
-			if (!LayerCoordinates.TryGetValue(layer, out HashSet<Coordinates> set))
+			if (!LayerBoundingBoxes.TryGetValue(layer, out HashSet<BoundingBox2> set))
 			{
 				return false;
 			}
 
-			foreach (Coordinates cord in set)
+			foreach (BoundingBox2 boundBox in set)
 			{
-				foo.Add(new Location(cord), this);
+				foo.Add(new Location(boundBox), this);
 			}
 			return true;
 		}
@@ -324,25 +324,25 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// <returns>A bool indicating if the tile is found on the provided layer.</returns>
 		public bool IsInLayer(int layer)
 		{
-			return LayerCoordinates.ContainsKey(layer);
+			return LayerBoundingBoxes.ContainsKey(layer);
 		}
 		/// <summary>
 		/// Removes the draw location of the tile from the specified layer.
 		/// </summary>
 		/// <param name="layer">The layer number to remove the draw location from.</param>
-		public void RemoveDrawLocation(int layer, Coordinates cord)
+		public void RemoveDrawLocation(int layer, BoundingBox2 boundBox)
 		{
 			if (!IsInLayer(layer))
 			{
 				return;
 			}
-			DrawCoordinates[layer].RemoveWhere(drawCord => cord.Equals(drawCord)); //TODO could be optimized. probably 
+			DrawBoundingBoxes[layer].RemoveWhere(drawBoundBox => boundBox.Equals(drawBoundBox)); //TODO could be optimized. probably 
 		}
 		/// <summary>
-		/// Update the drawing coordinates of the tile for the specified layer.
+		/// Update the drawing BoundingBox2 of the tile for the specified layer.
 		/// </summary>
 		/// <exception cref="Exception">Thrown if the specified layer is not found.</exception>
-		public void UpdateDrawCoordinates(int startLayer)
+		public void UpdateDrawBoundingBox2(int startLayer)
 		{
 			if (!ActiveGameMap.MapLayers.ContainsKey(startLayer))
 			{
@@ -358,9 +358,9 @@ namespace Fantasy.Engine.Mapping.Tiling
 					continue;
 				}
 
-				foreach (Coordinates cord in DrawCoordinates[startLayer])
+				foreach (BoundingBox2 boundBox in DrawBoundingBoxes[startLayer])
 				{
-					map.TileLayer.LookUpTile(cord)?.RemoveDrawLocation(map.Layer, cord);
+					map.TileLayer.LookUpTile(boundBox)?.RemoveDrawLocation(map.Layer, boundBox);
 				}
 				map = map.Next;
 			}
@@ -372,10 +372,10 @@ namespace Fantasy.Engine.Mapping.Tiling
 		/// <param name="layer">The layer to be drawn.</param>
 		public void Draw(GameTime gameTime, int layer)
 		{
-			DrawCoordinates.TryGetValue(layer, out HashSet<Coordinates> layerDrawCoordinates);
-			foreach (Coordinates cord in layerDrawCoordinates)
+            DrawBoundingBoxes.TryGetValue(layer, out HashSet<BoundingBox2> layerDrawBoundingBox2);
+			foreach (BoundingBox2 boundBox in layerDrawBoundingBox2)
 			{
-				SpriteBatchHandler.Draw(Spritesheet, cord.TopLeft, SheetBox, Color.White);
+                SpriteBatchHandler.Draw(Spritesheet, boundBox.TopLeft, SheetBox, Color.White);
 			}
 		}
 	}
