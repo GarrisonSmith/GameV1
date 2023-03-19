@@ -1,6 +1,7 @@
 ﻿using Fantasy.Engine.ContentManagement;
 using Fantasy.Engine.Drawing;
 using Fantasy.Engine.Drawing.Interfaces;
+using Fantasy.Engine.Drawing.View;
 using Fantasy.Engine.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -375,7 +376,10 @@ namespace Fantasy.Engine.Mapping.Tiling
             DrawBoundingBoxes.TryGetValue(layer, out HashSet<BoundingBox2> layerDrawBoundingBox2);
 			foreach (BoundingBox2 boundBox in layerDrawBoundingBox2)
 			{
-                SpriteBatchHandler.Draw(Spritesheet, boundBox.TopLeft, SheetBox, Color.White);
+				if (Camera.CameraViewBoundingBox.Intersects(boundBox))
+				{
+					SpriteBatchHandler.Draw(Spritesheet, boundBox.TopLeft, SheetBox, Color.White);
+				}
 			}
 		}
 	}

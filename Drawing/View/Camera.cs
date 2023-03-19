@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Fantasy.Engine.Physics;
 using System;
-using System.ComponentModel;
 using Fantasy.Engine.Mapping.Tiling;
 
 namespace Fantasy.Engine.Drawing.View
@@ -113,7 +112,7 @@ namespace Fantasy.Engine.Drawing.View
             Stretch = 1f;
             Rotation = 0f;
             //CameraMovementBoundingBox;
-            CameraViewBoundingBox = new BoundingBox2(new Vector2(), game._Graphics.PreferredBackBufferWidth, game._Graphics.PreferredBackBufferHeight);
+            CameraViewBoundingBox = new BoundingBox2(new Vector2(192, 64), game._Graphics.PreferredBackBufferWidth, game._Graphics.PreferredBackBufferHeight);
             Game = game;
         }
         /// <summary>
@@ -136,8 +135,8 @@ namespace Fantasy.Engine.Drawing.View
                 M32 = 0f,
                 M33 = 1f,
                 M34 = 0f,
-                M41 = CameraViewBoundingBox.TopLeft.X,
-                M42 = CameraViewBoundingBox.TopLeft.Y,
+                M41 = -CameraViewBoundingBox.TopLeft.X,
+                M42 = -CameraViewBoundingBox.TopLeft.Y,
                 M43 = 0f,
                 M44 = 1f
             };
@@ -157,30 +156,46 @@ namespace Fantasy.Engine.Drawing.View
 
             CameraViewBoundingBox.Center = foo;
         }
-
+        /// <summary>
+        /// Zooms the camera in by one stage if the camera is not at max zoom already.
+        /// </summary>
         public static void ZoomIn()
         {
             if (Zoom + 1 <= MaxZoom)
             {
                 Zoom += 1;
-                Stretch = (Zoom + 1f) / Tile.TILE_HEIGHT;
+                Stretch = Zoom / Tile.TILE_HEIGHT;
                 CameraViewBoundingBox.Width = (int)Math.Ceiling((Game._Graphics.PreferredBackBufferWidth / Stretch));
                 CameraViewBoundingBox.Height = (int)Math.Ceiling((Game._Graphics.PreferredBackBufferHeight / Stretch));
             }
         }
-
+        /// <summary>
+        /// Zooms the camera out by one stage if the camera is not at min zoom already.
+        /// </summary>
         public static void ZoomOut()
         {
-            if (Zoom - 1 < -MinZoom)
+            if (Zoom - 1 <= MinZoom)
             { 
                 Zoom -= 1;
-                Stretch = (Zoom - 1f) / Tile.TILE_HEIGHT;
+                Stretch = Zoom / Tile.TILE_HEIGHT;
                 CameraViewBoundingBox.Width = (int)Math.Ceiling((Game._Graphics.PreferredBackBufferWidth / Stretch));
                 CameraViewBoundingBox.Height = (int)Math.Ceiling((Game._Graphics.PreferredBackBufferHeight / Stretch));
             }
         }
-
-
+        /// <summary>
+        /// Sets the zoom to be the provided amount if it is within the bounds of min and max zoom.
+        /// </summary>
+        /// <param name="zoom">The zoom for the camera to be set to.</param>
+        public static void SetZoom(byte zoom)
+        {
+            if (zoom <= MinZoom && zoom >= MaxZoom)
+            {
+                Zoom = zoom;
+                Stretch = Zoom / Tile.TILE_HEIGHT;
+                CameraViewBoundingBox.Width = (int)Math.Ceiling((Game._Graphics.PreferredBackBufferWidth / Stretch));
+                CameraViewBoundingBox.Height = (int)Math.Ceiling((Game._Graphics.PreferredBackBufferHeight / Stretch));
+            }
+        }
 
     }
 }

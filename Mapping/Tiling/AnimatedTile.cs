@@ -4,6 +4,7 @@ using System;
 using System.Xml;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Fantasy.Engine.Drawing.View;
 
 namespace Fantasy.Engine.Mapping.Tiling
 {
@@ -107,7 +108,10 @@ namespace Fantasy.Engine.Mapping.Tiling
             DrawBoundingBoxes.TryGetValue(layer, out HashSet<BoundingBox2> layerDrawBoundingBox2);
 			foreach (BoundingBox2 boundBox in layerDrawBoundingBox2)
 			{
-                Animations[layer][boundBox].DrawCurrentFrame(boundBox, Color.White);
+				if (Camera.CameraViewBoundingBox.Intersects(boundBox))
+				{
+					Animations[layer][boundBox].DrawCurrentFrame(boundBox, Color.White);
+				}
 			}
 		}
 	}

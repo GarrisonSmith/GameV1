@@ -110,7 +110,7 @@ namespace Fantasy.Engine.Mapping.Tiling
 			UseCombinedTexture = useCombinedTexture;
 			RenderTarget2D foo = new RenderTarget2D(
 				SpriteBatchHandler.SpriteBatch.GraphicsDevice,
-				BoundingBox2.Width, BoundingBox2.Height,
+				(int)BoundingBox2.Width, (int)BoundingBox2.Height,
 				false, SurfaceFormat.Color, DepthFormat.None, 0,
 				RenderTargetUsage.PreserveContents
 			);
@@ -132,15 +132,6 @@ namespace Fantasy.Engine.Mapping.Tiling
 			combinedTexture = foo;
 		}
 
-		public bool Intersects(BoundingBox2 foo)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public double Distance(BoundingBox2 foo)
-		{
-			throw new System.NotImplementedException();
-		}
 		/// <summary>
 		/// Draws the tile collection on the screen.
 		/// </summary>
@@ -177,5 +168,20 @@ namespace Fantasy.Engine.Mapping.Tiling
 				}
 			}
 		}
-	}
+
+        public bool Intersects(ILocatable foo)
+        {
+            throw new System.NotImplementedException();
+        }
+
+		public bool Contains(ILocatable foo)
+		{
+            throw new System.NotImplementedException();
+        }
+
+        public float Distance(ILocatable foo)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }
